@@ -1,8 +1,7 @@
-#include "civic.h" 
 #include "core.cvc"
 
 /**
- *  Function that calculates the fibonaci value
+ *  Function that prints a fibonaci sequence
  *  @param  int     
  *  @return int
  */
@@ -31,10 +30,8 @@ void fibs( int n)
     fibs( n-1);
 }
 
-
-
 /**
- *  Function that calculates the fibonaci value
+ *  Function that prints prime numbers
  *  @param  int     
  *  @return int
  */
@@ -70,7 +67,7 @@ void primes( int n)
     primes( n-1);
 }
 
-
+/*
 export int main( )
 {
     fibs ( 10);
@@ -78,3 +75,4 @@ export int main( )
 
     return 0;
 }
+/*

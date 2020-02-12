@@ -50,30 +50,29 @@ int fib( int n)
  */
 bool isprime( int n)
 {
+   /**
+    *  Function that calculates prime numbers recursively
+    *  @param  int     
+    *  @param  int     
+    *  @return int
+    */
+    bool isprimerec( int num, int div)
+    {
+        // base case
+        if (num == div || num == 1) return true;
+
+        // base case
+        if ( num % div == 0 ) return false;
+
+        // 
+        return isprimerec( num, div+1);
+    }
+
     //
     return isprimerec( n, 2);
 }
 
-/**
- *  Function that calculates prime numbers recursively
- *  @param  int     
- *  @param  int     
- *  @return int
- */
-bool isprimerec( int num, int div)
-{
-    // base case
-    if (num == div || num == 1) return true;
-
-    // base case
-    if ( num % div == 0 ) return false;
-
-    // 
-    return isprimerec( num, div+1);
-}
-
 /*
-
 export int main( )
 {
     printInt( gcd( 8, 12));
