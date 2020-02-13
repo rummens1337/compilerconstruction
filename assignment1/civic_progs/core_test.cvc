@@ -1,0 +1,21 @@
+#include "core.h"
+int fails = 0;
+
+void gcd_test()
+{
+    if(gcd(8,12) != 4)
+        fails = fails + 1;
+
+    if(gcd(9,12) == 4)
+        fails = fails + 1;
+}
+
+export int main()
+{
+    gcd_test();
+
+    printInt(fails);
+    printNewlines(1);
+
+    return fails;
+}
