@@ -60,6 +60,13 @@
         </travuser>
       </traversal>
 
+      <traversal id="CO" name="Count operators" default="sons" include="opt_sub.h">
+        <travuser>
+          <node name="BinOp" />
+        </travuser>
+      </traversal>
+
+
     </general>
   </phases>
 
@@ -89,6 +96,52 @@
 -->
 
   <syntaxtree>
+    <!--
+ Node module:
+-->
+<!--    <node name="Module">-->
+<!--      <description>represents binary operator application</description>-->
+<!--      <sons>-->
+<!--        <son name="Left">-->
+<!--          <description>left operand expression</description>-->
+<!--          <targets>-->
+<!--            <target mandatory="yes">-->
+<!--              <set name="Expr" />-->
+<!--              <phases>-->
+<!--                <all />-->
+<!--              </phases>-->
+<!--            </target>-->
+<!--          </targets>-->
+<!--        </son>-->
+<!--        <son name="Right">-->
+<!--          <description>right operand expression</description>-->
+<!--          <targets>-->
+<!--            <target mandatory="yes">-->
+<!--              <set name="Expr" />-->
+<!--              <phases>-->
+<!--                <all />-->
+<!--              </phases>-->
+<!--            </target>-->
+<!--          </targets>-->
+<!--        </son>-->
+<!--      </sons>-->
+<!--      <attributes>-->
+<!--        <description>operator type</description>-->
+<!--        <attribute name="Op">-->
+<!--          <type name="BinOp">-->
+<!--            <targets>-->
+<!--              <target mandatory="yes">-->
+<!--                <any />-->
+<!--                <phases>-->
+<!--                  <all />-->
+<!--                </phases>-->
+<!--              </target>-->
+<!--            </targets>-->
+<!--          </type>-->
+<!--        </attribute>-->
+<!--      </attributes>-->
+<!--    </node>-->
+
 <!--
  Node Stmts:
 -->
