@@ -84,7 +84,7 @@ node *SInum (node *arg_node, info *arg_info)
  * Traversal start function
  */
 
-node *SIdoSumInts( node *syntaxtree)
+node *COdoCountOperators( node *syntaxtree)
 {
     info *arg_info;
 
