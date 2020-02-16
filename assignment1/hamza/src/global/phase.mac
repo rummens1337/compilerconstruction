@@ -50,16 +50,24 @@ SUBPHASE( os,
           "Optimise subtraction",
           OSdoOptSub, 
           ALWAYS,
-          pet)   
+          pet)    
+
+ENDPHASE( pet) 
+
+/******************************************************************************/
+
+
+PHASE( trav,
+       "Traversing over code",
+       ALWAYS)
 
 SUBPHASE( cao, 
           "Count arithmetic operators",
           CAOdoCountAo, 
           ALWAYS,
-          pet)  
+          trav)
 
-ENDPHASE( pet) 
-
+ENDPHASE( trav) 
 
 /******************************************************************************/
 
@@ -81,5 +89,6 @@ ENDPHASE( cg)
 
 
 /******************************************************************************/
+
 
 #include "phase_undefine_defs.mac"

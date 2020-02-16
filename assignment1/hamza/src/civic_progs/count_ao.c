@@ -25,6 +25,57 @@
 #include "ctinfo.h"
 
 /*
+ * INFO structure
+ */
+
+struct INFO {
+  int add;
+  int sub;
+  int mul;
+  int div;
+  int mod;
+};
+
+/*
+ * INFO macros
+ */
+
+#define INFO_ADD(n)  ((n)->add)
+#define INFO_SUB(n)  ((n)->sub)
+#define INFO_MUL(n)  ((n)->mul)
+#define INFO_DIV(n)  ((n)->div)
+#define INFO_MOD(n)  ((n)->mod)
+
+/*
+ * INFO functions
+ */
+
+static info *MakeInfo(void)
+{
+  info *result;
+
+  DBUG_ENTER( "MakeInfo");
+
+  result = (info *)MEMmalloc(sizeof(info));
+
+  INFO_ADD( result) = 0;
+  INFO_SUB( result) = 0;
+  INFO_MUL( result) = 0;
+  INFO_DIV( result) = 0;
+  INFO_MOD( result) = 0;
+
+  DBUG_RETURN( result);
+}
+
+static info *FreeInfo( info *info)
+{
+  DBUG_ENTER ("FreeInfo");
+
+  info = MEMfree( info);
+
+  DBUG_RETURN( info);
+}
+/*
  * Traversal functions
  */
 
@@ -32,20 +83,16 @@ node *CAObinop(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CAObinop");
 
-    CTInote("CAObinop");
-    CTInote("TYPE: %d", NODE_TYPE(arg_node));
-
+    // travsere further in the tree
     BINOP_LEFT( arg_node) = TRAVdo( BINOP_LEFT( arg_node), arg_info);
     BINOP_RIGHT( arg_node) = TRAVdo( BINOP_RIGHT( arg_node), arg_info);
 
-
-    // @todo check the operator and somehow pass it to the parent or something
-    //
-    // if (BINOP_OP( arg_node) == BO_add) MODULE_ADD( arg_node) += 1;
-    // if (BINOP_OP( arg_node) == BO_sub) MODULE_SUB( arg_node) += 1;
-    // if (BINOP_OP( arg_node) == BO_mul) MODULE_MUL( arg_node) += 1;
-    // if (BINOP_OP( arg_node) == BO_div) MODULE_DIV( arg_node) += 1;
-    // if (BINOP_OP( arg_node) == BO_mod) MODULE_MOD( arg_node) += 1;
+    // increment the ops
+    if (BINOP_OP( arg_node) == BO_add) INFO_ADD(arg_info) += 1;
+    else if (BINOP_OP( arg_node) == BO_sub) INFO_SUB(arg_info) += 1;
+    else if (BINOP_OP( arg_node) == BO_mul) INFO_MUL(arg_info) += 1;
+    else if (BINOP_OP( arg_node) == BO_div) INFO_DIV(arg_info) += 1;
+    else if (BINOP_OP( arg_node) == BO_mod) INFO_MOD(arg_info) += 1;
 
     DBUG_RETURN(arg_node);
 }
@@ -53,12 +100,6 @@ node *CAObinop(node *arg_node, info *arg_info)
 node *CAOstmts(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CAOstmts");
-
-    CTInote("CAOstmts");
-    CTInote("TYPE: %d", NODE_TYPE(arg_node));
-    // CTInote( "LINE: %d", NODE_LINE(arg_node));
-    // CTInote( "COL: %d", NODE_COL(arg_node));
-    // CTInote("SONS: %d", TRAVnumSons(arg_node));
 
     // traverse over the nodes
     STMTS_STMT(arg_node) = TRAVdo(STMTS_STMT(arg_node), arg_info);
@@ -73,15 +114,20 @@ node *CAOstmts(node *arg_node, info *arg_info)
 
 node *CAOmodule(node *arg_node, info *arg_info)
 {
-    DBUG_ENTER("CAOmodule");
+    DBUG_ENTER("CAOmodule begin");
 
-    CTInote("CAOmodule");
-    CTInote("Type: %d", NODE_TYPE(arg_node));
-    CTInote("SONS: %d", TRAVnumSons(arg_node));
+    info * info = MakeInfo();
 
     // traverse over the statement nods
-    TRAVdo(MODULE_NEXT(arg_node), arg_info);
+    TRAVdo(MODULE_NEXT(arg_node), info);
 
+    MODULE_ADD(arg_node) = INFO_ADD(info);
+    MODULE_SUB(arg_node) = INFO_SUB(info);
+    MODULE_MUL(arg_node) = INFO_MUL(info);
+    MODULE_DIV(arg_node) = INFO_DIV(info);
+    MODULE_MOD(arg_node) = INFO_MOD(info);
+
+    info = FreeInfo( info);
 
     DBUG_RETURN(arg_node);
 }
