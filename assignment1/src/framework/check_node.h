@@ -24,6 +24,7 @@ extern node *CHKMbinop (node * arg_node, info * arg_info);
 extern node *CHKMbool (node * arg_node, info * arg_info);
 extern node *CHKMerror (node * arg_node, info * arg_info);
 extern node *CHKMfloat (node * arg_node, info * arg_info);
+extern node *CHKMmodule (node * arg_node, info * arg_info);
 extern node *CHKMnum (node * arg_node, info * arg_info);
 extern node *CHKMstmts (node * arg_node, info * arg_info);
 extern node *CHKMsymboltableentry (node * arg_node, info * arg_info);

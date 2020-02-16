@@ -42,6 +42,11 @@ struct SONS_N_ERROR
 struct SONS_N_FLOAT
 {
 };
+struct SONS_N_MODULE
+{
+  node *Left;
+  node *Right;
+};
 struct SONS_N_NUM
 {
 };
@@ -70,6 +75,7 @@ struct SONUNION
   struct SONS_N_BOOL *N_bool;
   struct SONS_N_ERROR *N_error;
   struct SONS_N_FLOAT *N_float;
+  struct SONS_N_MODULE *N_module;
   struct SONS_N_NUM *N_num;
   struct SONS_N_STMTS *N_stmts;
   struct SONS_N_SYMBOLTABLEENTRY *N_symboltableentry;

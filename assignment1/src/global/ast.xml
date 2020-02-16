@@ -60,12 +60,12 @@
         </travuser>
       </traversal>
 
-      <traversal id="CO" name="Count operators" default="sons" include="opt_sub.h">
+      <traversal id="CO" name="Count operators" default="sons" include="count_operators.h">
         <travuser>
           <node name="BinOp" />
+          <node name="Module" />
         </travuser>
       </traversal>
-
 
     </general>
   </phases>
@@ -99,48 +99,100 @@
     <!--
  Node module:
 -->
-<!--    <node name="Module">-->
-<!--      <description>represents binary operator application</description>-->
-<!--      <sons>-->
-<!--        <son name="Left">-->
-<!--          <description>left operand expression</description>-->
-<!--          <targets>-->
-<!--            <target mandatory="yes">-->
-<!--              <set name="Expr" />-->
-<!--              <phases>-->
-<!--                <all />-->
-<!--              </phases>-->
-<!--            </target>-->
-<!--          </targets>-->
-<!--        </son>-->
-<!--        <son name="Right">-->
-<!--          <description>right operand expression</description>-->
-<!--          <targets>-->
-<!--            <target mandatory="yes">-->
-<!--              <set name="Expr" />-->
-<!--              <phases>-->
-<!--                <all />-->
-<!--              </phases>-->
-<!--            </target>-->
-<!--          </targets>-->
-<!--        </son>-->
-<!--      </sons>-->
-<!--      <attributes>-->
-<!--        <description>operator type</description>-->
-<!--        <attribute name="Op">-->
-<!--          <type name="BinOp">-->
-<!--            <targets>-->
-<!--              <target mandatory="yes">-->
-<!--                <any />-->
-<!--                <phases>-->
-<!--                  <all />-->
-<!--                </phases>-->
-<!--              </target>-->
-<!--            </targets>-->
-<!--          </type>-->
-<!--        </attribute>-->
-<!--      </attributes>-->
-<!--    </node>-->
+    <node name="Module">
+      <description>represents binary operator application</description>
+      <sons>
+        <son name="Left">
+          <description>left operand expression</description>
+          <targets>
+            <target mandatory="yes">
+              <set name="Expr" />
+              <phases>
+                <all />
+              </phases>
+            </target>
+          </targets>
+        </son>
+        <son name="Right">
+          <description>right operand expression</description>
+          <targets>
+            <target mandatory="yes">
+              <set name="Expr" />
+              <phases>
+                <all />
+              </phases>
+            </target>
+          </targets>
+        </son>
+      </sons>
+        <attributes>
+          <attribute name="Add">
+            <description>Counter of operator Add</description>
+            <type name="Int">
+              <targets>
+                <target mandatory="yes">
+                  <any />
+                  <phases>
+                    <all />
+                  </phases>
+                </target>
+              </targets>
+            </type>
+          </attribute>
+          <attribute name="Sub">
+            <description>Counter of operator Sub</description>
+            <type name="Int">
+              <targets>
+                <target mandatory="yes">
+                  <any />
+                  <phases>
+                    <all />
+                  </phases>
+                </target>
+              </targets>
+            </type>
+          </attribute>
+          <attribute name="Div">
+            <description>Counter of operator Div</description>
+            <type name="Int">
+              <targets>
+                <target mandatory="yes">
+                  <any />
+                  <phases>
+                    <all />
+                  </phases>
+                </target>
+              </targets>
+            </type>
+          </attribute>
+          <attribute name="Mul">
+            <description>Counter of operator Add</description>
+            <type name="Int">
+              <targets>
+                <target mandatory="yes">
+                  <any />
+                  <phases>
+                    <all />
+                  </phases>
+                </target>
+              </targets>
+            </type>
+          </attribute>
+          <attribute name="Mod">
+            <description>Counter of operator Add</description>
+            <type name="Int">
+              <targets>
+                <target mandatory="yes">
+                  <any />
+                  <phases>
+                    <all />
+                  </phases>
+                </target>
+              </targets>
+            </type>
+          </attribute>
+        </attributes>
+    </node>
 
 <!--
  Node Stmts:

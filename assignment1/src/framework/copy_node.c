@@ -162,6 +162,37 @@ COPYfloat (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn COPYmodule
+ *
+ * @brief Copies the node and its sons/attributes
+ *
+ * @param arg_node Module node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+COPYmodule (node * arg_node, info * arg_info)
+{
+  node *result = TBmakeModule (0, 0, 0, 0, 0, NULL, NULL);
+  DBUG_ENTER ("COPYmodule");
+  LUTinsertIntoLutP (INFO_LUT (arg_info), arg_node, result);
+  /* Copy attributes */
+  MODULE_ADD (result) = MODULE_ADD (arg_node);
+  MODULE_SUB (result) = MODULE_SUB (arg_node);
+  MODULE_DIV (result) = MODULE_DIV (arg_node);
+  MODULE_MUL (result) = MODULE_MUL (arg_node);
+  MODULE_MOD (result) = MODULE_MOD (arg_node);
+  /* Copy sons */
+  MODULE_LEFT (result) = COPYTRAV (MODULE_LEFT (arg_node), arg_info);
+  MODULE_RIGHT (result) = COPYTRAV (MODULE_RIGHT (arg_node), arg_info);
+  /* Return value */
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn COPYnum
  *
  * @brief Copies the node and its sons/attributes

@@ -37,15 +37,26 @@ static int yyerror( char *errname);
 %token <cflt> FLOAT
 %token <id> ID
 
-%type <node> intval floatval boolval constant expr
+%type <node> intval floatval boolval constant expr module
 %type <node> stmts stmt assign varlet program
 %type <cbinop> binop
 
 %start program
 
 %%
+program: module
+         {
+           parseresult = $1;
+         }
+         ;
 
-program: stmts 
+module: stmts
+        {
+          $$ = TBmakeModule(0, 0, 0, 0, 0, $1);
+        }
+        ;
+
+program: stmts
          {
            parseresult = $1;
          }
@@ -143,7 +154,7 @@ binop: PLUS      { $$ = BO_add; }
      | OR        { $$ = BO_or; }
      | AND       { $$ = BO_and; }
      ;
-      
+
 %%
 
 static int yyerror( char *error)

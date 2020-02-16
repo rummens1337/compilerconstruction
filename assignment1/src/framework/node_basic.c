@@ -37,6 +37,59 @@ MakeEmptyNode ()
 
 
 /*****************************************************************************
+ * N_Module :
+ *****************************************************************************/
+
+node *
+TBmakeModule (int Add, int Sub, int Div, int Mul, int Mod, node * Left,
+	      node * Right)
+{
+  node *this;
+  DBUG_ENTER ("TBmakeModule");
+  DBUG_PRINT ("MAKE", ("allocating node structure"));
+  this = MakeEmptyNode ();
+  NODE_TYPE (this) = N_module;
+  DBUG_PRINT ("MAKE", ("address: %s ", this));
+  DBUG_PRINT ("MAKE", ("allocating sons structure"));
+  this->sons.N_module = MEMmalloc (sizeof (struct SONS_N_MODULE));
+  DBUG_PRINT ("MAKE", ("allocating attrib structure"));
+  this->attribs.N_module = MEMmalloc (sizeof (struct ATTRIBS_N_MODULE));
+  DBUG_PRINT ("MAKE", ("setting node type"));
+  NODE_TYPE (this) = N_module;
+  DBUG_PRINT ("MAKE", ("assigning son Left initial value: %s ", Left));
+  MODULE_LEFT (this) = Left;
+  DBUG_PRINT ("MAKE", ("assigning son Right initial value: %s ", Right));
+  MODULE_RIGHT (this) = Right;
+  MODULE_ADD (this) = Add;
+  MODULE_SUB (this) = Sub;
+  MODULE_DIV (this) = Div;
+  MODULE_MUL (this) = Mul;
+  MODULE_MOD (this) = Mod;
+#ifndef DBUG_OFF
+  DBUG_PRINT ("MAKE", ("doing son target checks"));
+  if ((MODULE_LEFT (this) != NULL)
+      && (NODE_TYPE (MODULE_LEFT (this)) != N_binop)
+      && (NODE_TYPE (MODULE_LEFT (this)) != N_var)
+      && (NODE_TYPE (MODULE_LEFT (this)) != N_num)
+      && (NODE_TYPE (MODULE_LEFT (this)) != N_float)
+      && (NODE_TYPE (MODULE_LEFT (this)) != N_bool))
+    {
+      CTIwarn ("Field Left of node N_Module has non-allowed target node.");
+    }
+  if ((MODULE_RIGHT (this) != NULL)
+      && (NODE_TYPE (MODULE_RIGHT (this)) != N_binop)
+      && (NODE_TYPE (MODULE_RIGHT (this)) != N_var)
+      && (NODE_TYPE (MODULE_RIGHT (this)) != N_num)
+      && (NODE_TYPE (MODULE_RIGHT (this)) != N_float)
+      && (NODE_TYPE (MODULE_RIGHT (this)) != N_bool))
+    {
+      CTIwarn ("Field Right of node N_Module has non-allowed target node.");
+    }
+#endif /* DBUG_OFF */
+  DBUG_RETURN (this);
+}
+
+/*****************************************************************************
  * N_Stmts :
  *****************************************************************************/
 

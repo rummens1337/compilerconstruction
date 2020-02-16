@@ -22,6 +22,7 @@ extern node *EVALbinop (node * arg_node, info * arg_info);
 extern node *EVALbool (node * arg_node, info * arg_info);
 extern node *EVALerror (node * arg_node, info * arg_info);
 extern node *EVALfloat (node * arg_node, info * arg_info);
+extern node *EVALmodule (node * arg_node, info * arg_info);
 extern node *EVALnum (node * arg_node, info * arg_info);
 extern node *EVALstmts (node * arg_node, info * arg_info);
 extern node *EVALsymboltableentry (node * arg_node, info * arg_info);

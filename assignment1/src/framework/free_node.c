@@ -177,6 +177,34 @@ FREEfloat (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn FREEmodule
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Module node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEmodule (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEmodule");
+  DBUG_PRINT ("FREE", ("Processing node N_module at " F_PTR, arg_node));
+  MODULE_LEFT (arg_node) = FREETRAV (MODULE_LEFT (arg_node), arg_info);
+  MODULE_RIGHT (arg_node) = FREETRAV (MODULE_RIGHT (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_module = MEMfree (arg_node->sons.N_module);
+  arg_node->attribs.N_module = MEMfree (arg_node->attribs.N_module);
+  DBUG_PRINT ("FREE", ("Processing node N_module at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn FREEnum
  *
  * @brief Frees the node and its sons/attributes

@@ -158,6 +158,28 @@ CHKMfloat (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn CHKMmodule
+ *
+ * @brief Touched the node and its sons/attributes
+ *
+ * @param arg_node Module node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+CHKMmodule (node * arg_node, info * arg_info)
+{
+  DBUG_ENTER ("CHKMmodule");
+  NODE_ERROR (arg_node) = CHKMTRAV (NODE_ERROR (arg_node), arg_info);
+  MODULE_LEFT (arg_node) = CHKMTRAV (MODULE_LEFT (arg_node), arg_info);
+  MODULE_RIGHT (arg_node) = CHKMTRAV (MODULE_RIGHT (arg_node), arg_info);
+  DBUG_RETURN (arg_node);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn CHKMnum
  *
  * @brief Touched the node and its sons/attributes

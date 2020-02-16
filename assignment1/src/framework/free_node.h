@@ -22,6 +22,7 @@ extern node *FREEbinop (node * arg_node, info * arg_info);
 extern node *FREEbool (node * arg_node, info * arg_info);
 extern node *FREEerror (node * arg_node, info * arg_info);
 extern node *FREEfloat (node * arg_node, info * arg_info);
+extern node *FREEmodule (node * arg_node, info * arg_info);
 extern node *FREEnum (node * arg_node, info * arg_info);
 extern node *FREEstmts (node * arg_node, info * arg_info);
 extern node *FREEsymboltableentry (node * arg_node, info * arg_info);

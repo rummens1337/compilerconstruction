@@ -340,6 +340,87 @@ CHKfloat (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn CHKmodule
+ *
+ * @brief Check the node and its sons/attributes
+ *
+ * @param arg_node Module node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+CHKmodule (node * arg_node, info * arg_info)
+{
+  DBUG_ENTER ("CHKmodule");
+
+/*
+ * Son check: MODULE_LEFT 
+ */
+  if ((FALSE) || (TRUE))
+    {
+      CHKexistSon (MODULE_LEFT (arg_node), arg_node,
+		   "mandatory son MODULE_LEFT is NULL");
+      if (MODULE_LEFT (arg_node) != NULL)
+	{
+	  if (!((FALSE) || (isExpr (MODULE_LEFT (arg_node)))))
+	    {
+	      CHKcorrectTypeInsertError (arg_node,
+					 "MODULE_LEFT hasnt the right type."
+					 " It should be: " "Nodeset: Expr");
+	    }
+	}
+    }
+  else
+    {
+      CHKnotExist (MODULE_LEFT (arg_node), arg_node,
+		   "attribute MODULE_LEFT must be NULL");
+    }
+
+/*
+ * Son check: MODULE_RIGHT 
+ */
+  if ((FALSE) || (TRUE))
+    {
+      CHKexistSon (MODULE_RIGHT (arg_node), arg_node,
+		   "mandatory son MODULE_RIGHT is NULL");
+      if (MODULE_RIGHT (arg_node) != NULL)
+	{
+	  if (!((FALSE) || (isExpr (MODULE_RIGHT (arg_node)))))
+	    {
+	      CHKcorrectTypeInsertError (arg_node,
+					 "MODULE_RIGHT hasnt the right type."
+					 " It should be: " "Nodeset: Expr");
+	    }
+	}
+    }
+  else
+    {
+      CHKnotExist (MODULE_RIGHT (arg_node), arg_node,
+		   "attribute MODULE_RIGHT must be NULL");
+    }
+
+/*
+ * trav functions: to get all sons
+ */
+  if (MODULE_LEFT (arg_node) != NULL)
+    {
+      MODULE_LEFT (arg_node) = TRAVdo (MODULE_LEFT (arg_node), arg_info);
+    }
+
+/*
+ * trav functions: to get all sons
+ */
+  if (MODULE_RIGHT (arg_node) != NULL)
+    {
+      MODULE_RIGHT (arg_node) = TRAVdo (MODULE_RIGHT (arg_node), arg_info);
+    }
+  DBUG_RETURN (arg_node);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn CHKnum
  *
  * @brief Check the node and its sons/attributes
@@ -550,6 +631,7 @@ typedef enum
   CHK_bool_value,
   CHK_error_message,
   CHK_float_value,
+  CHK_module_add,
   CHK_num_value,
   CHK_var_name,
   CHK_varlet_name

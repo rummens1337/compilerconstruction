@@ -21,50 +21,57 @@
 #include "rename_identifiers.h"
 #include "sum_ints.h"
 #include "opt_sub.h"
+#include "count_operators.h"
 
 
 travtables_t travtables = {
   /* TR_undefined */
   {&TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror,
-   &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror}
+   &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror, &TRAVerror}
 
   /* TR_prt */
-  , {&TRAVerror, &PRTstmts, &PRTassign, &PRTbinop, &PRTvarlet, &PRTvar,
-     &PRTnum, &PRTfloat, &PRTbool, &PRTsymboltableentry, &PRTerror}
+  , {&TRAVerror, &PRTmodule, &PRTstmts, &PRTassign, &PRTbinop, &PRTvarlet,
+     &PRTvar, &PRTnum, &PRTfloat, &PRTbool, &PRTsymboltableentry, &PRTerror}
 
   /* TR_copy */
-  , {&TRAVerror, &COPYstmts, &COPYassign, &COPYbinop, &COPYvarlet, &COPYvar,
-     &COPYnum, &COPYfloat, &COPYbool, &COPYsymboltableentry, &COPYerror}
+  , {&TRAVerror, &COPYmodule, &COPYstmts, &COPYassign, &COPYbinop,
+     &COPYvarlet, &COPYvar, &COPYnum, &COPYfloat, &COPYbool,
+     &COPYsymboltableentry, &COPYerror}
 
   /* TR_free */
-  , {&TRAVerror, &FREEstmts, &FREEassign, &FREEbinop, &FREEvarlet, &FREEvar,
-     &FREEnum, &FREEfloat, &FREEbool, &FREEsymboltableentry, &FREEerror}
+  , {&TRAVerror, &FREEmodule, &FREEstmts, &FREEassign, &FREEbinop,
+     &FREEvarlet, &FREEvar, &FREEnum, &FREEfloat, &FREEbool,
+     &FREEsymboltableentry, &FREEerror}
 
   /* TR_chk */
-  , {&TRAVerror, &CHKstmts, &CHKassign, &CHKbinop, &CHKvarlet, &CHKvar,
-     &CHKnum, &CHKfloat, &CHKbool, &CHKsymboltableentry, &CHKerror}
+  , {&TRAVerror, &CHKmodule, &CHKstmts, &CHKassign, &CHKbinop, &CHKvarlet,
+     &CHKvar, &CHKnum, &CHKfloat, &CHKbool, &CHKsymboltableentry, &CHKerror}
 
   /* TR_ri */
-  , {&TRAVerror, &TRAVsons, &TRAVsons, &TRAVsons, &RIvarlet, &RIvar,
-     &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
+  , {&TRAVerror, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &RIvarlet,
+     &RIvar, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 
   /* TR_si */
   , {&TRAVerror, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons,
-     &SInum, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
+     &TRAVsons, &SInum, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 
   /* TR_os */
-  , {&TRAVerror, &TRAVsons, &TRAVsons, &OSbinop, &TRAVsons, &TRAVsons,
-     &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
+  , {&TRAVerror, &TRAVsons, &TRAVsons, &TRAVsons, &OSbinop, &TRAVsons,
+     &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
+
+  /* TR_co */
+  , {&TRAVerror, &COmodule, &TRAVsons, &TRAVsons, &CObinop, &TRAVsons,
+     &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 };
 
 preposttable_t pretable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 preposttable_t posttable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
-const char *travnames[8] = {
-  "unknown", "prt", "copy", "free", "chk", "ri", "si", "os"
+const char *travnames[9] = {
+  "unknown", "prt", "copy", "free", "chk", "ri", "si", "os", "co"
 };
