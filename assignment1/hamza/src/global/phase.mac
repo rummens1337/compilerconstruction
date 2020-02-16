@@ -67,6 +67,12 @@ SUBPHASE( cao,
           ALWAYS,
           trav)
 
+SUBPHASE( cio, 
+          "Count identifiers occerences",
+          CIOdoCountAo, 
+          ALWAYS,
+          trav)
+
 ENDPHASE( trav) 
 
 /******************************************************************************/

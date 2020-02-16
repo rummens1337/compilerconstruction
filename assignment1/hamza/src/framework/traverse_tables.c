@@ -22,6 +22,7 @@
 #include "sum_ints.h"
 #include "opt_sub.h"
 #include "count_ao.h"
+#include "count_io.h"
 
 
 travtables_t travtables = {
@@ -62,16 +63,20 @@ travtables_t travtables = {
   /* TR_cao */
   , {&TRAVerror, &CAOmodule, &CAOstmts, &TRAVsons, &CAObinop, &TRAVsons,
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
+
+  /* TR_cio */
+  , {&TRAVerror, &CIOmodule, &TRAVsons, &TRAVsons, &TRAVsons, &CIOvarlet,
+     &CIOvar, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 };
 
 preposttable_t pretable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 preposttable_t posttable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
-const char *travnames[9] = {
-  "unknown", "prt", "copy", "free", "chk", "ri", "si", "os", "cao"
+const char *travnames[10] = {
+  "unknown", "prt", "copy", "free", "chk", "ri", "si", "os", "cao", "cio"
 };

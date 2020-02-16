@@ -71,6 +71,14 @@
                 </travuser>
             </traversal>
 
+                <traversal id="CIO" name="Count identifiers occerences" default="sons" include="count_io.h">
+                <travuser>
+                    <node name="Module" />
+                    <node name="Var" />
+                    <node name="VarLet" />
+                </travuser>
+            </traversal>
+
         </general>
     </phases>
 
