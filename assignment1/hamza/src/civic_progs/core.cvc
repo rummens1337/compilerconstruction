@@ -1,0 +1,92 @@
+#include "civic.h" 
+
+/**
+ *  Function that calculates the greatest common denominator
+ *  @param  int     
+ *  @param  int     
+ *  @return int
+ */
+int gcd( int a, int b)
+{
+    // base case
+    if (b == 0) return a;
+
+    // return the result
+    return gcd(b, a % b);
+}
+
+/**
+ *  Function that calculates the fac
+ *  @param  int     
+ *  @return int
+ */
+int fac( int n)
+{
+    // base case
+    if (n == 0) return 1;
+
+    // return the result
+    return n * fac( n-1);
+}
+
+/**
+ *  Function that calculates the fibonaci value
+ *  @param  int     
+ *  @return int
+ */
+int fib( int n)
+{
+    // base case
+    if (n <= 1) return n;
+
+    // return the result
+    return fib(n - 1) + fib(n - 2);
+}
+
+/**
+ *  Function that calculates prime numbers
+ *  @param  int     
+ *  @return int
+ */
+bool isprime( int n)
+{
+   /**
+    *  Function that calculates prime numbers recursively
+    *  @param  int     
+    *  @param  int     
+    *  @return int
+    */
+    bool isprimerec( int num, int div)
+    {
+        // base case
+        if (num == div || num == 1) return true;
+
+        // base case
+        if ( num % div == 0 ) return false;
+
+        // 
+        return isprimerec( num, div+1);
+    }
+
+    //
+    return isprimerec( n, 2);
+}
+
+/*
+export int main( )
+{
+    printInt( gcd( 8, 12));
+    printNewlines(1);
+
+    printInt( fac( 3));
+    printNewlines(1);
+
+    printInt( fib( 10));
+    printNewlines(1);
+
+    printInt( (int)isprime( 2));
+    printNewlines(1);
+
+    return 0;
+}
+*/
