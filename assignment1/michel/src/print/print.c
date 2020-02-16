@@ -318,11 +318,11 @@ PRTmodule(node *arg_node, info *arg_info) {
     DBUG_ENTER("PRTmodule");
 
     // print the information
-    printf("ADDITIONS: %d\n", MODULE_ADD(arg_node));
-    printf("SUBTRACTIONS: %d\n", MODULE_SUB(arg_node));
-    printf("MULTIPLiCATIONS: %d\n", MODULE_MUL(arg_node));
-    printf("DIVISIONS: %d\n", MODULE_DIV(arg_node));
-    printf("MODULO: %d\n", MODULE_MOD(arg_node));
+    printf("Adittions: %d\n", MODULE_ADD(arg_node));
+    printf("Subtractions: %d\n", MODULE_SUB(arg_node));
+    printf("Multiplications: %d\n", MODULE_MUL(arg_node));
+    printf("Divisions: %d\n", MODULE_DIV(arg_node));
+    printf("Modulos: %d\n", MODULE_MOD(arg_node));
 
     DBUG_RETURN(arg_node);
 }
