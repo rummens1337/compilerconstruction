@@ -63,6 +63,7 @@
       <traversal id="CO" name="Count operators" default="sons" include="count_operators.h">
         <travuser>
           <node name="BinOp" />
+          <node name="Stmts" />
           <node name="Module" />
         </travuser>
       </traversal>
@@ -102,22 +103,11 @@
     <node name="Module">
       <description>represents binary operator application</description>
       <sons>
-        <son name="Left">
-          <description>left operand expression</description>
+        <son name="Next">
+          <description>remaining statements in sequence</description>
           <targets>
-            <target mandatory="yes">
-              <set name="Expr" />
-              <phases>
-                <all />
-              </phases>
-            </target>
-          </targets>
-        </son>
-        <son name="Right">
-          <description>right operand expression</description>
-          <targets>
-            <target mandatory="yes">
-              <set name="Expr" />
+            <target mandatory="no">
+              <node name="Stmts" />
               <phases>
                 <all />
               </phases>

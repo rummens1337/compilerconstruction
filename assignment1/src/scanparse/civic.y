@@ -44,6 +44,7 @@ static int yyerror( char *errname);
 %start program
 
 %%
+
 program: module
          {
            parseresult = $1;
@@ -55,12 +56,6 @@ module: stmts
           $$ = TBmakeModule(0, 0, 0, 0, 0, $1);
         }
         ;
-
-program: stmts
-         {
-           parseresult = $1;
-         }
-         ;
 
 stmts: stmt stmts
         {

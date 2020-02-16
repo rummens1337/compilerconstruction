@@ -331,7 +331,7 @@ PRTmodule (node * arg_node, info * arg_info)
 {
     DBUG_ENTER ("PRTmodule");
 
-//    printf( "%s", VARLET_NAME( arg_node));
+    printf( "%s", WOOOOP);
 
     DBUG_RETURN (arg_node);
 }
