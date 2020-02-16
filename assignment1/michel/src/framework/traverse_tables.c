@@ -60,7 +60,7 @@ travtables_t travtables = {
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 
   /* TR_co */
-  , {&TRAVerror, &COmodule, &COstmts, &TRAVsons, &CObinop, &TRAVsons,
+  , {&TRAVerror, &COmodule, &TRAVsons, &TRAVsons, &CObinop, &TRAVsons,
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 };
 

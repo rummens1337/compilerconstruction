@@ -93,10 +93,10 @@ node *CObinop (node *arg_node, info *arg_info)
     BINOP_RIGHT( arg_node) = TRAVdo( BINOP_RIGHT( arg_node), arg_info);
 
     if (BINOP_OP( arg_node) == BO_add) INFO_ADD( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_add) INFO_SUB( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_add) INFO_MUL( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_add) INFO_DIV( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_add) INFO_MOD( arg_info) += 1;
+    if (BINOP_OP( arg_node) == BO_sub) INFO_SUB( arg_info) += 1;
+    if (BINOP_OP( arg_node) == BO_mul) INFO_MUL( arg_info) += 1;
+    if (BINOP_OP( arg_node) == BO_div) INFO_DIV( arg_info) += 1;
+    if (BINOP_OP( arg_node) == BO_mod) INFO_MOD( arg_info) += 1;
 
     DBUG_RETURN( arg_node);
 }
@@ -107,7 +107,6 @@ node *COmodule (node *arg_node, info *arg_info)
 
     info * info = MakeInfo();
 
-    // traverse over the statement nods
     TRAVdo(MODULE_NEXT(arg_node), info);
 
     MODULE_ADD(arg_node) = INFO_ADD(info);
@@ -117,23 +116,6 @@ node *COmodule (node *arg_node, info *arg_info)
     MODULE_MOD(arg_node) = INFO_MOD(info);
 
     DBUG_RETURN(arg_node);
-}
-
-node *COstmts(node *arg_node, info *arg_info)
-{
-    DBUG_ENTER("COstmts");
-
-    /*
-     * Extremely important:
-     *  we must continue to traverse the abstract syntax tree !!
-     */
-
-    STMTS_STMT(arg_node) = TRAVdo(STMTS_STMT(arg_node), arg_info);
-    STMTS_NEXT(arg_node) = TRAVopt(STMTS_NEXT(arg_node), arg_info);
-
-    DBUG_RETURN(arg_node);
-
-    DBUG_RETURN( arg_node);
 }
 
 /*

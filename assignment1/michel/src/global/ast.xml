@@ -63,7 +63,6 @@
       <traversal id="CO" name="Count operators" default="sons" include="count_operators.h">
         <travuser>
           <node name="BinOp" />
-          <node name="Stmts" />
           <node name="Module" />
         </travuser>
       </traversal>
