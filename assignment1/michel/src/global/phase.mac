@@ -58,6 +58,12 @@ SUBPHASE( co,
             ALWAYS,
             pet)
 
+SUBPHASE( ci,
+            "Count identifiers",
+            CIdoCountIdentifiers,
+            ALWAYS,
+            pet)
+
 ENDPHASE( pet)
 
 
