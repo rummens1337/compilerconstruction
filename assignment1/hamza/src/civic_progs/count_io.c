@@ -61,7 +61,6 @@ static info *FreeInfo(info *info)
 {
     DBUG_ENTER("FreeInfo");
 
-    LUTremoveContentLut(INFO_LUT(info));
     LUTremoveLut(INFO_LUT(info));
     info = MEMfree(info);
 
@@ -75,6 +74,7 @@ static info *FreeInfo(info *info)
 struct COUNTER
 {
     int sum;
+    char * name;
 };
 
 typedef struct COUNTER counter;
@@ -84,6 +84,8 @@ typedef struct COUNTER counter;
  */
 
 #define COUNTER_SUM(n) ((n)->sum)
+#define COUNTER_NAME(n) ((n)->name)
+
 
 /*
  * INFO functions
@@ -96,23 +98,16 @@ static counter *MakeCounter(void)
     counter* result = (counter *)MEMmalloc(sizeof(counter));
 
     COUNTER_SUM(result) = 0;
+    COUNTER_NAME(result) = NULL;
 
     DBUG_RETURN(result);
-}
-
-static counter *FreeCounter(counter *info)
-{
-    DBUG_ENTER("FreeCounter");
-
-    info = MEMfree(info);
-
-    DBUG_RETURN(info);
 }
 
 
 static void *_map(void *item)
 {
-    CTInote( "CI %s", item);
+    counter * _counter = (counter *)item;
+    CTInote( "%s = %d", _counter->name, _counter->sum);
     return item;
 }
 
@@ -120,33 +115,21 @@ static void *_map(void *item)
 static void process(info *arg_info, char *name)
 {
     lut_t *lut = INFO_LUT(arg_info);
-    counter *_counter = (counter *)LUTsearchInLutS(lut, name);
+    void **result = LUTsearchInLutS(lut, name);
 
-    if (_counter == NULL)
+    if (result == NULL)
     {
-        CTInote( "1. found %s", name);
-
-        _counter = MakeCounter();
+        counter *_counter = MakeCounter();
         COUNTER_SUM(_counter) = 1;
-
-        CTInote( "2. found: %s = %d", name, COUNTER_SUM(_counter));
+        COUNTER_NAME(_counter) = STRcpy(name);
 
         lut = LUTinsertIntoLutS(lut, name, _counter);
-
-        _counter = (counter *)LUTsearchInLutS(lut, name);
-
-        CTInote( "3. found: %s = %d", name, _counter->sum);
-
     }
     else
     {
         void *found;
-
-        CTInote( "1. process: %s = %d", name, COUNTER_SUM(_counter));
-
+        counter *_counter = (counter *)(*result);
         COUNTER_SUM(_counter) += 1;
-
-        CTInote( "2. process: %s = %d", name, COUNTER_SUM(_counter));
 
         //
         lut = LUTupdateLutS(lut, name, _counter, &found);
@@ -160,8 +143,6 @@ node *CIOmodule(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CAOstmts");
 
-    CTInote( "CIOmodule");
-
     info *info = MakeInfo();
 
     // traverse over the nodes
@@ -171,7 +152,6 @@ node *CIOmodule(node *arg_node, info *arg_info)
 
     info = FreeInfo(info);
 
-
     DBUG_RETURN(arg_node);
 }
 
@@ -180,8 +160,6 @@ node *CIOvarlet(node *arg_node, info *arg_info)
     DBUG_ENTER("CIOvarlet");
 
     char *name = VARLET_NAME(arg_node);
-
-    CTInote( "CIOvarlet: %s", name);
 
     DBUG_PRINT( "CIO", ("CIOvarlet: Name = %s", name));
 
@@ -195,8 +173,6 @@ node *CIOvar(node *arg_node, info *arg_info)
     DBUG_ENTER("CIOvar");
 
     char *name = VAR_NAME(arg_node);
-
-    CTInote( "CIOvar: %s", name);
 
     DBUG_PRINT( "CIO", ("CIOvar: Name = %s", name));
 
