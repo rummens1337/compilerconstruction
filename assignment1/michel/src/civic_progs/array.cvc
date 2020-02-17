@@ -4,16 +4,14 @@
  *  print vec to stdout
  *  @param int[]
  */
-void printIntVec( int[n] vec)
-{
+void printIntVec(int[n] vec) {
     // iterate over the values
-    for ( int i=0, n)
-    {
+    for (int i = 0, n) {
         // print the value
-        printInt ( vec[i]);
+        printInt(vec[i]);
 
         // print a space
-        if ( (i+1) != n) printSpaces( 1);
+        if ((i + 1) != n) printSpaces(1);
     }
 }
 
@@ -21,16 +19,14 @@ void printIntVec( int[n] vec)
  *  print vec to stdout
  *  @param float[]
  */
-void printFloatVec( float[n] vec) 
-{
+void printFloatVec(float[n] vec) {
     // iterate over the values
-    for ( int i=0, n)
-    {
+    for (int i = 0, n) {
         // print the value
-        printFloat ( vec[i]);
+        printFloat(vec[i]);
 
         // print a space
-        if ( (i+1) != n) printSpaces( 1);
+        if ((i + 1) != n) printSpaces(1);
     }
 }
 
@@ -38,23 +34,20 @@ void printFloatVec( float[n] vec)
  *  print mat to stdout
  *  @param int[,]
  */
-void printIntMat( int[m, n] mat)
-{
+void printIntMat(int[m, n] mat) {
     // iterate over the values
-    for ( int x=0, m)
-    {
+    for (int x = 0, m) {
         // iterate over the values
-        for ( int y=0, n)
-        {
+        for (int y = 0, n) {
             // print the value
-            printInt ( mat[x, y]);
+            printInt(mat[x, y]);
 
             // print a space
-            if ( (y+1) != n) printSpaces( 1);
+            if ((y + 1) != n) printSpaces(1);
         }
 
         // print a space
-        if ( (x+1) != m) printNewlines( 1);
+        if ((x + 1) != m) printNewlines(1);
     }
 }
 
@@ -62,23 +55,20 @@ void printIntMat( int[m, n] mat)
  *  print mat to stdout
  *  @param float[,]
  */
-void printFloatMat( float[m,n] mat) 
-{
+void printFloatMat(float[m, n] mat) {
     // iterate over the values
-    for ( int x=0, m)
-    {
+    for (int x = 0, m) {
         // iterate over the values
-        for ( int y=0, n)
-        {
+        for (int y = 0, n) {
             // print the value
-            printFloat ( mat[x, y]);
+            printFloat(mat[x, y]);
 
             // print a space
-            if ( (y+1) != n) printSpaces( 1);
+            if ((y + 1) != n) printSpaces(1);
         }
 
         // print a space
-        if ( (x+1) != m) printNewlines( 1);
+        if ((x + 1) != m) printNewlines(1);
     }
 }
 
@@ -86,13 +76,11 @@ void printFloatMat( float[m,n] mat)
  *  scan vec from stdin;
  *  @param int[]
  */
-void scanIntVec( int[n] vec)
-{
+void scanIntVec(int[n] vec) {
     // iterate over the values
-    for ( int i=0, n)
-    {
+    for (int i = 0, n) {
         // scan the value
-        vec[i] = scanInt ( );
+        vec[i] = scanInt();
     }
 }
 
@@ -100,13 +88,11 @@ void scanIntVec( int[n] vec)
  *  scan vec from stdin;
  *  @param float[]
  */
-void scanFloatVec( float[n] vec)
-{
+void scanFloatVec(float[n] vec) {
     // iterate over the values
-    for ( int i=0, n)
-    {
+    for (int i = 0, n) {
         // scan the value
-        vec[i] = scanFloat ( );
+        vec[i] = scanFloat();
     }
 }
 
@@ -114,16 +100,13 @@ void scanFloatVec( float[n] vec)
  *  scan mat from stdin
  *  @param int[,]
  */
-void scanIntMat( int[m,n] mat)
-{
+void scanIntMat(int[m, n] mat) {
     // iterate over the values
-    for ( int x=0, m)
-    {
+    for (int x = 0, m) {
         // iterate over the values
-        for ( int y=0, n)
-        {
+        for (int y = 0, n) {
             // scan the value
-            mat[x, y] = scanInt ( );
+            mat[x, y] = scanInt();
         }
     }
 }
@@ -132,16 +115,13 @@ void scanIntMat( int[m,n] mat)
  *  scan mat from stdin
  *  @param float[,]
  */
-void scanFloatMat( float[m,n] mat)
-{
+void scanFloatMat(float[m, n] mat) {
     // iterate over the values
-    for ( int x=0, m)
-    {
+    for (int x = 0, m) {
         // iterate over the values
-        for ( int y=0, n)
-        {
+        for (int y = 0, n) {
             // scan the value
-            mat[x, y] = scanFloat ( );
+            mat[x, y] = scanFloat();
         }
     }
 }
@@ -152,17 +132,14 @@ void scanFloatMat( float[m,n] mat)
  *  @param float[,]
  *  @param float[,]
  */
-bool matMul( float[m,n] a, float[o,p] b, float[q,l] c)
-{
+bool matMul(float[m, n] a, float[o, p] b, float[q, l] c) {
     if (m != o || n != p) return false;
     if (m != q || n != l) return false;
 
     // iterate over the values
-    for ( int x=0, m)
-    {
+    for (int x = 0, m) {
         // iterate over the values
-        for ( int y=0, n)
-        {
+        for (int y = 0, n) {
             // scan the value
             c[x, y] = a[x, y] * b[x, y];
         }

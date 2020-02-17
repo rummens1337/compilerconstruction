@@ -63,7 +63,7 @@ src = global scanparse print codegen demo framework civic_progs
 #
 #  Note that the variable names must coincide with the directory names above.
 
-civic_progs = count_operators.o
+civic_progs = count_operators.o count_identifiers.o
 
 framework   = memory.o str.o ctinfo.o main_args.o dbug.o globals.o \
               free_attribs.o free.o copy.o traverse.o scanparse.o main.o \

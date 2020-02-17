@@ -67,6 +67,13 @@
         </travuser>
       </traversal>
 
+      <traversal id="CI" name="Count identifiers" default="sons" include="count_identifiers.h">
+        <travuser>
+          <node name="Var" />
+          <node name="VarLet" />
+        </travuser>
+      </traversal>
+
     </general>
   </phases>
 
