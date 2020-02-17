@@ -5,29 +5,27 @@
  *  @param  int     
  *  @return int
  */
-void fibs( int n)
-{
+void fibs(int n) {
     // base case
-    if (n <= 1) 
-    {
+    if (n <= 1) {
         // print the number
-        printInt( n);
+        printInt(n);
 
         // print new line
-        printNewlines( 1);
+        printNewlines(1);
 
         // exit the function
         return;
     }
 
     // return the result
-    printInt( fib( n));
+    printInt(fib(n));
 
     // print space
-    printSpaces( 1);
+    printSpaces(1);
 
     // recall ourself
-    fibs( n-1);
+    fibs(n - 1);
 }
 
 /**
@@ -35,36 +33,33 @@ void fibs( int n)
  *  @param  int     
  *  @return int
  */
-void primes( int n)
-{
+void primes(int n) {
     // base case
-    if (n <= 1)
-    {
+    if (n <= 1) {
         // print new line
-        printNewlines( 1);
+        printNewlines(1);
 
         // exit the function
         return;
     }
 
     // do we have a prime number?
-    if (!isprime( n))
-    {
+    if (!isprime(n)) {
         // recall ourself
-        primes( n-1);
+        primes(n - 1);
 
         // no need to continue
         return;
     }
 
     // return the result
-    printInt( n);
+    printInt(n);
 
     // print space
-    printSpaces( 1);
+    printSpaces(1);
 
     // recall ourself
-    primes( n-1);
+    primes(n - 1);
 }
 
 /*

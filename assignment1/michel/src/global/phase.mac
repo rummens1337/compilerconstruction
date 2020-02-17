@@ -52,13 +52,27 @@ SUBPHASE( os,
           ALWAYS,
           pet)
 
+ENDPHASE( pet)
+
+/******************************************************************************/
+
+PHASE( cot,
+        "Count occurrences traversal",
+        ALWAYS)
+
 SUBPHASE( co,
             "Count operators",
             COdoCountOperators,
             ALWAYS,
-            pet)
+            cot)
 
-ENDPHASE( pet)
+SUBPHASE( ci,
+            "Count identifiers",
+            CIdoCountIdentifiers,
+            ALWAYS,
+            cot)
+
+ENDPHASE( cot)
 
 
 /******************************************************************************/

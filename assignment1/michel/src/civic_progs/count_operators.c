@@ -51,61 +51,57 @@ struct INFO {
  * INFO functions
  */
 
-static info *MakeInfo(void)
-{
+static info *MakeInfo(void) {
     info *result;
 
-    DBUG_ENTER( "MakeInfo");
+    DBUG_ENTER("MakeInfo");
 
-    result = (info *)MEMmalloc(sizeof(info));
+    result = (info *) MEMmalloc(sizeof(info));
 
-    INFO_ADD( result) = 0;
-    INFO_SUB( result) = 0;
-    INFO_MUL( result) = 0;
-    INFO_DIV( result) = 0;
-    INFO_MOD( result) = 0;
+    INFO_ADD(result) = 0;
+    INFO_SUB(result) = 0;
+    INFO_MUL(result) = 0;
+    INFO_DIV(result) = 0;
+    INFO_MOD(result) = 0;
 
-    DBUG_RETURN( result);
+    DBUG_RETURN(result);
 }
 
-static info *FreeInfo( info *info)
-{
-    DBUG_ENTER ("FreeInfo");
+static info *FreeInfo(info *info) {
+    DBUG_ENTER("FreeInfo");
 
-    info = MEMfree( info);
+    info = MEMfree(info);
 
-    DBUG_RETURN( info);
+    DBUG_RETURN(info);
 }
 
 /*
  * Traversal functions
  */
 
-node *CObinop (node *arg_node, info *arg_info)
-{
+node *CObinop(node *arg_node, info *arg_info) {
     DBUG_ENTER("CObinop");
 
     /*
      * Extremely important:
      *  we must continue to traverse the abstract syntax tree !!
      */
-    BINOP_LEFT( arg_node) = TRAVdo( BINOP_LEFT( arg_node), arg_info);
-    BINOP_RIGHT( arg_node) = TRAVdo( BINOP_RIGHT( arg_node), arg_info);
+    BINOP_LEFT(arg_node) = TRAVdo(BINOP_LEFT(arg_node), arg_info);
+    BINOP_RIGHT(arg_node) = TRAVdo(BINOP_RIGHT(arg_node), arg_info);
 
-    if (BINOP_OP( arg_node) == BO_add) INFO_ADD( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_sub) INFO_SUB( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_mul) INFO_MUL( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_div) INFO_DIV( arg_info) += 1;
-    if (BINOP_OP( arg_node) == BO_mod) INFO_MOD( arg_info) += 1;
+    if (BINOP_OP(arg_node) == BO_add) INFO_ADD(arg_info) += 1;
+    if (BINOP_OP(arg_node) == BO_sub) INFO_SUB(arg_info) += 1;
+    if (BINOP_OP(arg_node) == BO_mul) INFO_MUL(arg_info) += 1;
+    if (BINOP_OP(arg_node) == BO_div) INFO_DIV(arg_info) += 1;
+    if (BINOP_OP(arg_node) == BO_mod) INFO_MOD(arg_info) += 1;
 
-    DBUG_RETURN( arg_node);
+    DBUG_RETURN(arg_node);
 }
 
-node *COmodule (node *arg_node, info *arg_info)
-{
+node *COmodule(node *arg_node, info *arg_info) {
     DBUG_ENTER("COmodule");
 
-    info * info = MakeInfo();
+    info *info = MakeInfo();
 
     TRAVdo(MODULE_NEXT(arg_node), info);
 
@@ -122,26 +118,25 @@ node *COmodule (node *arg_node, info *arg_info)
  * Traversal start function
  */
 
-node *COdoCountOperators( node *syntaxtree)
-{
+node *COdoCountOperators(node *syntaxtree) {
     info *arg_info;
 
     DBUG_ENTER("COdoCountOperators");
     arg_info = MakeInfo();
 
-    TRAVpush( TR_co);
-    syntaxtree = TRAVdo( syntaxtree, NULL);
+    TRAVpush(TR_co);
+    syntaxtree = TRAVdo(syntaxtree, NULL);
     TRAVpop();
 
     // Not sure why this works in sum_ints.c but not here :/
     // todo: find out why this works in sum_ints.c
-    CTInote( "Sum of additions: %d", INFO_ADD( arg_info));
-    CTInote( "Sum of subtractions: %d", INFO_SUB( arg_info));
-    CTInote( "Sum of divisions: %d", INFO_DIV( arg_info));
-    CTInote( "Sum of multiplications: %d", INFO_MUL( arg_info));
-    CTInote( "Sum of modulo's: %d", INFO_MOD( arg_info));
+    CTInote("Sum of additions: %d", INFO_ADD(arg_info));
+    CTInote("Sum of subtractions: %d", INFO_SUB(arg_info));
+    CTInote("Sum of divisions: %d", INFO_DIV(arg_info));
+    CTInote("Sum of multiplications: %d", INFO_MUL(arg_info));
+    CTInote("Sum of modulo's: %d", INFO_MOD(arg_info));
 
-    DBUG_RETURN( syntaxtree);
+    DBUG_RETURN(syntaxtree);
 
-    arg_info = FreeInfo( arg_info);
+    arg_info = FreeInfo(arg_info);
 }
