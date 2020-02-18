@@ -1,0 +1,7 @@
+*.idea
+*.DS_Store
+*.o
+*.d
+*.bak
+
+make_track
