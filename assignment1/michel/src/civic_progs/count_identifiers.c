@@ -23,7 +23,7 @@
 #include "free.h"
 #include "str.h"
 #include "ctinfo.h"
-#include "lookup_table.h"
+#include "../framework/lookup_table.h"
 
 
 /*
@@ -32,15 +32,22 @@
 
 struct INFO {
     lut_t * lut;
-    int counter;
 };
+
+struct COUNTER {
+    int count;
+    char * identifier;
+};
+
+typedef struct COUNTER counter;
 
 /*
  * INFO macros
  */
 
 #define INFO_LUT(n)  ((n)->lut)
-#define INFO_COUNTER(n)  ((n)->counter)
+#define COUNTER_COUNT(n) ((n)->count)
+#define COUNTER_IDENTIFIER(n) ((n)->identifier)
 
 /*
  * INFO functions
@@ -55,7 +62,6 @@ static info *MakeInfo(void)
     result = (info *)MEMmalloc(sizeof(info));
 
     INFO_LUT(result) = LUTgenerateLut();
-    INFO_COUNTER(result);
 
     DBUG_RETURN(result);
 }
@@ -69,17 +75,50 @@ static info *FreeInfo(info *info) {
     DBUG_RETURN(info);
 }
 
-static void insertIntoLut(char *identifier)
+static void * print(void *item)
 {
+    counter * _counter = (counter *)item;
+    CTInote( "%s = %d", _counter->identifier, _counter->count);
+    return item;
+}
 
-    info *info = MakeInfo();
-    lut_t *lut = INFO_LUT(info);
-    int *counter = INFO_COUNTER(info);
+static counter *MakeCounter(void)
+{
+    counter *result;
 
-    lut = LUTinsertIntoLutS(lut, identifier, counter);
-    INFO_COUNTER(info) += 1;
+    DBUG_ENTER("MakeCounter");
 
-    CTInote("Counter value: %d", INFO_COUNTER(info));
+    result = (counter *)MEMmalloc(sizeof(counter));
+
+    COUNTER_COUNT(result) = 1;
+    COUNTER_IDENTIFIER(result) = NULL;
+
+    DBUG_RETURN(result);
+}
+
+static void insertIntoLut(info *arg_info, char *identifier)
+{
+    lut_t *lut = INFO_LUT(arg_info);
+    void **result = LUTsearchInLutS(lut, identifier);
+    counter * _counter;
+
+    if(result == NULL)
+    {
+        _counter = MakeCounter();
+        COUNTER_IDENTIFIER(_counter) = STRcpy(identifier);
+
+        lut = LUTinsertIntoLutS(lut, identifier, _counter);
+    }
+    else
+    {
+        void *found_item;
+        _counter = (counter *)(*result);
+        COUNTER_COUNT(_counter) += 1;
+
+        lut = LUTupdateLutS(lut, identifier, _counter, &found_item);
+    }
+
+    CTInote("Identifier '%s' occurs: %d", _counter->identifier, _counter->count);
 }
 
 /*
@@ -88,27 +127,26 @@ static void insertIntoLut(char *identifier)
 
 node *CIvar(node *arg_node, info *arg_info) {
     DBUG_ENTER("CIvar");
-    info *info = MakeInfo();
 
     char *identifier = VAR_NAME(arg_node);
-    insertIntoLut(identifier);
 
     CTInote( "Expression: %s", identifier);
+    insertIntoLut(arg_info, identifier);
 
     DBUG_RETURN(arg_node);
 }
 
 node *CIvarlet(node *arg_node, info *arg_info) {
     DBUG_ENTER("CImodule");
-    info *info = MakeInfo();
 
     char *identifier = VARLET_NAME(arg_node);
-    insertIntoLut(identifier);
 
     CTInote( "Assignment: %s", identifier);
+    insertIntoLut(arg_info, identifier);
 
     DBUG_RETURN(arg_node);
 }
+
 
 /*
  * Traversal start function
@@ -121,7 +159,11 @@ node *CIdoCountIdentifiers(node *syntaxtree) {
     arg_info = MakeInfo();
 
     TRAVpush(TR_ci);
-    syntaxtree = TRAVdo(syntaxtree, NULL);
+    syntaxtree = TRAVdo(syntaxtree, arg_info);
+
+    lut_t *lut = INFO_LUT(arg_info);
+
+    LUTmapLutS(lut, print);
 
     TRAVpop();
 
