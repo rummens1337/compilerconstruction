@@ -19,14 +19,33 @@
 
 extern node *COPYassign (node * arg_node, info * arg_info);
 extern node *COPYbinop (node * arg_node, info * arg_info);
+extern node *COPYblock (node * arg_node, info * arg_info);
 extern node *COPYbool (node * arg_node, info * arg_info);
+extern node *COPYdeclarations (node * arg_node, info * arg_info);
 extern node *COPYerror (node * arg_node, info * arg_info);
+extern node *COPYexprs (node * arg_node, info * arg_info);
 extern node *COPYfloat (node * arg_node, info * arg_info);
+extern node *COPYfor (node * arg_node, info * arg_info);
+extern node *COPYfunbody (node * arg_node, info * arg_info);
+extern node *COPYfundec (node * arg_node, info * arg_info);
+extern node *COPYfundef (node * arg_node, info * arg_info);
+extern node *COPYfunheader (node * arg_node, info * arg_info);
+extern node *COPYglobaldec (node * arg_node, info * arg_info);
+extern node *COPYglobaldef (node * arg_node, info * arg_info);
+extern node *COPYif (node * arg_node, info * arg_info);
 extern node *COPYmodule (node * arg_node, info * arg_info);
+extern node *COPYmonop (node * arg_node, info * arg_info);
 extern node *COPYnum (node * arg_node, info * arg_info);
+extern node *COPYparam (node * arg_node, info * arg_info);
+extern node *COPYparams (node * arg_node, info * arg_info);
+extern node *COPYprocall (node * arg_node, info * arg_info);
+extern node *COPYreturn (node * arg_node, info * arg_info);
 extern node *COPYstmts (node * arg_node, info * arg_info);
 extern node *COPYsymboltableentry (node * arg_node, info * arg_info);
 extern node *COPYvar (node * arg_node, info * arg_info);
+extern node *COPYvardec (node * arg_node, info * arg_info);
+extern node *COPYvardecs (node * arg_node, info * arg_info);
 extern node *COPYvarlet (node * arg_node, info * arg_info);
+extern node *COPYwhile (node * arg_node, info * arg_info);
 
 #endif /* _SAC_COPY_NODE_H_ */

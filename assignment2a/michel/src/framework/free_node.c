@@ -96,6 +96,33 @@ FREEbinop (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn FREEblock
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Block node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEblock (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEblock");
+  DBUG_PRINT ("FREE", ("Processing node N_block at " F_PTR, arg_node));
+  BLOCK_STMTS (arg_node) = FREETRAV (BLOCK_STMTS (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_block = MEMfree (arg_node->sons.N_block);
+  arg_node->attribs.N_block = MEMfree (arg_node->attribs.N_block);
+  DBUG_PRINT ("FREE", ("Processing node N_block at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn FREEbool
  *
  * @brief Frees the node and its sons/attributes
@@ -117,6 +144,37 @@ FREEbool (node * arg_node, info * arg_info)
   arg_node->attribs.N_bool = MEMfree (arg_node->attribs.N_bool);
   DBUG_PRINT ("FREE", ("Processing node N_bool at " F_PTR, arg_node));
   result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEdeclarations
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Declarations node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEdeclarations (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEdeclarations");
+  DBUG_PRINT ("FREE", ("Processing node N_declarations at " F_PTR, arg_node));
+  DECLARATIONS_NEXT (arg_node) =
+    FREECOND (DECLARATIONS_NEXT (arg_node), arg_info);
+  DECLARATIONS_DECLARATION (arg_node) =
+    FREETRAV (DECLARATIONS_DECLARATION (arg_node), arg_info);
+  result = DECLARATIONS_NEXT (arg_node);
+  arg_node->sons.N_declarations = MEMfree (arg_node->sons.N_declarations);
+  arg_node->attribs.N_declarations =
+    MEMfree (arg_node->attribs.N_declarations);
+  DBUG_PRINT ("FREE", ("Processing node N_declarations at " F_PTR, arg_node));
+  arg_node = MEMfree (arg_node);
   DBUG_RETURN (result);
 }
 
@@ -151,6 +209,34 @@ FREEerror (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn FREEexprs
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Exprs node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEexprs (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEexprs");
+  DBUG_PRINT ("FREE", ("Processing node N_exprs at " F_PTR, arg_node));
+  EXPRS_NEXT (arg_node) = FREECOND (EXPRS_NEXT (arg_node), arg_info);
+  EXPRS_EXPR (arg_node) = FREETRAV (EXPRS_EXPR (arg_node), arg_info);
+  result = EXPRS_NEXT (arg_node);
+  arg_node->sons.N_exprs = MEMfree (arg_node->sons.N_exprs);
+  arg_node->attribs.N_exprs = MEMfree (arg_node->attribs.N_exprs);
+  DBUG_PRINT ("FREE", ("Processing node N_exprs at " F_PTR, arg_node));
+  arg_node = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn FREEfloat
  *
  * @brief Frees the node and its sons/attributes
@@ -171,6 +257,234 @@ FREEfloat (node * arg_node, info * arg_info)
   arg_node->sons.N_float = MEMfree (arg_node->sons.N_float);
   arg_node->attribs.N_float = MEMfree (arg_node->attribs.N_float);
   DBUG_PRINT ("FREE", ("Processing node N_float at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEfor
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node For node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEfor (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEfor");
+  DBUG_PRINT ("FREE", ("Processing node N_for at " F_PTR, arg_node));
+  FOR_ASSIGN (arg_node) = FREETRAV (FOR_ASSIGN (arg_node), arg_info);
+  FOR_EXPRS (arg_node) = FREETRAV (FOR_EXPRS (arg_node), arg_info);
+  FOR_BLOCK (arg_node) = FREETRAV (FOR_BLOCK (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_for = MEMfree (arg_node->sons.N_for);
+  arg_node->attribs.N_for = MEMfree (arg_node->attribs.N_for);
+  DBUG_PRINT ("FREE", ("Processing node N_for at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEfunbody
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node FunBody node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEfunbody (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEfunbody");
+  DBUG_PRINT ("FREE", ("Processing node N_funbody at " F_PTR, arg_node));
+  FUNBODY_VARDECS (arg_node) =
+    FREETRAV (FUNBODY_VARDECS (arg_node), arg_info);
+  FUNBODY_STMTS (arg_node) = FREETRAV (FUNBODY_STMTS (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_funbody = MEMfree (arg_node->sons.N_funbody);
+  arg_node->attribs.N_funbody = MEMfree (arg_node->attribs.N_funbody);
+  DBUG_PRINT ("FREE", ("Processing node N_funbody at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEfundec
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node FunDec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEfundec (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEfundec");
+  DBUG_PRINT ("FREE", ("Processing node N_fundec at " F_PTR, arg_node));
+  FUNDEC_FUNHEADER (arg_node) =
+    FREETRAV (FUNDEC_FUNHEADER (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_fundec = MEMfree (arg_node->sons.N_fundec);
+  arg_node->attribs.N_fundec = MEMfree (arg_node->attribs.N_fundec);
+  DBUG_PRINT ("FREE", ("Processing node N_fundec at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEfundef
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node FunDef node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEfundef (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEfundef");
+  DBUG_PRINT ("FREE", ("Processing node N_fundef at " F_PTR, arg_node));
+  FUNDEF_FUNHEADER (arg_node) =
+    FREETRAV (FUNDEF_FUNHEADER (arg_node), arg_info);
+  FUNDEF_FUNBODY (arg_node) = FREETRAV (FUNDEF_FUNBODY (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_fundef = MEMfree (arg_node->sons.N_fundef);
+  arg_node->attribs.N_fundef = MEMfree (arg_node->attribs.N_fundef);
+  DBUG_PRINT ("FREE", ("Processing node N_fundef at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEfunheader
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node FunHeader node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEfunheader (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEfunheader");
+  DBUG_PRINT ("FREE", ("Processing node N_funheader at " F_PTR, arg_node));
+  FUNHEADER_ID (arg_node) = FREETRAV (FUNHEADER_ID (arg_node), arg_info);
+  FUNHEADER_PARAMS (arg_node) =
+    FREETRAV (FUNHEADER_PARAMS (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_funheader = MEMfree (arg_node->sons.N_funheader);
+  arg_node->attribs.N_funheader = MEMfree (arg_node->attribs.N_funheader);
+  DBUG_PRINT ("FREE", ("Processing node N_funheader at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEglobaldec
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node GlobalDec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEglobaldec (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEglobaldec");
+  DBUG_PRINT ("FREE", ("Processing node N_globaldec at " F_PTR, arg_node));
+  GLOBALDEC_ID (arg_node) = FREETRAV (GLOBALDEC_ID (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_globaldec = MEMfree (arg_node->sons.N_globaldec);
+  arg_node->attribs.N_globaldec = MEMfree (arg_node->attribs.N_globaldec);
+  DBUG_PRINT ("FREE", ("Processing node N_globaldec at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEglobaldef
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node GlobalDef node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEglobaldef (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEglobaldef");
+  DBUG_PRINT ("FREE", ("Processing node N_globaldef at " F_PTR, arg_node));
+  GLOBALDEF_ID (arg_node) = FREETRAV (GLOBALDEF_ID (arg_node), arg_info);
+  GLOBALDEF_EXPR (arg_node) = FREETRAV (GLOBALDEF_EXPR (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_globaldef = MEMfree (arg_node->sons.N_globaldef);
+  arg_node->attribs.N_globaldef = MEMfree (arg_node->attribs.N_globaldef);
+  DBUG_PRINT ("FREE", ("Processing node N_globaldef at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEif
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node If node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEif (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEif");
+  DBUG_PRINT ("FREE", ("Processing node N_if at " F_PTR, arg_node));
+  IF_EXPR (arg_node) = FREETRAV (IF_EXPR (arg_node), arg_info);
+  IF_IFBLOCK (arg_node) = FREETRAV (IF_IFBLOCK (arg_node), arg_info);
+  IF_ELSEBLOCK (arg_node) = FREETRAV (IF_ELSEBLOCK (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_if = MEMfree (arg_node->sons.N_if);
+  arg_node->attribs.N_if = MEMfree (arg_node->attribs.N_if);
+  DBUG_PRINT ("FREE", ("Processing node N_if at " F_PTR, arg_node));
   result = MEMfree (arg_node);
   DBUG_RETURN (result);
 }
@@ -204,6 +518,33 @@ FREEmodule (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn FREEmonop
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node MonOp node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEmonop (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEmonop");
+  DBUG_PRINT ("FREE", ("Processing node N_monop at " F_PTR, arg_node));
+  MONOP_EXPR (arg_node) = FREETRAV (MONOP_EXPR (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_monop = MEMfree (arg_node->sons.N_monop);
+  arg_node->attribs.N_monop = MEMfree (arg_node->attribs.N_monop);
+  DBUG_PRINT ("FREE", ("Processing node N_monop at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn FREEnum
  *
  * @brief Frees the node and its sons/attributes
@@ -224,6 +565,116 @@ FREEnum (node * arg_node, info * arg_info)
   arg_node->sons.N_num = MEMfree (arg_node->sons.N_num);
   arg_node->attribs.N_num = MEMfree (arg_node->attribs.N_num);
   DBUG_PRINT ("FREE", ("Processing node N_num at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEparam
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Param node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEparam (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEparam");
+  DBUG_PRINT ("FREE", ("Processing node N_param at " F_PTR, arg_node));
+  PARAM_ID (arg_node) = FREETRAV (PARAM_ID (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_param = MEMfree (arg_node->sons.N_param);
+  arg_node->attribs.N_param = MEMfree (arg_node->attribs.N_param);
+  DBUG_PRINT ("FREE", ("Processing node N_param at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEparams
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Params node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEparams (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEparams");
+  DBUG_PRINT ("FREE", ("Processing node N_params at " F_PTR, arg_node));
+  PARAMS_PARAM (arg_node) = FREETRAV (PARAMS_PARAM (arg_node), arg_info);
+  PARAMS_NEXT (arg_node) = FREETRAV (PARAMS_NEXT (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_params = MEMfree (arg_node->sons.N_params);
+  arg_node->attribs.N_params = MEMfree (arg_node->attribs.N_params);
+  DBUG_PRINT ("FREE", ("Processing node N_params at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEprocall
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node ProCall node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEprocall (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEprocall");
+  DBUG_PRINT ("FREE", ("Processing node N_procall at " F_PTR, arg_node));
+  PROCALL_ID (arg_node) = FREETRAV (PROCALL_ID (arg_node), arg_info);
+  PROCALL_EXPRS (arg_node) = FREETRAV (PROCALL_EXPRS (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_procall = MEMfree (arg_node->sons.N_procall);
+  arg_node->attribs.N_procall = MEMfree (arg_node->attribs.N_procall);
+  DBUG_PRINT ("FREE", ("Processing node N_procall at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEreturn
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node Return node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEreturn (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEreturn");
+  DBUG_PRINT ("FREE", ("Processing node N_return at " F_PTR, arg_node));
+  RETURN_EXPR (arg_node) = FREETRAV (RETURN_EXPR (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_return = MEMfree (arg_node->sons.N_return);
+  arg_node->attribs.N_return = MEMfree (arg_node->attribs.N_return);
+  DBUG_PRINT ("FREE", ("Processing node N_return at " F_PTR, arg_node));
   result = MEMfree (arg_node);
   DBUG_RETURN (result);
 }
@@ -316,6 +767,62 @@ FREEvar (node * arg_node, info * arg_info)
 
 /** <!--******************************************************************-->
  *
+ * @fn FREEvardec
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node VarDec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEvardec (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEvardec");
+  DBUG_PRINT ("FREE", ("Processing node N_vardec at " F_PTR, arg_node));
+  VARDEC_ID (arg_node) = FREETRAV (VARDEC_ID (arg_node), arg_info);
+  VARDEC_EXPR (arg_node) = FREETRAV (VARDEC_EXPR (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_vardec = MEMfree (arg_node->sons.N_vardec);
+  arg_node->attribs.N_vardec = MEMfree (arg_node->attribs.N_vardec);
+  DBUG_PRINT ("FREE", ("Processing node N_vardec at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEvardecs
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node VarDecs node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEvardecs (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEvardecs");
+  DBUG_PRINT ("FREE", ("Processing node N_vardecs at " F_PTR, arg_node));
+  VARDECS_NEXT (arg_node) = FREECOND (VARDECS_NEXT (arg_node), arg_info);
+  VARDECS_VARDEC (arg_node) = FREETRAV (VARDECS_VARDEC (arg_node), arg_info);
+  result = VARDECS_NEXT (arg_node);
+  arg_node->sons.N_vardecs = MEMfree (arg_node->sons.N_vardecs);
+  arg_node->attribs.N_vardecs = MEMfree (arg_node->attribs.N_vardecs);
+  DBUG_PRINT ("FREE", ("Processing node N_vardecs at " F_PTR, arg_node));
+  arg_node = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
  * @fn FREEvarlet
  *
  * @brief Frees the node and its sons/attributes
@@ -339,6 +846,34 @@ FREEvarlet (node * arg_node, info * arg_info)
   arg_node->sons.N_varlet = MEMfree (arg_node->sons.N_varlet);
   arg_node->attribs.N_varlet = MEMfree (arg_node->attribs.N_varlet);
   DBUG_PRINT ("FREE", ("Processing node N_varlet at " F_PTR, arg_node));
+  result = MEMfree (arg_node);
+  DBUG_RETURN (result);
+}
+
+/** <!--******************************************************************-->
+ *
+ * @fn FREEwhile
+ *
+ * @brief Frees the node and its sons/attributes
+ *
+ * @param arg_node While node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+node *
+FREEwhile (node * arg_node, info * arg_info)
+{
+  node *result = NULL;
+  DBUG_ENTER ("FREEwhile");
+  DBUG_PRINT ("FREE", ("Processing node N_while at " F_PTR, arg_node));
+  WHILE_EXPR (arg_node) = FREETRAV (WHILE_EXPR (arg_node), arg_info);
+  WHILE_BLOCK (arg_node) = FREETRAV (WHILE_BLOCK (arg_node), arg_info);
+  result = NULL;
+  arg_node->sons.N_while = MEMfree (arg_node->sons.N_while);
+  arg_node->attribs.N_while = MEMfree (arg_node->attribs.N_while);
+  DBUG_PRINT ("FREE", ("Processing node N_while at " F_PTR, arg_node));
   result = MEMfree (arg_node);
   DBUG_RETURN (result);
 }

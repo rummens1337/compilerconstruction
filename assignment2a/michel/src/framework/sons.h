@@ -32,22 +32,98 @@ struct SONS_N_BINOP
   node *Left;
   node *Right;
 };
+struct SONS_N_BLOCK
+{
+  node *Stmts;
+};
 struct SONS_N_BOOL
 {
+};
+struct SONS_N_DECLARATIONS
+{
+  node *Declaration;
+  node *Next;
 };
 struct SONS_N_ERROR
 {
   node *Next;
 };
+struct SONS_N_EXPRS
+{
+  node *Expr;
+  node *Next;
+};
 struct SONS_N_FLOAT
 {
+};
+struct SONS_N_FOR
+{
+  node *Assign;
+  node *Exprs;
+  node *Block;
+};
+struct SONS_N_FUNBODY
+{
+  node *VarDecs;
+  node *Stmts;
+};
+struct SONS_N_FUNDEC
+{
+  node *FunHeader;
+};
+struct SONS_N_FUNDEF
+{
+  node *FunHeader;
+  node *FunBody;
+};
+struct SONS_N_FUNHEADER
+{
+  node *Id;
+  node *Params;
+};
+struct SONS_N_GLOBALDEC
+{
+  node *Id;
+};
+struct SONS_N_GLOBALDEF
+{
+  node *Id;
+  node *Expr;
+};
+struct SONS_N_IF
+{
+  node *Expr;
+  node *IfBlock;
+  node *ElseBlock;
 };
 struct SONS_N_MODULE
 {
   node *Next;
 };
+struct SONS_N_MONOP
+{
+  node *Expr;
+};
 struct SONS_N_NUM
 {
+};
+struct SONS_N_PARAM
+{
+  node *Id;
+};
+struct SONS_N_PARAMS
+{
+  node *Param;
+  node *next;
+};
+struct SONS_N_PROCALL
+{
+  node *Id;
+  node *Exprs;
+};
+struct SONS_N_RETURN
+{
+  node *Expr;
 };
 struct SONS_N_STMTS
 {
@@ -60,8 +136,23 @@ struct SONS_N_SYMBOLTABLEENTRY
 struct SONS_N_VAR
 {
 };
+struct SONS_N_VARDEC
+{
+  node *Id;
+  node *Expr;
+};
+struct SONS_N_VARDECS
+{
+  node *VarDec;
+  node *Next;
+};
 struct SONS_N_VARLET
 {
+};
+struct SONS_N_WHILE
+{
+  node *Expr;
+  node *Block;
 };
 /*****************************************************************************
  * This union handles all different types of sons. Its members are
@@ -71,14 +162,33 @@ struct SONUNION
 {
   struct SONS_N_ASSIGN *N_assign;
   struct SONS_N_BINOP *N_binop;
+  struct SONS_N_BLOCK *N_block;
   struct SONS_N_BOOL *N_bool;
+  struct SONS_N_DECLARATIONS *N_declarations;
   struct SONS_N_ERROR *N_error;
+  struct SONS_N_EXPRS *N_exprs;
   struct SONS_N_FLOAT *N_float;
+  struct SONS_N_FOR *N_for;
+  struct SONS_N_FUNBODY *N_funbody;
+  struct SONS_N_FUNDEC *N_fundec;
+  struct SONS_N_FUNDEF *N_fundef;
+  struct SONS_N_FUNHEADER *N_funheader;
+  struct SONS_N_GLOBALDEC *N_globaldec;
+  struct SONS_N_GLOBALDEF *N_globaldef;
+  struct SONS_N_IF *N_if;
   struct SONS_N_MODULE *N_module;
+  struct SONS_N_MONOP *N_monop;
   struct SONS_N_NUM *N_num;
+  struct SONS_N_PARAM *N_param;
+  struct SONS_N_PARAMS *N_params;
+  struct SONS_N_PROCALL *N_procall;
+  struct SONS_N_RETURN *N_return;
   struct SONS_N_STMTS *N_stmts;
   struct SONS_N_SYMBOLTABLEENTRY *N_symboltableentry;
   struct SONS_N_VAR *N_var;
+  struct SONS_N_VARDEC *N_vardec;
+  struct SONS_N_VARDECS *N_vardecs;
   struct SONS_N_VARLET *N_varlet;
+  struct SONS_N_WHILE *N_while;
 };
 #endif /* _SAC_SONS_H_ */

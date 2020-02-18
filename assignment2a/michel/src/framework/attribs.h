@@ -29,18 +29,58 @@ struct ATTRIBS_N_BINOP
 {
   binop Op;
 };
+struct ATTRIBS_N_BLOCK
+{
+};
 struct ATTRIBS_N_BOOL
 {
   bool Value;
+};
+struct ATTRIBS_N_DECLARATIONS
+{
 };
 struct ATTRIBS_N_ERROR
 {
   char *message;
   compiler_phase_t anyphase;
 };
+struct ATTRIBS_N_EXPRS
+{
+};
 struct ATTRIBS_N_FLOAT
 {
   float Value;
+};
+struct ATTRIBS_N_FOR
+{
+};
+struct ATTRIBS_N_FUNBODY
+{
+};
+struct ATTRIBS_N_FUNDEC
+{
+  bool Extern;
+};
+struct ATTRIBS_N_FUNDEF
+{
+  bool Export;
+};
+struct ATTRIBS_N_FUNHEADER
+{
+  RetType RetType;
+};
+struct ATTRIBS_N_GLOBALDEC
+{
+  bool Extern;
+  basictype Type;
+};
+struct ATTRIBS_N_GLOBALDEF
+{
+  bool Export;
+  basictype Type;
+};
+struct ATTRIBS_N_IF
+{
 };
 struct ATTRIBS_N_MODULE
 {
@@ -50,9 +90,26 @@ struct ATTRIBS_N_MODULE
   int Mul;
   int Mod;
 };
+struct ATTRIBS_N_MONOP
+{
+  MonOp MonOp;
+};
 struct ATTRIBS_N_NUM
 {
   int Value;
+};
+struct ATTRIBS_N_PARAM
+{
+  basictype Type;
+};
+struct ATTRIBS_N_PARAMS
+{
+};
+struct ATTRIBS_N_PROCALL
+{
+};
+struct ATTRIBS_N_RETURN
+{
 };
 struct ATTRIBS_N_STMTS
 {
@@ -65,10 +122,22 @@ struct ATTRIBS_N_VAR
   char *Name;
   node *Decl;
 };
+struct ATTRIBS_N_VARDEC
+{
+  basictype Type;
+};
+struct ATTRIBS_N_VARDECS
+{
+  basictype Type;
+};
 struct ATTRIBS_N_VARLET
 {
   char *Name;
   node *Decl;
+};
+struct ATTRIBS_N_WHILE
+{
+  bool Do;
 };
 /*****************************************************************************
  * This union handles all different types of attributes. Its members are
@@ -78,14 +147,33 @@ struct ATTRIBUNION
 {
   struct ATTRIBS_N_ASSIGN *N_assign;
   struct ATTRIBS_N_BINOP *N_binop;
+  struct ATTRIBS_N_BLOCK *N_block;
   struct ATTRIBS_N_BOOL *N_bool;
+  struct ATTRIBS_N_DECLARATIONS *N_declarations;
   struct ATTRIBS_N_ERROR *N_error;
+  struct ATTRIBS_N_EXPRS *N_exprs;
   struct ATTRIBS_N_FLOAT *N_float;
+  struct ATTRIBS_N_FOR *N_for;
+  struct ATTRIBS_N_FUNBODY *N_funbody;
+  struct ATTRIBS_N_FUNDEC *N_fundec;
+  struct ATTRIBS_N_FUNDEF *N_fundef;
+  struct ATTRIBS_N_FUNHEADER *N_funheader;
+  struct ATTRIBS_N_GLOBALDEC *N_globaldec;
+  struct ATTRIBS_N_GLOBALDEF *N_globaldef;
+  struct ATTRIBS_N_IF *N_if;
   struct ATTRIBS_N_MODULE *N_module;
+  struct ATTRIBS_N_MONOP *N_monop;
   struct ATTRIBS_N_NUM *N_num;
+  struct ATTRIBS_N_PARAM *N_param;
+  struct ATTRIBS_N_PARAMS *N_params;
+  struct ATTRIBS_N_PROCALL *N_procall;
+  struct ATTRIBS_N_RETURN *N_return;
   struct ATTRIBS_N_STMTS *N_stmts;
   struct ATTRIBS_N_SYMBOLTABLEENTRY *N_symboltableentry;
   struct ATTRIBS_N_VAR *N_var;
+  struct ATTRIBS_N_VARDEC *N_vardec;
+  struct ATTRIBS_N_VARDECS *N_vardecs;
   struct ATTRIBS_N_VARLET *N_varlet;
+  struct ATTRIBS_N_WHILE *N_while;
 };
 #endif /* _SAC_ATTRIBS_H_ */

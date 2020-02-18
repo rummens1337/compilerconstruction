@@ -15,10 +15,15 @@
 #ifndef _SAC_TYPES_NODETYPE_H_
 #define _SAC_TYPES_NODETYPE_H_
 
-#define MAX_NODES 11
+#define MAX_NODES 30
 typedef enum
-{ N_undefined = 0, N_module = 1, N_stmts = 2, N_assign = 3, N_binop =
-    4, N_varlet = 5, N_var = 6, N_num = 7, N_float = 8, N_bool =
-    9, N_symboltableentry = 10, N_error = 11 } nodetype;
+{ N_undefined = 0, N_declarations = 1, N_fundec = 2, N_fundef =
+    3, N_funheader = 4, N_param = 5, N_params = 6, N_globaldec =
+    7, N_globaldef = 8, N_funbody = 9, N_vardec = 10, N_vardecs =
+    11, N_procall = 12, N_block = 13, N_if = 14, N_while = 15, N_for =
+    16, N_return = 17, N_monop = 18, N_module = 19, N_exprs = 20, N_stmts =
+    21, N_assign = 22, N_binop = 23, N_varlet = 24, N_var = 25, N_num =
+    26, N_float = 27, N_bool = 28, N_symboltableentry = 29, N_error =
+    30 } nodetype;
 
 #endif /* _SAC_TYPES_NODETYPE_H_ */
