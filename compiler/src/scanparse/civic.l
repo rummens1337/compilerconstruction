@@ -22,6 +22,7 @@
 #define YY_NO_INPUT
 
 
+
 %}
 
 %p 6000 /* set positions to 6000 */
@@ -29,11 +30,19 @@
 %option noyywrap
 %option nounput
 
+start \/\* 
+end  \*\/ 
+
 
 %%
+  //______TOKENS_________________________________________________________________________________
 
-"("                        { FILTER( BRACKET_L); }
-")"                        { FILTER( BRACKET_R); }
+"("                        { FILTER( PARENTHESIS_L); } // OPERATORS  
+")"                        { FILTER( PARENTHESIS_R); }
+"{"                        { FILTER( CURLY_L); }
+"}"                        { FILTER( CURLY_R); }
+"["                        { FILTER( BRACKET_L); }
+"]"                        { FILTER( BRACKET_R); }
 ","                        { FILTER( COMMA); }
 ";"                        { FILTER( SEMICOLON); }
 
@@ -54,8 +63,29 @@
 
 "="                        { FILTER( LET);    }
 
-"true"                     { FILTER( TRUEVAL); }
-"false"                    { FILTER( FALSEVAL); }
+"extern"                   { FILTER( EXTERN); } // KEYWORDS
+"export"                   { FILTER( EXPORT); }
+"return"                   { FILTER( RETURN); }
+
+"if"                       { FILTER( IF); }
+"else"                     { FILTER( ELSE); }
+"do"                       { FILTER( DO); }
+"while"                    { FILTER( WHILE); }
+"for"                      { FILTER( FOR); }
+
+"int"                      { FILTER( INT); }
+"float"                    { FILTER( FLOAT); }
+"bool"                     { FILTER( BOOL); }
+"void"                     { FILTER( VOID); }
+
+"true"                     { FILTER( TRUEVAL); } // VALUES
+"false"                    { FILTER( FALSEVAL); } // Staat als boolval in node? moet dit wel, of true en false val?
+
+[0-9]+"."[0-9]*            { yylval.cflt = atof(yytext);  
+                             FILTER( FLOATVAL);
+                             printf( "A float: %s (%g)\n", yytext,
+                             atof( yytext ) );
+                           } // Hier nog even naar kijken, klopt waarschijnlijk niet < -------
 
 [A-Za-z][A-Za-z0-9_]*      { yylval.id = STRcpy(yytext);
                              FILTER( ID);
@@ -72,3 +102,7 @@
 
 [ \t]                      { global.col += yyleng;
                            } 
+
+[ \t\n]+  ;               // White space
+\/\/(.*) ;                // SingleLine comment
+{start}.*{end} ;          // Multiline comment   ____ HIERONDER MOET 1 EXTRA BLANK LINE ____
