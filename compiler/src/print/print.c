@@ -399,7 +399,7 @@ PRTerror (node * arg_node, info * arg_info)
 node *
 PRTmonop (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTmonop");
   DBUG_RETURN (arg_node);
@@ -421,7 +421,7 @@ PRTmonop (node * arg_node, info * arg_info)
 node *
 PRTprogram (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTprogram");
   DBUG_RETURN (arg_node);
@@ -443,7 +443,7 @@ PRTprogram (node * arg_node, info * arg_info)
 node *
 PRTdecls (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTdecls");
   DBUG_RETURN (arg_node);
@@ -465,7 +465,7 @@ PRTdecls (node * arg_node, info * arg_info)
 node *
 PRTexprs (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTexprs");
   DBUG_RETURN (arg_node);
@@ -487,7 +487,7 @@ PRTexprs (node * arg_node, info * arg_info)
 node *
 PRTarrexpr (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTarrexpr");
   DBUG_RETURN (arg_node);
@@ -509,20 +509,12 @@ PRTarrexpr (node * arg_node, info * arg_info)
 node *
 PRTids (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTids");
   DBUG_RETURN (arg_node);
 }
 
-node *
-PRTarrexpr (node * arg_node, info * arg_info)
-{
-  bool first_error;
-
-  DBUG_ENTER ("PRTarrexpr");
-  DBUG_RETURN (arg_node);
-}
 
 /** <!--******************************************************************-->
  *
@@ -540,7 +532,7 @@ PRTarrexpr (node * arg_node, info * arg_info)
 node *
 PRTexprstmt (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTexprstmt");
   DBUG_RETURN (arg_node);
@@ -562,7 +554,7 @@ PRTexprstmt (node * arg_node, info * arg_info)
 node *
 PRTreturn (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTreturn");
   DBUG_RETURN (arg_node);
@@ -584,7 +576,7 @@ PRTreturn (node * arg_node, info * arg_info)
 node *
 PRTfuncall (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTfuncall");
   DBUG_RETURN (arg_node);
@@ -606,7 +598,7 @@ PRTfuncall (node * arg_node, info * arg_info)
 node *
 PRTcast (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTcast");
   DBUG_RETURN (arg_node);
@@ -628,7 +620,7 @@ PRTcast (node * arg_node, info * arg_info)
 node *
 PRTfundefs (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTfundefs");
   DBUG_RETURN (arg_node);
@@ -650,7 +642,7 @@ PRTfundefs (node * arg_node, info * arg_info)
 node *
 PRTfundef (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTfundef");
   DBUG_RETURN (arg_node);
@@ -672,7 +664,7 @@ PRTfundef (node * arg_node, info * arg_info)
 node *
 PRTfunbody (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTfunbody");
   DBUG_RETURN (arg_node);
@@ -694,7 +686,7 @@ PRTfunbody (node * arg_node, info * arg_info)
 node *
 PRTifelse (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTifelse");
   DBUG_RETURN (arg_node);
@@ -716,7 +708,7 @@ PRTifelse (node * arg_node, info * arg_info)
 node *
 PRTwhile (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTwhile");
   DBUG_RETURN (arg_node);
@@ -738,7 +730,7 @@ PRTwhile (node * arg_node, info * arg_info)
 node *
 PRTdowhile (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTdowhile");
   DBUG_RETURN (arg_node);
@@ -760,7 +752,7 @@ PRTdowhile (node * arg_node, info * arg_info)
 node *
 PRTfor (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTfor");
   DBUG_RETURN (arg_node);
@@ -782,7 +774,7 @@ PRTfor (node * arg_node, info * arg_info)
 node *
 PRTglobdecl (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTglobdecl");
   DBUG_RETURN (arg_node);
@@ -804,7 +796,7 @@ PRTglobdecl (node * arg_node, info * arg_info)
 node *
 PRTglobdef (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTglobdef");
   DBUG_RETURN (arg_node);
@@ -826,7 +818,7 @@ PRTglobdef (node * arg_node, info * arg_info)
 node *
 PRTparam (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTparam");
   DBUG_RETURN (arg_node);
@@ -848,7 +840,7 @@ PRTparam (node * arg_node, info * arg_info)
 node *
 PRTvardecl (node * arg_node, info * arg_info)
 {
-  bool first_error;
+  // bool first_error;
 
   DBUG_ENTER ("PRTvardecl");
   DBUG_RETURN (arg_node);

@@ -1,6 +1,8 @@
 #ifndef _CIVCC_MYTYPES_H_
 #define _CIVCC_MYTYPES_H_
 
+// this file is included by the types.h folder, and thus is already in use.
+// No need to alter types.h.
 
 /*
  * This enumeration defines all monops

@@ -79,13 +79,7 @@ end  \*\/
 "void"                     { FILTER( VOID); }
 
 "true"                     { FILTER( TRUEVAL); } // VALUES
-"false"                    { FILTER( FALSEVAL); } // Staat als boolval in node? moet dit wel, of true en false val?
-
-[0-9]+"."[0-9]*            { yylval.cflt = atof(yytext);  
-                             FILTER( FLOATVAL);
-                             printf( "A float: %s (%g)\n", yytext,
-                             atof( yytext ) );
-                           } // Hier nog even naar kijken, klopt waarschijnlijk niet < -------
+"false"                    { FILTER( FALSEVAL); }
 
 [A-Za-z][A-Za-z0-9_]*      { yylval.id = STRcpy(yytext);
                              FILTER( ID);
@@ -93,6 +87,12 @@ end  \*\/
 
 [0-9]+                     { yylval.cint=atoi(yytext);
                              FILTER( NUM);
+                           }
+
+[0-9]*[.][0-9]+            { yylval.cflt = atof(yytext);  
+                             FILTER( FLOATNUM);
+                             printf( "A float: %s (%g)\n", yytext,
+                             atof( yytext ) );
                            }
 
 \n.*                       { global.line += 1;
@@ -105,4 +105,4 @@ end  \*\/
 
 [ \t\n]+  ;               // White space
 \/\/(.*) ;                // SingleLine comment
-{start}.*{end} ;          // Multiline comment   ____ HIERONDER MOET 1 EXTRA BLANK LINE ____
+{start}.*{end} ;          // Multiline comment   ____ BELOW NEEDS ONE EXTRA BLANK LINE! ____

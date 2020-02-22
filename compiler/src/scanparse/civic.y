@@ -18,6 +18,12 @@ static node *parseresult = NULL;
 extern int yylex();
 static int yyerror( char *errname);
 
+
+//
+// Nog even kijken naar FLOAT token, gaf duplicate error, wat logisch is.
+// Weet alleen niet hoe het wel moet.
+//  
+
 %}
 
 %union {
@@ -36,7 +42,7 @@ static int yyerror( char *errname);
 %token IF ELSE DO WHILE FOR
 
 %token <cint> NUM
-%token <cflt> FLOAT
+%token <cflt> FLOATNUM
 %token <id> ID
 
 %type <node> intval floatval boolval constant expr
@@ -77,7 +83,7 @@ assign: varlet LET expr SEMICOLON
 
 varlet: ID
         {
-          $$ = TBmakeVarlet( STRcpy( $1));
+          $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
         }
         ;
 
@@ -88,7 +94,7 @@ expr: constant
       }
     | ID
       {
-        $$ = TBmakeVar( STRcpy( $1));
+        $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
       }
     | PARENTHESIS_L expr binop expr PARENTHESIS_R
       {
@@ -110,7 +116,7 @@ constant: floatval
           }
         ;
 
-floatval: FLOAT
+floatval: FLOATNUM
            {
              $$ = TBmakeFloat( $1);
            }

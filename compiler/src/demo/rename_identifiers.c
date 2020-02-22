@@ -66,7 +66,7 @@ node *RIdoRenameIdentifiers( node *syntaxtree)
 {
   DBUG_ENTER("RIdoRenameIdentifiers");
 
-  TRAVpush( TR_ri);   // Push traversal "ri" as defined in ast.xml
+  // TRAVpush( TR_ri);   // Push traversal "ri" as defined in ast.xml
 
   syntaxtree = TRAVdo( syntaxtree, NULL);   // Initiate ast traversal
 
