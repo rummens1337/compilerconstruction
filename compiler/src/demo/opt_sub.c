@@ -67,7 +67,7 @@ node *OSdoOptSub( node *syntaxtree)
 {
   DBUG_ENTER("OSdoOptSub");
 
-  // TRAVpush( TR_os);
+  TRAVpush( TR_os);
   syntaxtree = TRAVdo( syntaxtree, NULL);
   TRAVpop();
 

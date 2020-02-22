@@ -92,7 +92,7 @@ node *SIdoSumInts( node *syntaxtree)
 
   arg_info = MakeInfo();
 
-  // TRAVpush( TR_si);
+  TRAVpush( TR_si);
   syntaxtree = TRAVdo( syntaxtree, arg_info);
   TRAVpop();
 
