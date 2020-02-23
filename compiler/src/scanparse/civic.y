@@ -18,11 +18,7 @@ static node *parseresult = NULL;
 extern int yylex();
 static int yyerror( char *errname);
 
-
-//
-// Nog even kijken naar FLOAT token, gaf duplicate error, wat logisch is.
-// Weet alleen niet hoe het wel moet.
-//  
+// monop toegevoegd als test.
 
 %}
 
@@ -32,11 +28,12 @@ static int yyerror( char *errname);
  int                 cint;
  float               cflt;
  binop               cbinop;
+ monop               cmonop;
  node               *node;
 }
 
 %token PARENTHESIS_L PARENTHESIS_R CURLY_L CURLY_R BRACKET_L BRACKET_R COMMA SEMICOLON
-%token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND LET
+%token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND LET NEG NOT
 %token INT FLOAT BOOL VOID TRUEVAL FALSEVAL
 %token EXTERN EXPORT RETURN
 %token IF ELSE DO WHILE FOR
@@ -48,6 +45,7 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr
 %type <node> stmts stmt assign varlet program
 %type <cbinop> binop
+%type <cmonop> monop
 
 %start program
 
@@ -100,6 +98,10 @@ expr: constant
       {
         $$ = TBmakeBinop( $3, $2, $4);
       }
+    | monop expr
+      {
+        $$ = TBmakeMonop( $1, $2);
+      }
     ;
 
 constant: floatval
@@ -150,6 +152,10 @@ binop: PLUS      { $$ = BO_add; }
      | EQ        { $$ = BO_eq; }
      | OR        { $$ = BO_or; }
      | AND       { $$ = BO_and; }
+     ;
+
+monop: NOT       { $$ = MO_not; }
+     | NEG       { $$ = MO_neg; }
      ;
       
 %%

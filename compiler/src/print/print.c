@@ -383,6 +383,15 @@ PRTerror (node * arg_node, info * arg_info)
   DBUG_RETURN (arg_node);
 }
 
+// 
+// 
+// 
+// 
+// Adjusted prints from this block forwards :)
+// 
+// 
+// 
+
 /** <!--******************************************************************-->
  *
  * @fn PRTmonop
@@ -399,15 +408,30 @@ PRTerror (node * arg_node, info * arg_info)
 node *
 PRTmonop (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTmonop");
+  char *tmp;
+  
+  switch (MONOP_OP( arg_node)) {
+    case MO_not:
+      tmp = "~";
+      break;
+    case MO_neg:
+      tmp = "!";
+      break;
+    case MO_unknown:
+      DBUG_ASSERT( 0, "unknown monop detected!");
+  }
+
+  printf( " %s ", tmp);
+
+  MONOP_OPERAND( arg_node) = TRAVdo( MONOP_OPERAND( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
 /** <!--******************************************************************-->
  *
- * @fn PRTmonop
+ * @fn PRTprogram
  *
  * @brief Prints the node and its sons/attributes
  *

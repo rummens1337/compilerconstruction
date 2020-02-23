@@ -63,6 +63,9 @@ end  \*\/
 
 "="                        { FILTER( LET);    }
 
+"~"                        { FILTER( NOT);    }
+"!"                        { FILTER( NEG);    }
+
 "extern"                   { FILTER( EXTERN); } // KEYWORDS
 "export"                   { FILTER( EXPORT); }
 "return"                   { FILTER( RETURN); }
