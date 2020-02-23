@@ -23,6 +23,44 @@
 #include "globals.h"
 
 
+/** <!--******************************************************************-->
+ *
+ * @fn printType
+ *
+ * @brief Prints the type specified as input to printf.
+ *
+ * @param type the type of the arg_node
+ *
+ * @return void
+ *
+ ***************************************************************************/
+void printType(char type)
+{
+
+  char *tmp;
+  
+  switch (type) {
+    case T_void:
+      tmp = "void";
+      break;
+    case T_bool:
+      tmp = "bool";
+      break;
+    case T_int:
+      tmp = "int";
+      break;
+    case T_float:
+      tmp = "float";
+      break;
+    case T_unknown:
+      DBUG_ASSERT( 0, "unknown monop detected!");
+  }
+
+  printf( "%s", tmp);
+
+}
+
+
 /*
  * INFO structure
  */
@@ -422,7 +460,7 @@ PRTmonop (node * arg_node, info * arg_info)
       DBUG_ASSERT( 0, "unknown monop detected!");
   }
 
-  printf( " %s ", tmp);
+  printf( "%s", tmp);
 
   MONOP_OPERAND( arg_node) = TRAVdo( MONOP_OPERAND( arg_node), arg_info);
 
@@ -649,30 +687,9 @@ PRTcast (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTcast");
 
-  char *tmp;
-
   printf( "%s", "(");
-  
-  switch (CAST_TYPE( arg_node)) {
-    case T_void:
-      tmp = "void";
-      break;
-    case T_bool:
-      tmp = "bool";
-      break;
-    case T_int:
-      tmp = "int";
-      break;
-    case T_float:
-      tmp = "float";
-      break;
-    case T_unknown:
-      DBUG_ASSERT( 0, "unknown monop detected!");
-  }
-
-  printf( "%s", tmp);
+  printType(CAST_TYPE(arg_node)); // prints the cast type.
   printf( "%s", ")");
-
 
   CAST_EXPR( arg_node) = TRAVdo( CAST_EXPR( arg_node), arg_info);
 
@@ -695,9 +712,12 @@ PRTcast (node * arg_node, info * arg_info)
 node *
 PRTfundefs (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTfundefs");
+
+  // todo - print
+  FUNDEFS_FUNDEF( arg_node) = TRAVdo( FUNDEFS_FUNDEF( arg_node), arg_info);
+  FUNDEFS_NEXT( arg_node) = TRAVopt( FUNDEFS_FUNDEF( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -717,9 +737,19 @@ PRTfundefs (node * arg_node, info * arg_info)
 node *
 PRTfundef (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTfundef");
+
+  if(FUNDEF_ISEXPORT(arg_node) == 1)
+  {
+    printf("%s ", "export");
+  }
+
+  printType(FUNDEF_TYPE (arg_node)); // prints the function type.
+  printf(" %s",FUNDEF_NAME (arg_node)); // prints the function type.
+
+  FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
+  FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -739,9 +769,13 @@ PRTfundef (node * arg_node, info * arg_info)
 node *
 PRTfunbody (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTfunbody");
+
+  // todo - print
+  FUNBODY_VARDECLS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
+  FUNBODY_LOCALFUNDEFS( arg_node) = TRAVopt( FUNBODY_LOCALFUNDEFS( arg_node), arg_info);
+  FUNBODY_STMTS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -761,9 +795,13 @@ PRTfunbody (node * arg_node, info * arg_info)
 node *
 PRTifelse (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTifelse");
+
+  // todo - print
+  IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND( arg_node), arg_info);
+  IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN( arg_node), arg_info);
+  IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -783,9 +821,12 @@ PRTifelse (node * arg_node, info * arg_info)
 node *
 PRTwhile (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTwhile");
+
+  // todo - print
+  WHILE_COND( arg_node) = TRAVdo( WHILE_COND( arg_node), arg_info);
+  WHILE_BLOCK( arg_node) = TRAVopt( WHILE_BLOCK( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -805,9 +846,13 @@ PRTwhile (node * arg_node, info * arg_info)
 node *
 PRTdowhile (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTdowhile");
+
+  // todo - print
+  DOWHILE_COND( arg_node) = TRAVdo( DOWHILE_COND( arg_node), arg_info);
+  DOWHILE_BLOCK( arg_node) = TRAVopt( DOWHILE_BLOCK( arg_node), arg_info);
+  
+
   DBUG_RETURN (arg_node);
 }
 
@@ -827,9 +872,16 @@ PRTdowhile (node * arg_node, info * arg_info)
 node *
 PRTfor (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTfor");
+
+  printf("%s", FOR_LOOPVAR(arg_node)); // print the loop variable.
+
+  // todo - print
+  FOR_START( arg_node) = TRAVdo( FOR_START( arg_node), arg_info);
+  FOR_STOP( arg_node) = TRAVdo( FOR_STOP( arg_node), arg_info);
+  FOR_STEP( arg_node) = TRAVopt( FOR_STEP( arg_node), arg_info);
+  FOR_BLOCK( arg_node) = TRAVopt( FOR_BLOCK( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -849,9 +901,17 @@ PRTfor (node * arg_node, info * arg_info)
 node *
 PRTglobdecl (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTglobdecl");
+
+  printf("%s ", "extern "); // todo - check if this is always the case
+  printType(GLOBDECL_TYPE(arg_node)); // print the declaration type.
+  printf(" %s ", GLOBDECL_NAME(arg_node)); // print identifier
+  // Example: int count;
+
+  // todo - print
+  GLOBDECL_DIMS( arg_node) = TRAVopt( GLOBDECL_DIMS( arg_node), arg_info);
+
+
   DBUG_RETURN (arg_node);
 }
 
@@ -871,9 +931,22 @@ PRTglobdecl (node * arg_node, info * arg_info)
 node *
 PRTglobdef (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTglobdef");
+
+  if(GLOBDEF_ISEXPORT(arg_node) == 1)
+  {
+    printf("%s ", "export ");
+  }
+
+  printType(GLOBDEF_TYPE(arg_node)); // print the definition type.
+  printf(" %s", GLOBDEF_NAME(arg_node)); // print identifier
+  // Example: [ export ] int count;
+
+  // todo - print
+  GLOBDEF_DIMS( arg_node) = TRAVopt( GLOBDEF_DIMS( arg_node), arg_info);
+  GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+
+
   DBUG_RETURN (arg_node);
 }
 
@@ -893,10 +966,16 @@ PRTglobdef (node * arg_node, info * arg_info)
 node *
 PRTparam (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-  
-
   DBUG_ENTER ("PRTparam");
+
+  printType(PARAM_TYPE(arg_node)); // print the parameter type.
+  printf(" %s", PARAM_NAME(arg_node)); // print identifier
+  // Example: int count
+
+  // todo - print
+  PARAM_DIMS( arg_node) = TRAVopt( PARAM_DIMS( arg_node), arg_info);
+  PARAM_NEXT( arg_node) = TRAVopt( PARAM_NEXT( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -916,7 +995,15 @@ PRTparam (node * arg_node, info * arg_info)
 node *
 PRTvardecl (node * arg_node, info * arg_info)
 {
-  // bool first_error;
+
+  printType(VARDECL_TYPE(arg_node)); // print the declaration type.
+  printf(" %s", VARDECL_NAME(arg_node)); // print identifier
+  // Example: [ export ] int count;
+
+  // todo - print
+  VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS( arg_node), arg_info);
+  VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT( arg_node), arg_info);
+  VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT( arg_node), arg_info);
 
   DBUG_ENTER ("PRTvardecl");
   DBUG_RETURN (arg_node);
