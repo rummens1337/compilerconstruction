@@ -445,9 +445,12 @@ PRTmonop (node * arg_node, info * arg_info)
 node *
 PRTprogram (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTprogram");
+
+  printf("%s", "Begin of program"); // todo check why this isn't printed in the output
+  // Probably because there is no attribute, but this is to be checked.
+  PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -467,9 +470,11 @@ PRTprogram (node * arg_node, info * arg_info)
 node *
 PRTdecls (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTdecls");
+
+  // todo print
+  DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -489,9 +494,12 @@ PRTdecls (node * arg_node, info * arg_info)
 node *
 PRTexprs (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTexprs");
+
+  // todo print  
+  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info); 
+  EXPRS_NEXT( arg_node) = TRAVopt( EXPRS_NEXT( arg_node), arg_info); 
+
   DBUG_RETURN (arg_node);
 }
 
@@ -511,9 +519,11 @@ PRTexprs (node * arg_node, info * arg_info)
 node *
 PRTarrexpr (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTarrexpr");
+
+  // todo print  
+  ARREXPR_EXPRS( arg_node) = TRAVdo( ARREXPR_EXPRS( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -533,9 +543,14 @@ PRTarrexpr (node * arg_node, info * arg_info)
 node *
 PRTids (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTids");
+
+  printf("%s", IDS_NAME(arg_node));
+
+  // todo - not sure what this is supposed to do, but this should be the syntax?
+
+  IDS_NEXT( arg_node) = TRAVopt( IDS_NEXT( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -556,9 +571,11 @@ PRTids (node * arg_node, info * arg_info)
 node *
 PRTexprstmt (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTexprstmt");
+
+  // todo print  
+  EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
+  
   DBUG_RETURN (arg_node);
 }
 
@@ -578,9 +595,11 @@ PRTexprstmt (node * arg_node, info * arg_info)
 node *
 PRTreturn (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTreturn");
+
+  // todo print  
+  RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
+  
   DBUG_RETURN (arg_node);
 }
 
@@ -600,9 +619,15 @@ PRTreturn (node * arg_node, info * arg_info)
 node *
 PRTfuncall (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTfuncall");
+
+  // todo - check functionallity, probably needs parenthesis
+  // and decl is of type node.
+  // printf("%s", FUNCALL_DECL(arg_node));
+  printf("%s", FUNCALL_NAME(arg_node));
+
+  FUNCALL_ARGS( arg_node) = TRAVopt( FUNCALL_ARGS( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 
@@ -622,9 +647,35 @@ PRTfuncall (node * arg_node, info * arg_info)
 node *
 PRTcast (node * arg_node, info * arg_info)
 {
-  // bool first_error;
-
   DBUG_ENTER ("PRTcast");
+
+  char *tmp;
+
+  printf( "%s", "(");
+  
+  switch (CAST_TYPE( arg_node)) {
+    case T_void:
+      tmp = "void";
+      break;
+    case T_bool:
+      tmp = "bool";
+      break;
+    case T_int:
+      tmp = "int";
+      break;
+    case T_float:
+      tmp = "float";
+      break;
+    case T_unknown:
+      DBUG_ASSERT( 0, "unknown monop detected!");
+  }
+
+  printf( "%s", tmp);
+  printf( "%s", ")");
+
+
+  CAST_EXPR( arg_node) = TRAVdo( CAST_EXPR( arg_node), arg_info);
+
   DBUG_RETURN (arg_node);
 }
 

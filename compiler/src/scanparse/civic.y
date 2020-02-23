@@ -29,6 +29,7 @@ static int yyerror( char *errname);
  float               cflt;
  binop               cbinop;
  monop               cmonop;
+ type                ctype;
  node               *node;
 }
 
@@ -46,6 +47,7 @@ static int yyerror( char *errname);
 %type <node> stmts stmt assign varlet program
 %type <cbinop> binop
 %type <cmonop> monop
+%type <ctype> type
 
 %start program
 
@@ -102,6 +104,10 @@ expr: constant
       {
         $$ = TBmakeMonop( $1, $2);
       }
+    | PARENTHESIS_L type PARENTHESIS_R expr
+      {
+        $$ = TBmakeCast( $2, $4);
+      }
     ;
 
 constant: floatval
@@ -156,6 +162,12 @@ binop: PLUS      { $$ = BO_add; }
 
 monop: NOT       { $$ = MO_not; }
      | NEG       { $$ = MO_neg; }
+     ;
+
+type:  INT     { $$ = T_int; }
+     | FLOAT   { $$ = T_float; }
+     | BOOL    { $$ = T_bool; }
+     | VOID    { $$ = T_void; }
      ;
       
 %%
