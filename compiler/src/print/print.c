@@ -97,10 +97,10 @@ PRTassign (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTassign");
 
-  if (ASSIGN_LET( arg_node) != NULL) {
-    ASSIGN_LET( arg_node) = TRAVdo( ASSIGN_LET( arg_node), arg_info);
-    printf( " = ");
-  }
+
+  ASSIGN_LET( arg_node) = TRAVopt( ASSIGN_LET( arg_node), arg_info);
+  printf( " = ");
+
   
   ASSIGN_EXPR( arg_node) = TRAVdo( ASSIGN_EXPR( arg_node), arg_info);
   
@@ -819,6 +819,7 @@ node *
 PRTparam (node * arg_node, info * arg_info)
 {
   // bool first_error;
+  
 
   DBUG_ENTER ("PRTparam");
   DBUG_RETURN (arg_node);
