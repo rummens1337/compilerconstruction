@@ -1,0 +1,15 @@
+a()
+a(1)
+a(1,2,3)
+b = a(1)
+
+
+a, a, a, a;
+
+export int _var, _var, _var;
+
+
+int foo(int a, b, c, bool oke, oke2, oke3)
+{
+
+}

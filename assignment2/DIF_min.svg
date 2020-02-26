@@ -1,0 +1,25 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="800" height="600" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="83.5" cy="250.5" rx="30" ry="30"/>
+	<text x="78.5" y="256.5" font-family="Times New Roman" font-size="20">0</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="331.5" cy="252.5" rx="30" ry="30"/>
+	<text x="326.5" y="258.5" font-family="Times New Roman" font-size="20">3</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="193.5" cy="250.5" rx="30" ry="30"/>
+	<text x="188.5" y="256.5" font-family="Times New Roman" font-size="20">1</text>
+	<ellipse stroke="black" stroke-width="1" fill="none" cx="193.5" cy="250.5" rx="24" ry="24"/>
+	<path stroke="black" stroke-width="1" fill="none" d="M 194.497,280.366 A 22.5,22.5 0 1 1 170.401,269.458"/>
+	<text x="151.5" y="333.5" font-family="Times New Roman" font-size="20">c</text>
+	<polygon fill="black" stroke-width="1" points="170.401,269.458 160.975,269.07 165.921,277.761"/>
+	<polygon stroke="black" stroke-width="1" points="113.5,250.5 163.5,250.5"/>
+	<polygon fill="black" stroke-width="1" points="163.5,250.5 155.5,245.5 155.5,255.5"/>
+	<path stroke="black" stroke-width="1" fill="none" d="M 204.673,222.906 A 69.85,69.85 0 0 1 321.131,224.594"/>
+	<polygon fill="black" stroke-width="1" points="321.131,224.594 321.019,215.161 312.603,220.561"/>
+	<text x="258.5" y="183.5" font-family="Times New Roman" font-size="20">a</text>
+	<path stroke="black" stroke-width="1" fill="none" d="M 313.445,276.216 A 76.253,76.253 0 0 1 210.86,274.73"/>
+	<polygon fill="black" stroke-width="1" points="313.445,276.216 304.139,277.764 310.758,285.26"/>
+	<text x="256.5" y="316.5" font-family="Times New Roman" font-size="20">b</text>
+	<polygon stroke="black" stroke-width="1" points="23.5,250.5 53.5,250.5"/>
+	<polygon fill="black" stroke-width="1" points="53.5,250.5 45.5,245.5 45.5,255.5"/>
+</svg>

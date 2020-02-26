@@ -322,7 +322,7 @@ PRTvar (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvar");
 
-  printf( "%s", VAR_NAME( arg_node));
+  printf( "(var)%s", VAR_NAME( arg_node));
 
   DBUG_RETURN (arg_node);
 }
@@ -346,7 +346,7 @@ PRTvarlet (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvarlet");
 
-  printf( "%s", VARLET_NAME( arg_node));
+  printf( "(varlet)%s", VARLET_NAME( arg_node));
 
   DBUG_RETURN (arg_node);
 }
@@ -535,7 +535,7 @@ PRTexprs (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTexprs");
 
   // todo print  
-  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info); 
+  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info);
   EXPRS_NEXT( arg_node) = TRAVopt( EXPRS_NEXT( arg_node), arg_info); 
 
   DBUG_RETURN (arg_node);
@@ -635,8 +635,15 @@ PRTreturn (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTreturn");
 
+  // print the return statement
+  printf("retrun ");
+
   // todo print  
   RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
+
+  // print a semicolon
+  printf(";");
+
   
   DBUG_RETURN (arg_node);
 }
@@ -661,10 +668,11 @@ PRTfuncall (node * arg_node, info * arg_info)
 
   // todo - check functionallity, probably needs parenthesis
   // and decl is of type node.
-  // printf("%s", FUNCALL_DECL(arg_node));
-  printf("%s", FUNCALL_NAME(arg_node));
+  printf("%s(", FUNCALL_NAME(arg_node));
 
   FUNCALL_ARGS( arg_node) = TRAVopt( FUNCALL_ARGS( arg_node), arg_info);
+
+  printf(")");
 
   DBUG_RETURN (arg_node);
 }
