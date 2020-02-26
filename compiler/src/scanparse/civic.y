@@ -45,6 +45,8 @@ static int yyerror( char *errname);
 
 %type <node> intval floatval boolval constant expr
 %type <node> stmts stmt assign varlet program
+%type <node> return exprs funcall
+
 %type <cbinop> binop
 %type <cmonop> monop
 %type <ctype> type
@@ -70,14 +72,38 @@ stmts: stmt stmts
         ;
 
 stmt: assign
-       {
-         $$ = $1;
-       }
-       ;
+      {
+        $$ = $1;
+      }
+    | return
+      {
+        $$ = $1;
+      }
+    | funcall
+      {
+        $$ = $1;
+      }
+      ;
 
-assign: varlet LET expr SEMICOLON
+return: RETURN expr
+        {
+          $$ = TBmakeReturn( $2);
+        }
+        ;
+
+assign: varlet LET expr
         {
           $$ = TBmakeAssign( $1, $3);
+        }
+        ;
+
+funcall: ID PARENTHESIS_L exprs PARENTHESIS_R
+        {
+          $$ = TBmakeFuncall( STRcpy( $1), NULL, $3);
+        }
+        | ID PARENTHESIS_L PARENTHESIS_R
+        {
+          $$ = TBmakeFuncall( STRcpy( $1), NULL, NULL);
         }
         ;
 
@@ -87,6 +113,15 @@ varlet: ID
         }
         ;
 
+exprs: expr COMMA exprs
+      {
+        $$ = TBmakeExprs($1, $3);
+      }
+      | expr
+      {
+        $$ = TBmakeExprs($1, NULL);
+      }
+      ;
 
 expr: constant
       {
@@ -107,6 +142,10 @@ expr: constant
     | PARENTHESIS_L type PARENTHESIS_R expr
       {
         $$ = TBmakeCast( $2, $4);
+      }
+    | funcall
+      {
+          $$ = $1;
       }
     ;
 
