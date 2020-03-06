@@ -630,7 +630,7 @@ PRTreturn (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTreturn");
 
   // print the return statement
-  printf("return ");
+  printf("retrun ");
  
   RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
 

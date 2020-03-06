@@ -14,11 +14,11 @@
 #include "free.h"
 #include "globals.h"
 
-#define YYDEBUG 1
-
 static node *parseresult = NULL;
 extern int yylex();
 static int yyerror( char *errname);
+
+// monop toegevoegd als test.
 
 %}
 
@@ -85,13 +85,13 @@ stmt: assign
       }
       ;
 
-return: RETURN expr SEMICOLON
+return: RETURN expr
         {
           $$ = TBmakeReturn( $2);
         }
         ;
 
-assign: varlet LET expr SEMICOLON
+assign: varlet LET expr
         {
           $$ = TBmakeAssign( $1, $3);
         }
@@ -130,6 +130,14 @@ expr: constant
     | ID
       {
         $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
+      }
+    | PARENTHESIS_L expr binop expr PARENTHESIS_R
+      {
+        $$ = TBmakeBinop( $3, $2, $4);
+      }
+    | monop expr
+      {
+        $$ = TBmakeMonop( $1, $2);
       }
     | PARENTHESIS_L type PARENTHESIS_R expr
       {
@@ -215,7 +223,7 @@ static int yyerror( char *error)
 node *YYparseTree( void)
 {
   DBUG_ENTER("YYparseTree");
-  yydebug = 1;
+
   yyparse();
 
   DBUG_RETURN( parseresult);
