@@ -1,5 +1,6 @@
-a = (float)(43-2);
-b = !(true*7);
-c = ((a + b) - c);
-d = ((7-7) * 0);
-e = (c - c);
+a = (float) 43-2;
+b = !true*7;
+c = a + b - c;
+d = 7-7 * 0;
+e = c - c;
+return 5;
