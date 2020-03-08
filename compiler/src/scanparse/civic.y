@@ -43,12 +43,10 @@ static int yyerror( char *errname);
 %token <cflt> FLOATNUM
 %token <id> ID
 
-%type <node> intval floatval boolval constant expr
+%type <node> intval floatval boolval constant expr binop
 %type <node> stmts stmt assign varlet program
-%type <node> return exprs funcall
+%type <node> return exprs funcall opprec5 opprec6 opprec4 opprec3 opprec2 opprec1
 
-%type <cbinop> binop
-%type <cmonop> monop
 %type <ctype> type
 
 %start program
@@ -123,24 +121,39 @@ exprs: expr COMMA exprs
       }
       ;
 
-expr: constant
+expr: 
+      PARENTHESIS_L type PARENTHESIS_R expr
       {
-        $$ = $1;
+        $$ = TBmakeCast( $2, $4);
       }
+    | opprec6
     | ID
       {
         $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
       }
-    | PARENTHESIS_L type PARENTHESIS_R expr
-      {
-        $$ = TBmakeCast( $2, $4);
-      }
-    | funcall
-      {
-          $$ = $1;
-      }
     ;
 
+opprec6: opprec5
+        | opprec6 AND opprec5
+          {
+            TBmakeBinop(BO_and, $1, $3);
+          }
+        ;
+opprec5: opprec4
+        | opprec5 OR constant
+          {
+            TBmakeBinop(BO_or, $1, $3);
+          }
+          ;
+opprec4: constant
+          {
+            $$ = $1;
+          }
+        | opprec5 MINUS constant
+          {
+            TBmakeBinop(BO_sub, $1, $3);
+          }
+          ;
 
 constant: floatval
           {
@@ -178,23 +191,23 @@ boolval: TRUEVAL
          }
        ;
 
-binop: PLUS      { $$ = BO_add; }
-     | MINUS     { $$ = BO_sub; }
-     | STAR      { $$ = BO_mul; }
-     | SLASH     { $$ = BO_div; }
-     | PERCENT   { $$ = BO_mod; }
-     | LE        { $$ = BO_le; }
-     | LT        { $$ = BO_lt; }
-     | GE        { $$ = BO_ge; }
-     | GT        { $$ = BO_gt; }
-     | EQ        { $$ = BO_eq; }
-     | OR        { $$ = BO_or; }
-     | AND       { $$ = BO_and; }
-     ;
+// binop: PLUS      { $$ = BO_add; }
+//      | MINUS     { $$ = BO_sub; }
+//      | STAR      { $$ = BO_mul; }
+//      | SLASH     { $$ = BO_div; }
+//      | PERCENT   { $$ = BO_mod; }
+//      | LE        { $$ = BO_le; }
+//      | LT        { $$ = BO_lt; }
+//      | GE        { $$ = BO_ge; }
+//      | GT        { $$ = BO_gt; }
+//      | EQ        { $$ = BO_eq; }
+//      | OR        { $$ = BO_or; }
+//      | AND       { $$ = BO_and; }
+//      ;
 
-monop: NOT       { $$ = MO_not; }
-     | NEG       { $$ = MO_neg; }
-     ;
+// monop: NOT       { $$ = MO_not; }
+//      | NEG       { $$ = MO_neg; }
+//      ;
 
 type:  INT     { $$ = T_int; }
      | FLOAT   { $$ = T_float; }
