@@ -85,13 +85,13 @@ stmt: assign
       }
       ;
 
-return: RETURN expr
+return: RETURN expr SEMICOLON
         {
           $$ = TBmakeReturn( $2);
         }
         ;
 
-assign: varlet LET expr
+assign: varlet LET expr SEMICOLON
         {
           $$ = TBmakeAssign( $1, $3);
         }
