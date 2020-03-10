@@ -48,9 +48,13 @@ static int yyerror( char *errname);
 
 %type <node> intval floatval boolval constant expr
 %type <node> stmts stmt assign varlet program 
-%type <node> return exprstmt binop exprs type monop
+%type <node> return exprstmt binop exprs monop 
+%type <node> vardecl
+// %type <node> fundef funbody fundefs decl decls globdecl globdef vardecls
 
-// %type <node>
+// %type <node> fundec
+
+%type <ctype> type
 
 %start program
 
@@ -64,9 +68,16 @@ static int yyerror( char *errname);
 
 %nonassoc ID
 %nonassoc PARENTHESIS_L PARENTHESIS_R
+
 %%
 
-program: stmts 
+program: 
+    // decls
+    //     {
+    //         parseresult = $1;
+    //     }
+    // |  
+    stmts 
         {
             parseresult = $1;
         }
@@ -82,6 +93,30 @@ stmts: stmt stmts
         }
     ;
 
+// decls: decl decls
+//         {
+//             $$ = TBmakeDecls( $1, $2);
+//         }
+//     |   decl
+//         {
+//             $$ = TBmakeDecls( $1, NULL);
+//         }
+//     ;
+
+// decl: globdecl
+//         {
+//             $$ = $1;
+//         }
+//     |   globdef
+//         {
+//             $$ = $1;
+//         }
+//     |   fundefs
+//         {
+//             $$ = $1;
+//         }
+//     ;
+
 stmt: assign
         {
             $$ = $1;
@@ -94,9 +129,49 @@ stmt: assign
         {
             $$ = $1;
         }
+    |   vardecl
+        {
+            $$ = $1;
+        } 
     ;
 
-return: RETURN expr SEMICOLON
+// fundec: EXTERN type ID PARENTHESIS_L exprs PARENTHESIS_R SEMICOLON
+//         {
+//             $$ = TBmakeFundec($2, $3, $8, $4);
+//         }
+//     ;
+
+// fundefs: fundef fundefs
+//         {
+//             $$ = TBmakeFundefs( $1, $2);
+//         }
+//     |   fundef
+//         {
+//             $$ = TBmakeFundefs( $1, NULL);
+//         }
+//     ;
+
+// fundef: type ID PARENTHESIS_L exprs PARENTHESIS_R funbody
+//         {
+//             $$ = TBmakeFundef( $1, $2, $6, $4);
+//         }
+//     |   EXPORT type ID PARENTHESIS_L exprs PARENTHESIS_R funbody
+//         {
+//             $$ = TBmakeFundef( $2, $3, $7, $5);
+//         }
+//     ;
+
+// funbody: CURLY_L vardecls fundefs stmts CURLY_R
+//         {
+//             $$ = TBmakeFunbody( $2, $3, $4);
+//         }
+//     ;
+
+return: RETURN SEMICOLON
+        {
+          $$ = TBmakeReturn( NULL);
+        }
+    |   RETURN expr SEMICOLON
         {
           $$ = TBmakeReturn( $2);
         }
@@ -111,6 +186,53 @@ assign: varlet LET expr
 varlet: ID
         {
           $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
+        }
+    ;
+
+// @todo check how to pass export flag
+// @todo check how to declare global def without 
+// globdef: type ID SEMICOLON
+//         {
+//             $$ = TBmakeGlobdef($1, $2, NULL, NULL);
+//         }
+//     |   type ID LET expr SEMICOLON
+//         {
+//             $$ = TBmakeGlobdef($1, $2, NULL, $4);
+//         } 
+//     |   EXPORT type ID SEMICOLON
+//         {
+//             $$ = TBmakeGlobdef($2, $3, NULL, NULL);
+//         }
+//     |   EXPORT type ID LET expr SEMICOLON
+//         {
+//             $$ = TBmakeGlobdef($2, $3, NULL, $5);
+//         }
+//     ;
+
+// globdecl: EXTERN type ID SEMICOLON
+//         {
+//             $$ = TBmakeGlobdecl($2, $3, NULL);
+//         }
+//     ;
+
+
+// vardecls: vardecl vardecls
+//         {
+//             $$ = TBmakeVardel($1, $2);
+//         }
+//     |   vardecl
+//         {
+//             $$ = TBmakeVardels($1, NULL);
+//         }
+//     ;
+
+vardecl: type ID SEMICOLON
+        {
+            $$ = TBmakeVardecl($2, $1, NULL, NULL, NULL);
+        }
+    |   type ID LET expr SEMICOLON
+        {
+            $$ = TBmakeVardecl($2, $1, NULL, $4, NULL);
         }
     ;
 
@@ -141,9 +263,9 @@ expr:
         {
             $$ = $1;
         }
-    |   type
+    |   PARENTHESIS_L type PARENTHESIS_R expr
         {
-            $$ = $1;
+            $$ = TBmakeCast( $2, $4);
         }
     |   ID PARENTHESIS_L exprs PARENTHESIS_R
         {
@@ -257,23 +379,11 @@ monop:  NEG expr
         }
     ;
 
-type:   PARENTHESIS_L INT PARENTHESIS_R expr
-        {
-            $$ = TBmakeCast( T_int, $4);
-        }
-    |   PARENTHESIS_L FLOAT PARENTHESIS_R expr
-        {
-            $$ = TBmakeCast( T_float, $4);
-        }
-    |   PARENTHESIS_L BOOL PARENTHESIS_R expr
-        {
-            $$ = TBmakeCast( T_bool, $4);
-        }
-    |   PARENTHESIS_L VOID PARENTHESIS_R expr
-        {
-            $$ = TBmakeCast( T_void, $4);
-        }
-    ;
+type: INT      { $$ = T_int; }
+     | FLOAT     { $$ = T_float; }
+     | BOOL      { $$ = T_bool; }
+     | VOID     { $$ = T_void; }
+     ;
 
 %%
 

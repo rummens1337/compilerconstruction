@@ -64,6 +64,7 @@
 </nodesets>
 
 <syntaxtree>
+
     <node name="Program">
         <sons>
             <son name="Decls">
@@ -80,6 +81,7 @@
         <attributes>
         </attributes>
     </node>
+
     <node name="Decls">
         <sons>
             <son name="Decl">
@@ -104,6 +106,7 @@
             </son>
         </sons>
     </node>
+
     <node name="Exprs">
         <sons>
             <son name="Expr">
@@ -128,6 +131,7 @@
             </son>
         </sons>
     </node>
+
     <node name="ArrExpr">
         <sons>
             <son name="Exprs">
@@ -142,6 +146,7 @@
             </son>
         </sons>
     </node>
+
     <node name="Ids">
         <sons>
             <son name="Next">
@@ -170,6 +175,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="ExprStmt">
         <sons>
             <son name="Expr">
@@ -240,6 +246,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Cast">
         <sons>
             <son name="Expr">
@@ -268,6 +275,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="FunDefs">
         <sons>
             <son name="Fundef">
@@ -293,6 +301,7 @@
         </sons>
         <attributes/>
     </node>
+
     <node name="FunDef">
         <sons>
             <son name="FunBody">
@@ -346,6 +355,7 @@
             <flag name="IsExport" />
         </flags>
     </node>
+
     <node name="FunBody">
         <sons>
             <son name="Vardecls">
@@ -384,6 +394,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="IfElse">
         <sons>
             <son name="Cond">
@@ -422,6 +433,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="While">
         <sons>
             <son name="Cond">
@@ -450,6 +462,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="DoWhile">
         <sons>
             <son name="Cond">
@@ -478,6 +491,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="For">
         <sons>
             <son name="Start">
@@ -538,6 +552,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="GlobDecl">
         <sons>
             <son name="Dims">
@@ -580,6 +595,7 @@
         <flags>
         </flags>
     </node>
+
     <node name="GlobDef">
         <sons>
             <son name="Dims">
@@ -633,6 +649,7 @@
             <flag name="IsExport" />
         </flags>
     </node>
+
     <node name="Param">
         <sons>
             <son name="Dims">
@@ -683,6 +700,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="VarDecl">
         <sons>
             <son name="Dims">
@@ -743,6 +761,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Stmts">
         <sons>
             <son name="Stmt">
@@ -768,6 +787,7 @@
         </sons>
         <attributes/>
     </node>
+
     <node name="Assign">
         <sons>
             <son name="Let">
@@ -793,6 +813,7 @@
         </sons>
         <attributes/>
     </node>
+
     <node name="BinOp">
         <sons>
             <son name="Left">
@@ -831,6 +852,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="MonOp">
         <sons>
             <son name="Operand">
@@ -859,6 +881,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="VarLet">
         <sons>
             <son name="Indices">
@@ -899,6 +922,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Var">
         <sons>
             <son name="Indices">
@@ -939,6 +963,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Num">
         <sons/>
         <attributes>
@@ -956,6 +981,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Float">
         <sons/>
         <attributes>
@@ -973,6 +999,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Bool">
         <sons/>
         <attributes>
@@ -990,6 +1017,7 @@
             </attribute>
         </attributes>
     </node>
+
     <node name="Error">
         <sons>
             <son name="Next">
@@ -1031,5 +1059,6 @@
         </attributes>
         <flags/>
     </node>
+
 </syntaxtree>
 </definition>

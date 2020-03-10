@@ -142,8 +142,6 @@ PRTassign (node * arg_node, info * arg_info)
   
   ASSIGN_EXPR( arg_node) = TRAVdo( ASSIGN_EXPR( arg_node), arg_info);
   
-  printf( ";\n");
-  
   DBUG_RETURN (arg_node);
 }
 
@@ -167,8 +165,6 @@ PRTbinop (node * arg_node, info * arg_info)
   char *tmp;
 
   DBUG_ENTER ("PRTbinop");
-
-  printf( "( ");
 
   BINOP_LEFT( arg_node) = TRAVdo( BINOP_LEFT( arg_node), arg_info);
 
@@ -219,8 +215,6 @@ PRTbinop (node * arg_node, info * arg_info)
   printf( " %s ", tmp);
 
   BINOP_RIGHT( arg_node) = TRAVdo( BINOP_RIGHT( arg_node), arg_info);
-
-  printf( ")");
 
   DBUG_RETURN (arg_node);
 }
@@ -485,6 +479,8 @@ PRTprogram (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTprogram");
 
+  printf("%s", "Begin of program"); // todo check why this isn't printed in the output
+  // Probably because there is no attribute, but this is to be checked.
   PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
 
   DBUG_RETURN (arg_node);
@@ -508,7 +504,9 @@ PRTdecls (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTdecls");
 
+  // todo print
   DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
+  DECLS_NEXT( arg_node) = TRAVopt( DECLS_NEXT( arg_node), arg_info);
 
   DBUG_RETURN (arg_node);
 }
@@ -531,7 +529,8 @@ PRTexprs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprs");
 
-  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info); 
+  // todo print  
+  EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info);
   EXPRS_NEXT( arg_node) = TRAVopt( EXPRS_NEXT( arg_node), arg_info); 
 
   DBUG_RETURN (arg_node);
@@ -555,6 +554,7 @@ PRTarrexpr (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTarrexpr");
 
+  // todo print  
   ARREXPR_EXPRS( arg_node) = TRAVdo( ARREXPR_EXPRS( arg_node), arg_info);
 
   DBUG_RETURN (arg_node);
@@ -606,8 +606,12 @@ PRTexprstmt (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprstmt");
 
+  // todo print  
   EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
-  
+
+  // print semi colomn
+  printf(";\n");
+
   DBUG_RETURN (arg_node);
 }
 
@@ -630,8 +634,9 @@ PRTreturn (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTreturn");
 
   // print the return statement
-  printf("return ");
- 
+  printf("retrun ");
+
+  // todo print  
   RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
 
   // print a semicolon
@@ -715,6 +720,7 @@ PRTfundefs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundefs");
 
+  // todo - print
   FUNDEFS_FUNDEF( arg_node) = TRAVdo( FUNDEFS_FUNDEF( arg_node), arg_info);
   FUNDEFS_NEXT( arg_node) = TRAVopt( FUNDEFS_FUNDEF( arg_node), arg_info);
 
@@ -771,6 +777,7 @@ PRTfunbody (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfunbody");
 
+  // todo - print
   FUNBODY_VARDECLS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
   FUNBODY_LOCALFUNDEFS( arg_node) = TRAVopt( FUNBODY_LOCALFUNDEFS( arg_node), arg_info);
   FUNBODY_STMTS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
@@ -796,6 +803,7 @@ PRTifelse (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTifelse");
 
+  // todo - print
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND( arg_node), arg_info);
   IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN( arg_node), arg_info);
   IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE( arg_node), arg_info);
@@ -821,6 +829,7 @@ PRTwhile (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTwhile");
 
+  // todo - print
   WHILE_COND( arg_node) = TRAVdo( WHILE_COND( arg_node), arg_info);
   WHILE_BLOCK( arg_node) = TRAVopt( WHILE_BLOCK( arg_node), arg_info);
 
@@ -845,6 +854,7 @@ PRTdowhile (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTdowhile");
 
+  // todo - print
   DOWHILE_COND( arg_node) = TRAVdo( DOWHILE_COND( arg_node), arg_info);
   DOWHILE_BLOCK( arg_node) = TRAVopt( DOWHILE_BLOCK( arg_node), arg_info);
   
@@ -872,6 +882,7 @@ PRTfor (node * arg_node, info * arg_info)
 
   printf("%s", FOR_LOOPVAR(arg_node)); // print the loop variable.
 
+  // todo - print
   FOR_START( arg_node) = TRAVdo( FOR_START( arg_node), arg_info);
   FOR_STOP( arg_node) = TRAVdo( FOR_STOP( arg_node), arg_info);
   FOR_STEP( arg_node) = TRAVopt( FOR_STEP( arg_node), arg_info);
@@ -903,6 +914,7 @@ PRTglobdecl (node * arg_node, info * arg_info)
   printf(" %s ", GLOBDECL_NAME(arg_node)); // print identifier
   // Example: int count;
 
+  // todo - print
   GLOBDECL_DIMS( arg_node) = TRAVopt( GLOBDECL_DIMS( arg_node), arg_info);
 
 
@@ -936,9 +948,20 @@ PRTglobdef (node * arg_node, info * arg_info)
   printf(" %s", GLOBDEF_NAME(arg_node)); // print identifier
   // Example: [ export ] int count;
 
-  // todo - print
+  // traverse
   GLOBDEF_DIMS( arg_node) = TRAVopt( GLOBDEF_DIMS( arg_node), arg_info);
-  GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+
+  if (GLOBDEF_INIT( arg_node) != NULL)
+  {
+    // print the equal sign
+    printf(" = ");
+
+    // traverse
+    GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
+  }
+
+  // print semicolmn
+  printf(";\n");
 
 
   DBUG_RETURN (arg_node);
@@ -996,8 +1019,15 @@ PRTvardecl (node * arg_node, info * arg_info)
 
   // todo - print
   VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS( arg_node), arg_info);
-  VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT( arg_node), arg_info);
+  if (VARDECL_INIT( arg_node) != NULL)
+  {
+    printf(" = ");
+    VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT( arg_node), arg_info);
+  }
   VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT( arg_node), arg_info);
+
+  // print semicolmn
+  printf(";\n");
 
   DBUG_ENTER ("PRTvardecl");
   DBUG_RETURN (arg_node);
