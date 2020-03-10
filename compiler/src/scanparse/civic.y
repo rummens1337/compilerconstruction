@@ -20,6 +20,9 @@ static int yyerror( char *errname);
 
 // monop toegevoegd als test.
 
+// enable debugging
+#define YYDEBUG 1
+
 %}
 
 %union {
@@ -44,188 +47,251 @@ static int yyerror( char *errname);
 %token <id> ID
 
 %type <node> intval floatval boolval constant expr
-%type <node> stmts stmt assign varlet program
-%type <node> return exprs funcall
+%type <node> stmts stmt assign varlet program 
+%type <node> return exprstmt binop exprs type monop
 
-%type <cbinop> binop
-%type <cmonop> monop
-%type <ctype> type
+// %type <node>
 
 %start program
 
+%left OR
+%left AND
+%left EQ NEQ
+%left LT GT LET LE GE
+%left PLUS MINUS
+%left STAR SLASH PERCENT
+%left NOT NEG
+
+%nonassoc ID
+%nonassoc PARENTHESIS_L PARENTHESIS_R
 %%
 
 program: stmts 
-         {
-           parseresult = $1;
-         }
-         ;
+        {
+            parseresult = $1;
+        }
+    ;
 
 stmts: stmt stmts
         {
-          $$ = TBmakeStmts( $1, $2);
+            $$ = TBmakeStmts( $1, $2);
         }
-      | stmt
+    |   stmt
         {
-          $$ = TBmakeStmts( $1, NULL);
+            $$ = TBmakeStmts( $1, NULL);
         }
-        ;
+    ;
 
 stmt: assign
-      {
-        $$ = $1;
-      }
-    | return
-      {
-        $$ = $1;
-      }
-    | funcall
-      {
-        $$ = $1;
-      }
-      ;
+        {
+            $$ = $1;
+        }
+    |   return
+        {
+            $$ = $1;
+        }
+    |   exprstmt
+        {
+            $$ = $1;
+        }
+    ;
 
 return: RETURN expr SEMICOLON
         {
           $$ = TBmakeReturn( $2);
         }
-        ;
+    ;
 
-assign: varlet LET expr SEMICOLON
+assign: varlet LET expr
         {
           $$ = TBmakeAssign( $1, $3);
         }
-        ;
-
-funcall: ID PARENTHESIS_L exprs PARENTHESIS_R
-        {
-          $$ = TBmakeFuncall( STRcpy( $1), NULL, $3);
-        }
-        | ID PARENTHESIS_L PARENTHESIS_R
-        {
-          $$ = TBmakeFuncall( STRcpy( $1), NULL, NULL);
-        }
-        ;
+    ;
 
 varlet: ID
         {
           $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
         }
-        ;
-
-exprs: expr COMMA exprs
-      {
-        $$ = TBmakeExprs($1, $3);
-      }
-      | expr
-      {
-        $$ = TBmakeExprs($1, NULL);
-      }
-      ;
-
-expr: constant
-      {
-        $$ = $1;
-      }
-    | ID
-      {
-        $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
-      }
-    | PARENTHESIS_L expr binop expr PARENTHESIS_R
-      {
-        $$ = TBmakeBinop( $3, $2, $4);
-      }
-    | monop expr
-      {
-        $$ = TBmakeMonop( $1, $2);
-      }
-    | PARENTHESIS_L type PARENTHESIS_R expr
-      {
-        $$ = TBmakeCast( $2, $4);
-      }
-    | funcall
-      {
-          $$ = $1;
-      }
     ;
 
+exprs: expr COMMA exprs
+        {
+            $$ = TBmakeExprs($1, $3);
+        }
+    |   expr
+        {
+            $$ = TBmakeExprs($1, NULL);
+        }
+    ;
+
+expr: 
+    constant
+        {
+            $$ = $1;
+        }
+    |   ID
+        {
+            $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
+        }
+    |   binop
+        {
+            $$ = $1;
+        }
+    |   monop
+        {
+            $$ = $1;
+        }
+    |   type
+        {
+            $$ = $1;
+        }
+    |   ID PARENTHESIS_L exprs PARENTHESIS_R
+        {
+          $$ = TBmakeFuncall( STRcpy( $1), NULL, $3);
+        }
+    |   ID PARENTHESIS_L PARENTHESIS_R
+        {
+            $$ = TBmakeFuncall( STRcpy( $1), NULL, NULL);
+        }
+    ;
+
+exprstmt: expr SEMICOLON
+        {
+            $$ = TBmakeExprstmt( $1);
+        }
+    ;
 
 constant: floatval
-          {
+        {
             $$ = $1;
-          }
-        | intval
-          {
+        }
+    |   intval
+        {
             $$ = $1;
-          }
-        | boolval
-          {
+        }
+    |   boolval
+        {
             $$ = $1;
-          }
-        ;
+        }
+    ;
 
 floatval: FLOATNUM
-           {
-             $$ = TBmakeFloat( $1);
-           }
-         ;
+        {
+            $$ = TBmakeFloat( $1);
+        }
+    ;
 
 intval: NUM
         {
-          $$ = TBmakeNum( $1);
+            $$ = TBmakeNum( $1);
         }
-      ;
+    ;
 
 boolval: TRUEVAL
-         {
-           $$ = TBmakeBool( TRUE);
-         }
-       | FALSEVAL
-         {
-           $$ = TBmakeBool( FALSE);
-         }
-       ;
+        {
+            $$ = TBmakeBool( TRUE);
+        }
+    |   FALSEVAL
+        {
+            $$ = TBmakeBool( FALSE);
+        }
+    ;
 
-binop: PLUS      { $$ = BO_add; }
-     | MINUS     { $$ = BO_sub; }
-     | STAR      { $$ = BO_mul; }
-     | SLASH     { $$ = BO_div; }
-     | PERCENT   { $$ = BO_mod; }
-     | LE        { $$ = BO_le; }
-     | LT        { $$ = BO_lt; }
-     | GE        { $$ = BO_ge; }
-     | GT        { $$ = BO_gt; }
-     | EQ        { $$ = BO_eq; }
-     | OR        { $$ = BO_or; }
-     | AND       { $$ = BO_and; }
-     ;
+binop: expr LE expr
+        { 
+            $$ = TBmakeBinop( BO_le, $1, $3);
+        }
+    |   expr LT expr
+        { 
+            $$ = TBmakeBinop( BO_lt, $1, $3);
+        }
+    |   expr GE expr 
+        { 
+            $$ = TBmakeBinop( BO_ge, $1, $3);
+        }
+    |   expr GT expr 
+        { 
+            $$ = TBmakeBinop( BO_gt, $1, $3);
+        }
+    |   expr EQ expr 
+        { 
+            $$ = TBmakeBinop( BO_eq, $1, $3);
+        }
+    |   expr OR expr 
+        { 
+            $$ = TBmakeBinop( BO_or, $1, $3);
+        }
+    |   expr AND expr 
+        { 
+            $$ = TBmakeBinop( BO_and, $1, $3);
+        }
+    |   expr MINUS expr
+        { 
+            $$ = TBmakeBinop( BO_add, $1, $3);
+        }
+    |   expr PLUS expr 
+        { 
+            $$ = TBmakeBinop( BO_sub, $1, $3);
+        }
+    |   expr STAR expr
+        {
+            $$ = TBmakeBinop( BO_mul, $1, $3);
+        }
+    |   expr SLASH expr
+        {
+            $$ = TBmakeBinop( BO_div, $1, $3);
+        }
+    |   expr PERCENT expr 
+        { 
+            $$ = TBmakeBinop( BO_mod, $1, $3);
+        }
+    ;
 
-monop: NOT       { $$ = MO_not; }
-     | NEG       { $$ = MO_neg; }
-     ;
+monop:  NEG expr
+        {
+            $$ = TBmakeMonop( MO_neg, $2);
+        }
+    |   NOT expr
+        {
+            $$ = TBmakeMonop( MO_not, $2);
+        }
+    ;
 
-type:  INT     { $$ = T_int; }
-     | FLOAT   { $$ = T_float; }
-     | BOOL    { $$ = T_bool; }
-     | VOID    { $$ = T_void; }
-     ;
-      
+type:   PARENTHESIS_L INT PARENTHESIS_R expr
+        {
+            $$ = TBmakeCast( T_int, $4);
+        }
+    |   PARENTHESIS_L FLOAT PARENTHESIS_R expr
+        {
+            $$ = TBmakeCast( T_float, $4);
+        }
+    |   PARENTHESIS_L BOOL PARENTHESIS_R expr
+        {
+            $$ = TBmakeCast( T_bool, $4);
+        }
+    |   PARENTHESIS_L VOID PARENTHESIS_R expr
+        {
+            $$ = TBmakeCast( T_void, $4);
+        }
+    ;
+
 %%
 
 static int yyerror( char *error)
 {
-  CTIabort( "line %d, col %d\nError parsing source code: %s\n", 
+    CTIabort( "line %d, col %d\nError parsing source code: %s\n", 
             global.line, global.col, error);
 
-  return( 0);
+    return( 0);
 }
 
 node *YYparseTree( void)
 {
-  DBUG_ENTER("YYparseTree");
+    DBUG_ENTER("YYparseTree");
 
-  yyparse();
+    yydebug = 1;
+    yyparse();
 
-  DBUG_RETURN( parseresult);
+    DBUG_RETURN( parseresult);
 }
 
