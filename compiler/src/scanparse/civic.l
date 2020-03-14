@@ -22,17 +22,12 @@
 #define YY_NO_INPUT
 
 
-
 %}
 
 %p 6000 /* set positions to 6000 */
 %e 2000 /* set nodes to 1100 */
 %option noyywrap
 %option nounput
-
-start \/\* 
-end  \*\/ 
-
 
 %%
   //______TOKENS_________________________________________________________________________________
@@ -63,7 +58,6 @@ end  \*\/
 
 "="                        { FILTER( LET);    }
 
-"~"                        { FILTER( NOT);    }
 "!"                        { FILTER( NEG);    }
 
 "extern"                   { FILTER( EXTERN); } // KEYWORDS
@@ -108,4 +102,4 @@ end  \*\/
 
 [ \t\n]+  ;               // White space
 \/\/(.*) ;                // SingleLine comment
-{start}.*{end} ;          // Multiline comment   ____ BELOW NEEDS ONE EXTRA BLANK LINE! ____
+\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/ ;          // Multiline comment   ____ BELOW NEEDS ONE EXTRA BLANK LINE! ____

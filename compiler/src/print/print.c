@@ -14,7 +14,7 @@
  * @{
  */
 
-
+#include <stdarg.h>
 #include "print.h"
 #include "traverse.h"
 #include "tree_basic.h"
@@ -60,15 +60,17 @@ void printType(char type)
 
 }
 
-
 /*
  * INFO structure
  */
 struct INFO {
   bool firsterror;
+  size_t tabs;
 };
 
 #define INFO_FIRSTERROR(n) ((n)->firsterror)
+#define INFO_TABS(n) ((n)->tabs)
+
 
 static info *MakeInfo()
 {
@@ -77,6 +79,7 @@ static info *MakeInfo()
   result = MEMmalloc(sizeof(info));
 
   INFO_FIRSTERROR(result) = FALSE;
+  INFO_TABS(result) = 0;
   
   return result;
 }
@@ -89,7 +92,26 @@ static info *FreeInfo( info *info)
   return info;
 }
 
+/**
+ * 
+ */
+void printTabs(info *info)
+{
+  for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
+}
 
+/**
+ * 
+ */
+void print(info *info, char *fmt, ...)
+{
+  printTabs(info);
+
+  va_list args;
+  va_start (args, fmt);
+  vprintf (fmt, args);
+  va_end (args);
+}
 
 /** <!--******************************************************************-->
  *
@@ -135,12 +157,19 @@ PRTassign (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTassign");
 
+  printTabs(arg_info);
 
+  // print left side
   ASSIGN_LET( arg_node) = TRAVopt( ASSIGN_LET( arg_node), arg_info);
-  printf( " = ");
 
-  
+  // print let symbol
+  printf(" = ");
+
+  // print right side
   ASSIGN_EXPR( arg_node) = TRAVdo( ASSIGN_EXPR( arg_node), arg_info);
+
+  // print semicolon symbol
+  printf(";\n");
   
   DBUG_RETURN (arg_node);
 }
@@ -290,7 +319,8 @@ PRTbool (node * arg_node, info * arg_info)
   if (BOOL_VALUE( arg_node)) {
     printf( "true");
   }
-  else {
+  else
+  {
     printf( "false");
   }
   
@@ -316,7 +346,7 @@ PRTvar (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvar");
 
-  printf( "(var)%s", VAR_NAME( arg_node));
+  printf( "%s", VAR_NAME( arg_node));
 
   DBUG_RETURN (arg_node);
 }
@@ -340,7 +370,7 @@ PRTvarlet (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvarlet");
 
-  printf( "(varlet)%s", VARLET_NAME( arg_node));
+  printf( "%s", VARLET_NAME( arg_node));
 
   DBUG_RETURN (arg_node);
 }
@@ -444,8 +474,8 @@ PRTmonop (node * arg_node, info * arg_info)
   char *tmp;
   
   switch (MONOP_OP( arg_node)) {
-    case MO_not:
-      tmp = "~";
+    case MO_minus:
+      tmp = "-";
       break;
     case MO_neg:
       tmp = "!";
@@ -580,9 +610,8 @@ PRTids (node * arg_node, info * arg_info)
 
   printf("%s", IDS_NAME(arg_node));
 
-  // todo - not sure what this is supposed to do, but this should be the syntax?
-
-  IDS_NEXT( arg_node) = TRAVopt( IDS_NEXT( arg_node), arg_info);
+  // used in array expressions
+  // IDS_NEXT( arg_node) = TRAVopt( IDS_NEXT( arg_node), arg_info);
 
   DBUG_RETURN (arg_node);
 }
@@ -606,10 +635,10 @@ PRTexprstmt (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprstmt");
 
-  // todo print  
+  // print the exppresion
   EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
 
-  // print semi colomn
+  // print semi colum
   printf(";\n");
 
   DBUG_RETURN (arg_node);
@@ -634,13 +663,19 @@ PRTreturn (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTreturn");
 
   // print the return statement
-  printf("retrun ");
+  print(arg_info, "return");
 
-  // todo print  
-  RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
+  if(RETURN_EXPR( arg_node))
+  {
+    // add extra space
+    printf(" ");
+
+    // print the expression  
+    RETURN_EXPR( arg_node) = TRAVopt( RETURN_EXPR( arg_node), arg_info);
+  }
 
   // print a semicolon
-  printf(";");
+  printf(";\n");
 
   
   DBUG_RETURN (arg_node);
@@ -720,7 +755,7 @@ PRTfundefs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundefs");
 
-  // todo - print
+  // print the function definitions
   FUNDEFS_FUNDEF( arg_node) = TRAVdo( FUNDEFS_FUNDEF( arg_node), arg_info);
   FUNDEFS_NEXT( arg_node) = TRAVopt( FUNDEFS_FUNDEF( arg_node), arg_info);
 
@@ -745,16 +780,28 @@ PRTfundef (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundef");
 
-  if(FUNDEF_ISEXPORT(arg_node) == 1)
+  if (FUNDEF_ISEXPORT(arg_node) == 1)
   {
     printf("%s ", "export");
   }
 
-  printType(FUNDEF_TYPE (arg_node)); // prints the function type.
-  printf(" %s",FUNDEF_NAME (arg_node)); // prints the function type.
+  printType(FUNDEF_TYPE (arg_node));
+  printf(" %s ( ", FUNDEF_NAME (arg_node));
+
+  FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
+
+  printf(") {\n");
+
+  // increment the number of tabs
+  INFO_TABS(arg_info)++;
 
   FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
-  FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
+
+  // decrement the number of tabs
+  INFO_TABS(arg_info)--;
+
+  printf("}\n"); // prints the function type.
+
 
   DBUG_RETURN (arg_node);
 }
@@ -777,8 +824,8 @@ PRTfunbody (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfunbody");
 
-  // todo - print
-  FUNBODY_VARDECLS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
+  // print the nodes
+  FUNBODY_VARDECLS( arg_node) = TRAVopt( FUNBODY_VARDECLS( arg_node), arg_info);
   FUNBODY_LOCALFUNDEFS( arg_node) = TRAVopt( FUNBODY_LOCALFUNDEFS( arg_node), arg_info);
   FUNBODY_STMTS( arg_node) = TRAVopt( FUNBODY_STMTS( arg_node), arg_info);
 
@@ -803,10 +850,18 @@ PRTifelse (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTifelse");
 
+  print(arg_info, "if ( ");
   // todo - print
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND( arg_node), arg_info);
+  printf(")");
+
   IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN( arg_node), arg_info);
-  IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE( arg_node), arg_info);
+
+  if (IFELSE_ELSE( arg_node))
+  {
+    printf(" else ");
+    IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE( arg_node), arg_info);
+  }
 
   DBUG_RETURN (arg_node);
 }
@@ -960,7 +1015,7 @@ PRTglobdef (node * arg_node, info * arg_info)
     GLOBDEF_INIT( arg_node) = TRAVopt( GLOBDEF_INIT( arg_node), arg_info);
   }
 
-  // print semicolmn
+  // print semicolon
   printf(";\n");
 
 
@@ -985,13 +1040,24 @@ PRTparam (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTparam");
 
-  printType(PARAM_TYPE(arg_node)); // print the parameter type.
-  printf(" %s", PARAM_NAME(arg_node)); // print identifier
-  // Example: int count
+  // print the parameter type.
+  printType(PARAM_TYPE(arg_node));
 
-  // todo - print
-  PARAM_DIMS( arg_node) = TRAVopt( PARAM_DIMS( arg_node), arg_info);
-  PARAM_NEXT( arg_node) = TRAVopt( PARAM_NEXT( arg_node), arg_info);
+  // print identifier
+  printf(" %s", PARAM_NAME(arg_node));
+
+  // used for array params
+  // PARAM_DIMS( arg_node) = TRAVopt( PARAM_DIMS( arg_node), arg_info);
+
+  // do we have more params
+  if (PARAM_NEXT( arg_node))
+  {
+    // print the seperator
+    printf(", ");
+
+    // print the next param
+    PARAM_NEXT( arg_node) = TRAVopt( PARAM_NEXT( arg_node), arg_info);
+  }
 
   DBUG_RETURN (arg_node);
 }
@@ -1012,22 +1078,33 @@ PRTparam (node * arg_node, info * arg_info)
 node *
 PRTvardecl (node * arg_node, info * arg_info)
 {
+  // print tabs
+  printTabs(arg_info);
 
-  printType(VARDECL_TYPE(arg_node)); // print the declaration type.
-  printf(" %s", VARDECL_NAME(arg_node)); // print identifier
-  // Example: [ export ] int count;
+  // print the declaration type.
+  printType(VARDECL_TYPE(arg_node));
 
-  // todo - print
-  VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS( arg_node), arg_info);
+  // print identifier
+  printf(" %s", VARDECL_NAME(arg_node));
+
+  // @todo used for array declerations
+  // VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS( arg_node), arg_info);
+
+  // was this an intialized variable
   if (VARDECL_INIT( arg_node) != NULL)
   {
+    // print the assignment symbol
     printf(" = ");
-    VARDECL_INIT( arg_node) = TRAVopt( VARDECL_INIT( arg_node), arg_info);
-  }
-  VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT( arg_node), arg_info);
 
-  // print semicolmn
+    // print the expression
+    VARDECL_INIT( arg_node) = TRAVdo( VARDECL_INIT( arg_node), arg_info);
+  }
+
+  // print semicolon
   printf(";\n");
+
+  // print the next decleration
+  VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT( arg_node), arg_info);
 
   DBUG_ENTER ("PRTvardecl");
   DBUG_RETURN (arg_node);

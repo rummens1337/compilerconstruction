@@ -37,7 +37,7 @@ static int yyerror( char *errname);
 }
 
 %token PARENTHESIS_L PARENTHESIS_R CURLY_L CURLY_R BRACKET_L BRACKET_R COMMA SEMICOLON
-%token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND LET NEG NOT
+%token MINUS PLUS STAR SLASH PERCENT LE LT GE GT EQ NE OR AND LET NEG
 %token INT FLOAT BOOL VOID TRUEVAL FALSEVAL
 %token EXTERN EXPORT RETURN
 %token IF ELSE DO WHILE FOR
@@ -49,10 +49,9 @@ static int yyerror( char *errname);
 %type <node> intval floatval boolval constant expr
 %type <node> stmts stmt assign varlet program 
 %type <node> return exprstmt binop exprs monop 
-%type <node> vardecl
-// %type <node> fundef funbody fundefs decl decls globdecl globdef vardecls
-
-// %type <node> fundec
+%type <node> vardecl fundef funbody block ifelse
+%type <node> decl decls globdecl globdef for dowhile
+%type <node> param while
 
 %type <ctype> type
 
@@ -60,26 +59,137 @@ static int yyerror( char *errname);
 
 %left OR
 %left AND
-%left EQ NEQ
+%left EQ NE
 %left LT GT LET LE GE
 %left PLUS MINUS
 %left STAR SLASH PERCENT
-%left NOT NEG
+%left NEG
 
 %nonassoc ID
-%nonassoc PARENTHESIS_L PARENTHESIS_R
+%nonassoc PARENTHESIS_L
+%nonassoc PARENTHESIS_R
+%nonassoc ELSE
 
 %%
 
 program: 
-    // decls
-    //     {
-    //         parseresult = $1;
-    //     }
-    // |  
-    stmts 
+        decls
         {
             parseresult = $1;
+        }
+    ;
+
+decls: decl decls
+        {
+            $$ = TBmakeDecls( $1, $2);
+        }
+    |   decl
+        {
+            $$ = TBmakeDecls( $1, NULL);
+        }
+    ;
+
+decl: globdecl
+        {
+            $$ = $1;
+        }
+    |   globdef
+        {
+            $$ = $1;
+        }
+    |   fundef
+        {
+            $$ = $1;
+        }
+    ;
+
+globdecl: EXTERN type ID SEMICOLON
+        {
+            $$ = TBmakeGlobdecl($2, STRcpy( $3), NULL);
+        }
+    ;
+
+// @todo check how to pass export flag
+globdef: type ID SEMICOLON
+        {
+            $$ = TBmakeGlobdef($1, STRcpy( $2), NULL, NULL);
+        }
+    |   type ID LET expr SEMICOLON
+        {
+            $$ = TBmakeGlobdef($1, STRcpy( $2), NULL, $4);
+        }
+    |   EXPORT type ID SEMICOLON
+        {
+            $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, NULL);
+        }
+    |   EXPORT type ID LET expr SEMICOLON
+        {
+            $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, $5);
+        }
+    ;
+
+fundef: type ID PARENTHESIS_L PARENTHESIS_R  CURLY_L funbody CURLY_R
+        {
+            $$ = TBmakeFundef( $1, STRcpy( $2), $6, NULL);
+        }
+    |   type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+        {
+            $$ = TBmakeFundef( $1, STRcpy( $2), $7, $4);
+        }
+    |   EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+        {
+            $$ = TBmakeFundef( $2, STRcpy( $3), $7, NULL);
+        }
+    |   EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+        {
+            $$ = TBmakeFundef( $2, STRcpy( $3), $8, $5);
+        }
+    ;
+
+param: type ID COMMA param
+        {
+            $$ = TBmakeParam( STRcpy( $2), $1, NULL, $4);
+        }
+    |   type ID
+        {
+            $$ = TBmakeParam( STRcpy( $2), $1, NULL, NULL);
+        }
+    ;
+
+// first line is to support empty function bodies
+funbody: 
+        {
+            $$ = TBmakeFunbody( NULL, NULL, NULL);
+        }
+    |   vardecl
+        {
+            $$ = TBmakeFunbody( $1, NULL, NULL);
+        }
+    |   stmts
+        {
+            $$ = TBmakeFunbody( NULL, NULL, $1);
+        }
+    |   vardecl stmts
+        {
+            $$ = TBmakeFunbody( $1, NULL, $2);
+        }
+    ;
+
+vardecl: type ID SEMICOLON
+        {
+            $$ = TBmakeVardecl( STRcpy( $2), $1, NULL, NULL, NULL);
+        }
+    |   type ID LET expr SEMICOLON
+        {
+            $$ = TBmakeVardecl( STRcpy( $2), $1, NULL, $4, NULL);
+        }
+    |   type ID SEMICOLON vardecl
+        {
+            $$ = TBmakeVardecl( STRcpy( $2), $1, NULL, NULL, $4);
+        }
+    |   type ID LET expr SEMICOLON vardecl
+        {
+            $$ = TBmakeVardecl( STRcpy( $2), $1, NULL, $4, $6);
         }
     ;
 
@@ -93,35 +203,7 @@ stmts: stmt stmts
         }
     ;
 
-// decls: decl decls
-//         {
-//             $$ = TBmakeDecls( $1, $2);
-//         }
-//     |   decl
-//         {
-//             $$ = TBmakeDecls( $1, NULL);
-//         }
-//     ;
-
-// decl: globdecl
-//         {
-//             $$ = $1;
-//         }
-//     |   globdef
-//         {
-//             $$ = $1;
-//         }
-//     |   fundefs
-//         {
-//             $$ = $1;
-//         }
-//     ;
-
 stmt: assign
-        {
-            $$ = $1;
-        }
-    |   return
         {
             $$ = $1;
         }
@@ -129,110 +211,99 @@ stmt: assign
         {
             $$ = $1;
         }
-    |   vardecl
+    |   ifelse
         {
             $$ = $1;
-        } 
+        }
+    |   while
+        {
+            $$ = $1;
+        }
+    |   dowhile
+        {
+            $$ = $1;
+        }
+    |   for
+        {
+            $$ = $1;
+        }
+    |   return
+        {
+            $$ = $1;
+        }
     ;
 
-// fundec: EXTERN type ID PARENTHESIS_L exprs PARENTHESIS_R SEMICOLON
-//         {
-//             $$ = TBmakeFundec($2, $3, $8, $4);
-//         }
-//     ;
+ifelse: IF PARENTHESIS_L expr PARENTHESIS_R block
+        {
+            $$ = TBmakeIfelse($3, $5, NULL);
+        }
+    |   IF PARENTHESIS_L expr PARENTHESIS_R block ELSE block
+        {
+            $$ = TBmakeIfelse($3, $5, $7);
+        }
+    ;
 
-// fundefs: fundef fundefs
-//         {
-//             $$ = TBmakeFundefs( $1, $2);
-//         }
-//     |   fundef
-//         {
-//             $$ = TBmakeFundefs( $1, NULL);
-//         }
-//     ;
+while: WHILE PARENTHESIS_L expr PARENTHESIS_R block
+        {
+            $$ = TBmakeWhile( $3, $5);
+        }
+    ;
 
-// fundef: type ID PARENTHESIS_L exprs PARENTHESIS_R funbody
-//         {
-//             $$ = TBmakeFundef( $1, $2, $6, $4);
-//         }
-//     |   EXPORT type ID PARENTHESIS_L exprs PARENTHESIS_R funbody
-//         {
-//             $$ = TBmakeFundef( $2, $3, $7, $5);
-//         }
-//     ;
+dowhile: DO block WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
+        {
+            $$ = TBmakeDowhile( $2, $5);
+        }
+    ;
 
-// funbody: CURLY_L vardecls fundefs stmts CURLY_R
-//         {
-//             $$ = TBmakeFunbody( $2, $3, $4);
-//         }
-//     ;
+for: FOR PARENTHESIS_L INT ID LET expr COMMA expr PARENTHESIS_R block
+        {
+            $$ = TBmakeFor( STRcpy( $4), $6, $8, NULL, $10);
+        }
+    |   FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R block
+        {
+            $$ = TBmakeFor( STRcpy( $4), $6, $8, $10, $12);
+        }
+    ;
+
+block: CURLY_L CURLY_R
+        {
+            $$ = NULL;
+        }
+    |   CURLY_L stmts CURLY_R
+        {
+            $$ = $2;
+        }
+    |   stmt
+        {
+            $$ = $1;
+        }
+    ;
 
 return: RETURN SEMICOLON
         {
-          $$ = TBmakeReturn( NULL);
+            $$ = TBmakeReturn( NULL);
         }
     |   RETURN expr SEMICOLON
         {
-          $$ = TBmakeReturn( $2);
+            $$ = TBmakeReturn( $2);
         }
     ;
 
-assign: varlet LET expr
+exprstmt: expr SEMICOLON
         {
-          $$ = TBmakeAssign( $1, $3);
+            $$ = TBmakeExprstmt( $1);
+        }
+    ;
+
+assign: varlet LET expr SEMICOLON
+        {
+            $$ = TBmakeAssign( $1, $3);
         }
     ;
 
 varlet: ID
         {
-          $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
-        }
-    ;
-
-// @todo check how to pass export flag
-// @todo check how to declare global def without 
-// globdef: type ID SEMICOLON
-//         {
-//             $$ = TBmakeGlobdef($1, $2, NULL, NULL);
-//         }
-//     |   type ID LET expr SEMICOLON
-//         {
-//             $$ = TBmakeGlobdef($1, $2, NULL, $4);
-//         } 
-//     |   EXPORT type ID SEMICOLON
-//         {
-//             $$ = TBmakeGlobdef($2, $3, NULL, NULL);
-//         }
-//     |   EXPORT type ID LET expr SEMICOLON
-//         {
-//             $$ = TBmakeGlobdef($2, $3, NULL, $5);
-//         }
-//     ;
-
-// globdecl: EXTERN type ID SEMICOLON
-//         {
-//             $$ = TBmakeGlobdecl($2, $3, NULL);
-//         }
-//     ;
-
-
-// vardecls: vardecl vardecls
-//         {
-//             $$ = TBmakeVardel($1, $2);
-//         }
-//     |   vardecl
-//         {
-//             $$ = TBmakeVardels($1, NULL);
-//         }
-//     ;
-
-vardecl: type ID SEMICOLON
-        {
-            $$ = TBmakeVardecl($2, $1, NULL, NULL, NULL);
-        }
-    |   type ID LET expr SEMICOLON
-        {
-            $$ = TBmakeVardecl($2, $1, NULL, $4, NULL);
+            $$ = TBmakeVarlet( STRcpy( $1), NULL, NULL);
         }
     ;
 
@@ -269,17 +340,11 @@ expr:
         }
     |   ID PARENTHESIS_L exprs PARENTHESIS_R
         {
-          $$ = TBmakeFuncall( STRcpy( $1), NULL, $3);
+            $$ = TBmakeFuncall( STRcpy( $1), NULL, $3);
         }
     |   ID PARENTHESIS_L PARENTHESIS_R
         {
             $$ = TBmakeFuncall( STRcpy( $1), NULL, NULL);
-        }
-    ;
-
-exprstmt: expr SEMICOLON
-        {
-            $$ = TBmakeExprstmt( $1);
         }
     ;
 
@@ -339,6 +404,10 @@ binop: expr LE expr
         { 
             $$ = TBmakeBinop( BO_eq, $1, $3);
         }
+    |   expr NE expr 
+        { 
+            $$ = TBmakeBinop( BO_ne, $1, $3);
+        }
     |   expr OR expr 
         { 
             $$ = TBmakeBinop( BO_or, $1, $3);
@@ -349,11 +418,11 @@ binop: expr LE expr
         }
     |   expr MINUS expr
         { 
-            $$ = TBmakeBinop( BO_add, $1, $3);
+            $$ = TBmakeBinop( BO_sub, $1, $3);
         }
     |   expr PLUS expr 
         { 
-            $$ = TBmakeBinop( BO_sub, $1, $3);
+            $$ = TBmakeBinop( BO_add, $1, $3);
         }
     |   expr STAR expr
         {
@@ -373,9 +442,9 @@ monop:  NEG expr
         {
             $$ = TBmakeMonop( MO_neg, $2);
         }
-    |   NOT expr
+    |   MINUS expr
         {
-            $$ = TBmakeMonop( MO_not, $2);
+            $$ = TBmakeMonop( MO_minus, $2);
         }
     ;
 

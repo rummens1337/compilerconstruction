@@ -7,7 +7,7 @@
 /*
  * This enumeration defines all monops
  */
-typedef enum { MO_not, MO_neg, MO_unknown } monop;
+typedef enum { MO_minus, MO_neg, MO_unknown } monop;
 
 /*
  * This enumeration defines all binops
