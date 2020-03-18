@@ -36,28 +36,22 @@
  ***************************************************************************/
 void printType(char type)
 {
-
-  char *tmp;
-  
   switch (type) {
     case T_void:
-      tmp = "void";
+      printf("void");
       break;
     case T_bool:
-      tmp = "bool";
+      printf("bool");
       break;
     case T_int:
-      tmp = "int";
+      printf("int");
       break;
     case T_float:
-      tmp = "float";
+      printf("float");
       break;
     case T_unknown:
-      DBUG_ASSERT( 0, "unknown monop detected!");
+      DBUG_ASSERT( 0, "unknown type detected!");
   }
-
-  printf( "%s", tmp);
-
 }
 
 /*
@@ -371,27 +365,6 @@ PRTvarlet (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTvarlet");
 
   printf( "%s", VARLET_NAME( arg_node));
-
-  DBUG_RETURN (arg_node);
-}
-
-
-/** <!--******************************************************************-->
- *
- * @fn PRTsymboltableentry
- *
- * @brief Prints the node and its sons/attributes
- *
- * @param arg_node letrec node to process
- * @param arg_info pointer to info structure
- *
- * @return processed node
- *
- ***************************************************************************/
-
-node *PRTsymboltableentry (node * arg_node, info * arg_info)
-{
-  DBUG_ENTER ("PRTsymboltableentry");
 
   DBUG_RETURN (arg_node);
 }
@@ -1110,9 +1083,50 @@ PRTvardecl (node * arg_node, info * arg_info)
   DBUG_RETURN (arg_node);
 }
 
+/** <!--******************************************************************-->
+ *
+ * @fn PRTsymboltable
+ *
+ * @brief Prints the node and its sons/attributes
+ *
+ * @param arg_node letrec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+
+node *PRTsymboltable (node * arg_node, info * arg_info)
+{
+  DBUG_ENTER ("PRTsymboltable");
+
+  printf("PRTsymboltable");
+
+  DBUG_RETURN (arg_node);
+}
 
 
+/** <!--******************************************************************-->
+ *
+ * @fn PRTsymboltableentry
+ *
+ * @brief Prints the node and its sons/attributes
+ *
+ * @param arg_node letrec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
 
+node *PRTsymboltableentry (node * arg_node, info * arg_info)
+{
+  DBUG_ENTER ("PRTsymboltableentry");
+
+  printf("PRTsymboltableentry");
+
+  DBUG_RETURN (arg_node);
+}
 
 /** <!-- ****************************************************************** --> 
  * @brief Prints the given syntaxtree

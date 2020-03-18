@@ -27,6 +27,15 @@
       <traversal id="COPY" name="Copy Syntax Tree" default="user" include="copy_node.h" />
       <traversal id="FREE" name="Free Syntax Tree" default="user" include="free_node.h" />
       <traversal id="CHK" name="Check Syntax Tree" default="user" include="check.h" />
+
+        <traversal id="PST" name="Process symbol table" default="user" include="process_symbol_table.h">
+            <travuser>
+                <node name="FunDef" />
+                <!-- <node name="GlobDecl" /> -->
+                <node name="GlobDef" />
+                <node name="VarDecl" />
+            </travuser>
+      </traversal>
     </general>
 </phases>
 <nodesets>
@@ -79,6 +88,110 @@
             </son>
         </sons>
         <attributes>
+        </attributes>
+    </node>
+
+    <node name="SymbolTable">
+        <sons>
+            <son name="Entry">
+                <targets>
+                    <target mandatory="no">
+                        <node name="SymbolTableEntry"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+        </sons>
+        <attributes>
+            <attribute name="Parent">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="no">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+        </attributes>
+    </node>
+
+    <node name="SymbolTableEntry">
+        <sons>
+            <son name="Next">
+                <targets>
+                    <target mandatory="no">
+                        <node name="SymbolTableEntry"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+            <son name="Table">
+                <targets>
+                    <target mandatory="no">
+                        <node name="SymbolTable"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
+        </sons>
+        <attributes>
+            <attribute name="Name">
+                <type name="String">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Type">
+                <type name="Type">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Depth">
+                <type name="Int">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Node">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
     </node>
 

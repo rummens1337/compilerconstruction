@@ -29,6 +29,20 @@ ENDPHASE( ld)
 
 /******************************************************************************/
 
+PHASE( ca,
+       "Context analysis",
+       ALWAYS)
+
+SUBPHASE( pst, 
+          "ProcessSymbolTable",
+          PSTdoProcessSymbolTable, 
+          ALWAYS,
+          ca)
+
+ENDPHASE( ca) 
+
+
+/******************************************************************************/
 
 PHASE( cg,
        "Generating Code",
