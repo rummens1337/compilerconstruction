@@ -39,8 +39,13 @@ SUBPHASE( pst,
           ALWAYS,
           ca)
 
-ENDPHASE( ca) 
+SUBPHASE( tc, 
+          "TypeChecker",
+          TCdoTypeChecker, 
+          ALWAYS,
+          ca)
 
+ENDPHASE( ca) 
 
 /******************************************************************************/
 

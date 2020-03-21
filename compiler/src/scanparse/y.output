@@ -1,0 +1,3111 @@
+Terminals unused in grammar
+
+   BRACKET_L
+   BRACKET_R
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: decls
+
+    2 decls: decl decls
+    3      | decl
+
+    4 decl: globdecl
+    5     | globdef
+    6     | fundef
+
+    7 globdecl: EXTERN type ID SEMICOLON
+
+    8 globdef: type ID SEMICOLON
+    9        | type ID LET expr SEMICOLON
+   10        | EXPORT type ID SEMICOLON
+   11        | EXPORT type ID LET expr SEMICOLON
+
+   12 fundef: type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   13       | type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+   14       | EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   15       | EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+   16 param: type ID COMMA param
+   17      | type ID
+
+   18 funbody: %empty
+   19        | vardecl
+   20        | stmts
+   21        | vardecl stmts
+
+   22 vardecl: type ID SEMICOLON
+   23        | type ID LET expr SEMICOLON
+   24        | type ID SEMICOLON vardecl
+   25        | type ID LET expr SEMICOLON vardecl
+
+   26 stmts: stmt stmts
+   27      | stmt
+
+   28 stmt: assign
+   29     | exprstmt
+   30     | ifelse
+   31     | while
+   32     | dowhile
+   33     | for
+   34     | return
+
+   35 ifelse: IF PARENTHESIS_L expr PARENTHESIS_R block
+   36       | IF PARENTHESIS_L expr PARENTHESIS_R block ELSE block
+
+   37 while: WHILE PARENTHESIS_L expr PARENTHESIS_R block
+
+   38 dowhile: DO block WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R block
+
+   41 block: CURLY_L CURLY_R
+   42      | CURLY_L stmts CURLY_R
+   43      | stmt
+
+   44 return: RETURN SEMICOLON
+   45       | RETURN expr SEMICOLON
+
+   46 exprstmt: expr SEMICOLON
+
+   47 assign: varlet LET expr SEMICOLON
+
+   48 varlet: ID
+
+   49 exprs: expr COMMA exprs
+   50      | expr
+
+   51 expr: constant
+   52     | ID
+   53     | binop
+   54     | monop
+   55     | PARENTHESIS_L type PARENTHESIS_R expr
+   56     | ID PARENTHESIS_L exprs PARENTHESIS_R
+   57     | ID PARENTHESIS_L PARENTHESIS_R
+
+   58 constant: floatval
+   59         | intval
+   60         | boolval
+
+   61 floatval: FLOATNUM
+
+   62 intval: NUM
+
+   63 boolval: TRUEVAL
+   64        | FALSEVAL
+
+   65 binop: expr LE expr
+   66      | expr LT expr
+   67      | expr GE expr
+   68      | expr GT expr
+   69      | expr EQ expr
+   70      | expr NE expr
+   71      | expr OR expr
+   72      | expr AND expr
+   73      | expr MINUS expr
+   74      | expr PLUS expr
+   75      | expr STAR expr
+   76      | expr SLASH expr
+   77      | expr PERCENT expr
+
+   78 monop: NEG expr
+   79      | MINUS expr
+
+   80 type: INT
+   81     | FLOAT
+   82     | BOOL
+   83     | VOID
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+PARENTHESIS_L (258) 12 13 14 15 35 36 37 38 39 40 55 56 57
+PARENTHESIS_R (259) 12 13 14 15 35 36 37 38 39 40 55 56 57
+CURLY_L (260) 12 13 14 15 41 42
+CURLY_R (261) 12 13 14 15 41 42
+BRACKET_L (262)
+BRACKET_R (263)
+COMMA (264) 16 39 40 49
+SEMICOLON (265) 7 8 9 10 11 22 23 24 25 38 44 45 46 47
+MINUS (266) 73 79
+PLUS (267) 74
+STAR (268) 75
+SLASH (269) 76
+PERCENT (270) 77
+LE (271) 65
+LT (272) 66
+GE (273) 67
+GT (274) 68
+EQ (275) 69
+NE (276) 70
+OR (277) 71
+AND (278) 72
+LET (279) 9 11 23 25 39 40 47
+NEG (280) 78
+INT (281) 39 40 80
+FLOAT (282) 81
+BOOL (283) 82
+VOID (284) 83
+TRUEVAL (285) 63
+FALSEVAL (286) 64
+EXTERN (287) 7
+EXPORT (288) 10 11 14 15
+RETURN (289) 44 45
+IF (290) 35 36
+ELSE (291) 36
+DO (292) 38
+WHILE (293) 37 38
+FOR (294) 39 40
+NUM (295) 62
+FLOATNUM (296) 61
+ID (297) 7 8 9 10 11 12 13 14 15 16 17 22 23 24 25 39 40 48 52 56 57
+
+
+Nonterminals, with rules where they appear
+
+$accept (43)
+    on left: 0
+program (44)
+    on left: 1, on right: 0
+decls (45)
+    on left: 2 3, on right: 1 2
+decl (46)
+    on left: 4 5 6, on right: 2 3
+globdecl (47)
+    on left: 7, on right: 4
+globdef (48)
+    on left: 8 9 10 11, on right: 5
+fundef (49)
+    on left: 12 13 14 15, on right: 6
+param (50)
+    on left: 16 17, on right: 13 15 16
+funbody (51)
+    on left: 18 19 20 21, on right: 12 13 14 15
+vardecl (52)
+    on left: 22 23 24 25, on right: 19 21 24 25
+stmts (53)
+    on left: 26 27, on right: 20 21 26 42
+stmt (54)
+    on left: 28 29 30 31 32 33 34, on right: 26 27 43
+ifelse (55)
+    on left: 35 36, on right: 30
+while (56)
+    on left: 37, on right: 31
+dowhile (57)
+    on left: 38, on right: 32
+for (58)
+    on left: 39 40, on right: 33
+block (59)
+    on left: 41 42 43, on right: 35 36 37 38 39 40
+return (60)
+    on left: 44 45, on right: 34
+exprstmt (61)
+    on left: 46, on right: 29
+assign (62)
+    on left: 47, on right: 28
+varlet (63)
+    on left: 48, on right: 47
+exprs (64)
+    on left: 49 50, on right: 49 56
+expr (65)
+    on left: 51 52 53 54 55 56 57, on right: 9 11 23 25 35 36 37 38
+    39 40 45 46 47 49 50 55 65 66 67 68 69 70 71 72 73 74 75 76 77
+    78 79
+constant (66)
+    on left: 58 59 60, on right: 51
+floatval (67)
+    on left: 61, on right: 58
+intval (68)
+    on left: 62, on right: 59
+boolval (69)
+    on left: 63 64, on right: 60
+binop (70)
+    on left: 65 66 67 68 69 70 71 72 73 74 75 76 77, on right: 53
+monop (71)
+    on left: 78 79, on right: 54
+type (72)
+    on left: 80 81 82 83, on right: 7 8 9 10 11 12 13 14 15 16 17 22
+    23 24 25 55
+
+
+State 0
+
+    0 $accept: . program $end
+
+    INT     shift, and go to state 1
+    FLOAT   shift, and go to state 2
+    BOOL    shift, and go to state 3
+    VOID    shift, and go to state 4
+    EXTERN  shift, and go to state 5
+    EXPORT  shift, and go to state 6
+
+    program   go to state 7
+    decls     go to state 8
+    decl      go to state 9
+    globdecl  go to state 10
+    globdef   go to state 11
+    fundef    go to state 12
+    type      go to state 13
+
+
+State 1
+
+   80 type: INT .
+
+    $default  reduce using rule 80 (type)
+
+
+State 2
+
+   81 type: FLOAT .
+
+    $default  reduce using rule 81 (type)
+
+
+State 3
+
+   82 type: BOOL .
+
+    $default  reduce using rule 82 (type)
+
+
+State 4
+
+   83 type: VOID .
+
+    $default  reduce using rule 83 (type)
+
+
+State 5
+
+    7 globdecl: EXTERN . type ID SEMICOLON
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    type  go to state 14
+
+
+State 6
+
+   10 globdef: EXPORT . type ID SEMICOLON
+   11        | EXPORT . type ID LET expr SEMICOLON
+   14 fundef: EXPORT . type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   15       | EXPORT . type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    type  go to state 15
+
+
+State 7
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 16
+
+
+State 8
+
+    1 program: decls .
+
+    $default  reduce using rule 1 (program)
+
+
+State 9
+
+    2 decls: decl . decls
+    3      | decl .
+
+    INT     shift, and go to state 1
+    FLOAT   shift, and go to state 2
+    BOOL    shift, and go to state 3
+    VOID    shift, and go to state 4
+    EXTERN  shift, and go to state 5
+    EXPORT  shift, and go to state 6
+
+    $default  reduce using rule 3 (decls)
+
+    decls     go to state 17
+    decl      go to state 9
+    globdecl  go to state 10
+    globdef   go to state 11
+    fundef    go to state 12
+    type      go to state 13
+
+
+State 10
+
+    4 decl: globdecl .
+
+    $default  reduce using rule 4 (decl)
+
+
+State 11
+
+    5 decl: globdef .
+
+    $default  reduce using rule 5 (decl)
+
+
+State 12
+
+    6 decl: fundef .
+
+    $default  reduce using rule 6 (decl)
+
+
+State 13
+
+    8 globdef: type . ID SEMICOLON
+    9        | type . ID LET expr SEMICOLON
+   12 fundef: type . ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   13       | type . ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    ID  shift, and go to state 18
+
+
+State 14
+
+    7 globdecl: EXTERN type . ID SEMICOLON
+
+    ID  shift, and go to state 19
+
+
+State 15
+
+   10 globdef: EXPORT type . ID SEMICOLON
+   11        | EXPORT type . ID LET expr SEMICOLON
+   14 fundef: EXPORT type . ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   15       | EXPORT type . ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    ID  shift, and go to state 20
+
+
+State 16
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 17
+
+    2 decls: decl decls .
+
+    $default  reduce using rule 2 (decls)
+
+
+State 18
+
+    8 globdef: type ID . SEMICOLON
+    9        | type ID . LET expr SEMICOLON
+   12 fundef: type ID . PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   13       | type ID . PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 21
+    SEMICOLON      shift, and go to state 22
+    LET            shift, and go to state 23
+
+
+State 19
+
+    7 globdecl: EXTERN type ID . SEMICOLON
+
+    SEMICOLON  shift, and go to state 24
+
+
+State 20
+
+   10 globdef: EXPORT type ID . SEMICOLON
+   11        | EXPORT type ID . LET expr SEMICOLON
+   14 fundef: EXPORT type ID . PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
+   15       | EXPORT type ID . PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 25
+    SEMICOLON      shift, and go to state 26
+    LET            shift, and go to state 27
+
+
+State 21
+
+   12 fundef: type ID PARENTHESIS_L . PARENTHESIS_R CURLY_L funbody CURLY_R
+   13       | type ID PARENTHESIS_L . param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_R  shift, and go to state 28
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+
+    param  go to state 29
+    type   go to state 30
+
+
+State 22
+
+    8 globdef: type ID SEMICOLON .
+
+    $default  reduce using rule 8 (globdef)
+
+
+State 23
+
+    9 globdef: type ID LET . expr SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 39
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 24
+
+    7 globdecl: EXTERN type ID SEMICOLON .
+
+    $default  reduce using rule 7 (globdecl)
+
+
+State 25
+
+   14 fundef: EXPORT type ID PARENTHESIS_L . PARENTHESIS_R CURLY_L funbody CURLY_R
+   15       | EXPORT type ID PARENTHESIS_L . param PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_R  shift, and go to state 46
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+
+    param  go to state 47
+    type   go to state 30
+
+
+State 26
+
+   10 globdef: EXPORT type ID SEMICOLON .
+
+    $default  reduce using rule 10 (globdef)
+
+
+State 27
+
+   11 globdef: EXPORT type ID LET . expr SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 48
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 28
+
+   12 fundef: type ID PARENTHESIS_L PARENTHESIS_R . CURLY_L funbody CURLY_R
+
+    CURLY_L  shift, and go to state 49
+
+
+State 29
+
+   13 fundef: type ID PARENTHESIS_L param . PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_R  shift, and go to state 50
+
+
+State 30
+
+   16 param: type . ID COMMA param
+   17      | type . ID
+
+    ID  shift, and go to state 51
+
+
+State 31
+
+   55 expr: PARENTHESIS_L . type PARENTHESIS_R expr
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    type  go to state 52
+
+
+State 32
+
+   79 monop: MINUS . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 53
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 33
+
+   78 monop: NEG . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 54
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 34
+
+   63 boolval: TRUEVAL .
+
+    $default  reduce using rule 63 (boolval)
+
+
+State 35
+
+   64 boolval: FALSEVAL .
+
+    $default  reduce using rule 64 (boolval)
+
+
+State 36
+
+   62 intval: NUM .
+
+    $default  reduce using rule 62 (intval)
+
+
+State 37
+
+   61 floatval: FLOATNUM .
+
+    $default  reduce using rule 61 (floatval)
+
+
+State 38
+
+   52 expr: ID .
+   56     | ID . PARENTHESIS_L exprs PARENTHESIS_R
+   57     | ID . PARENTHESIS_L PARENTHESIS_R
+
+    PARENTHESIS_L  shift, and go to state 55
+
+    $default  reduce using rule 52 (expr)
+
+
+State 39
+
+    9 globdef: type ID LET expr . SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 56
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 40
+
+   51 expr: constant .
+
+    $default  reduce using rule 51 (expr)
+
+
+State 41
+
+   58 constant: floatval .
+
+    $default  reduce using rule 58 (constant)
+
+
+State 42
+
+   59 constant: intval .
+
+    $default  reduce using rule 59 (constant)
+
+
+State 43
+
+   60 constant: boolval .
+
+    $default  reduce using rule 60 (constant)
+
+
+State 44
+
+   53 expr: binop .
+
+    $default  reduce using rule 53 (expr)
+
+
+State 45
+
+   54 expr: monop .
+
+    $default  reduce using rule 54 (expr)
+
+
+State 46
+
+   14 fundef: EXPORT type ID PARENTHESIS_L PARENTHESIS_R . CURLY_L funbody CURLY_R
+
+    CURLY_L  shift, and go to state 70
+
+
+State 47
+
+   15 fundef: EXPORT type ID PARENTHESIS_L param . PARENTHESIS_R CURLY_L funbody CURLY_R
+
+    PARENTHESIS_R  shift, and go to state 71
+
+
+State 48
+
+   11 globdef: EXPORT type ID LET expr . SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 72
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 49
+
+   12 fundef: type ID PARENTHESIS_L PARENTHESIS_R CURLY_L . funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 18 (funbody)
+
+    funbody   go to state 79
+    vardecl   go to state 80
+    stmts     go to state 81
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+    type      go to state 92
+
+
+State 50
+
+   13 fundef: type ID PARENTHESIS_L param PARENTHESIS_R . CURLY_L funbody CURLY_R
+
+    CURLY_L  shift, and go to state 93
+
+
+State 51
+
+   16 param: type ID . COMMA param
+   17      | type ID .
+
+    COMMA  shift, and go to state 94
+
+    $default  reduce using rule 17 (param)
+
+
+State 52
+
+   55 expr: PARENTHESIS_L type . PARENTHESIS_R expr
+
+    PARENTHESIS_R  shift, and go to state 95
+
+
+State 53
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+   79 monop: MINUS expr .
+
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 79 (monop)
+
+
+State 54
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+   78 monop: NEG expr .
+
+    $default  reduce using rule 78 (monop)
+
+
+State 55
+
+   56 expr: ID PARENTHESIS_L . exprs PARENTHESIS_R
+   57     | ID PARENTHESIS_L . PARENTHESIS_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    PARENTHESIS_R  shift, and go to state 96
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    exprs     go to state 97
+    expr      go to state 98
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 56
+
+    9 globdef: type ID LET expr SEMICOLON .
+
+    $default  reduce using rule 9 (globdef)
+
+
+State 57
+
+   73 binop: expr MINUS . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 99
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 58
+
+   74 binop: expr PLUS . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 100
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 59
+
+   75 binop: expr STAR . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 101
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 60
+
+   76 binop: expr SLASH . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 102
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 61
+
+   77 binop: expr PERCENT . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 103
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 62
+
+   65 binop: expr LE . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 104
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 63
+
+   66 binop: expr LT . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 105
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 64
+
+   67 binop: expr GE . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 106
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 65
+
+   68 binop: expr GT . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 107
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 66
+
+   69 binop: expr EQ . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 108
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 67
+
+   70 binop: expr NE . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 109
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 68
+
+   71 binop: expr OR . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 110
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 69
+
+   72 binop: expr AND . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 111
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 70
+
+   14 fundef: EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L . funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 18 (funbody)
+
+    funbody   go to state 112
+    vardecl   go to state 80
+    stmts     go to state 81
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+    type      go to state 92
+
+
+State 71
+
+   15 fundef: EXPORT type ID PARENTHESIS_L param PARENTHESIS_R . CURLY_L funbody CURLY_R
+
+    CURLY_L  shift, and go to state 113
+
+
+State 72
+
+   11 globdef: EXPORT type ID LET expr SEMICOLON .
+
+    $default  reduce using rule 11 (globdef)
+
+
+State 73
+
+   44 return: RETURN . SEMICOLON
+   45       | RETURN . expr SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    SEMICOLON      shift, and go to state 114
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 115
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 74
+
+   35 ifelse: IF . PARENTHESIS_L expr PARENTHESIS_R block
+   36       | IF . PARENTHESIS_L expr PARENTHESIS_R block ELSE block
+
+    PARENTHESIS_L  shift, and go to state 116
+
+
+State 75
+
+   38 dowhile: DO . block WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 119
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 76
+
+   37 while: WHILE . PARENTHESIS_L expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 120
+
+
+State 77
+
+   39 for: FOR . PARENTHESIS_L INT ID LET expr COMMA expr PARENTHESIS_R block
+   40    | FOR . PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 121
+
+
+State 78
+
+   48 varlet: ID .
+   52 expr: ID .
+   56     | ID . PARENTHESIS_L exprs PARENTHESIS_R
+   57     | ID . PARENTHESIS_L PARENTHESIS_R
+
+    PARENTHESIS_L  shift, and go to state 55
+
+    LET       reduce using rule 48 (varlet)
+    $default  reduce using rule 52 (expr)
+
+
+State 79
+
+   12 fundef: type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody . CURLY_R
+
+    CURLY_R  shift, and go to state 122
+
+
+State 80
+
+   19 funbody: vardecl .
+   21        | vardecl . stmts
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 19 (funbody)
+
+    stmts     go to state 123
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 81
+
+   20 funbody: stmts .
+
+    $default  reduce using rule 20 (funbody)
+
+
+State 82
+
+   26 stmts: stmt . stmts
+   27      | stmt .
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 27 (stmts)
+
+    stmts     go to state 124
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 83
+
+   30 stmt: ifelse .
+
+    $default  reduce using rule 30 (stmt)
+
+
+State 84
+
+   31 stmt: while .
+
+    $default  reduce using rule 31 (stmt)
+
+
+State 85
+
+   32 stmt: dowhile .
+
+    $default  reduce using rule 32 (stmt)
+
+
+State 86
+
+   33 stmt: for .
+
+    $default  reduce using rule 33 (stmt)
+
+
+State 87
+
+   34 stmt: return .
+
+    $default  reduce using rule 34 (stmt)
+
+
+State 88
+
+   29 stmt: exprstmt .
+
+    $default  reduce using rule 29 (stmt)
+
+
+State 89
+
+   28 stmt: assign .
+
+    $default  reduce using rule 28 (stmt)
+
+
+State 90
+
+   47 assign: varlet . LET expr SEMICOLON
+
+    LET  shift, and go to state 125
+
+
+State 91
+
+   46 exprstmt: expr . SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 126
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 92
+
+   22 vardecl: type . ID SEMICOLON
+   23        | type . ID LET expr SEMICOLON
+   24        | type . ID SEMICOLON vardecl
+   25        | type . ID LET expr SEMICOLON vardecl
+
+    ID  shift, and go to state 127
+
+
+State 93
+
+   13 fundef: type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L . funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 18 (funbody)
+
+    funbody   go to state 128
+    vardecl   go to state 80
+    stmts     go to state 81
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+    type      go to state 92
+
+
+State 94
+
+   16 param: type ID COMMA . param
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    param  go to state 129
+    type   go to state 30
+
+
+State 95
+
+   55 expr: PARENTHESIS_L type PARENTHESIS_R . expr
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 130
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 96
+
+   57 expr: ID PARENTHESIS_L PARENTHESIS_R .
+
+    $default  reduce using rule 57 (expr)
+
+
+State 97
+
+   56 expr: ID PARENTHESIS_L exprs . PARENTHESIS_R
+
+    PARENTHESIS_R  shift, and go to state 131
+
+
+State 98
+
+   49 exprs: expr . COMMA exprs
+   50      | expr .
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    COMMA    shift, and go to state 132
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+    EQ       shift, and go to state 66
+    NE       shift, and go to state 67
+    OR       shift, and go to state 68
+    AND      shift, and go to state 69
+
+    $default  reduce using rule 50 (exprs)
+
+
+State 99
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   73      | expr MINUS expr .
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 73 (binop)
+
+
+State 100
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   74      | expr PLUS expr .
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 74 (binop)
+
+
+State 101
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   75      | expr STAR expr .
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    $default  reduce using rule 75 (binop)
+
+
+State 102
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   76      | expr SLASH expr .
+   77      | expr . PERCENT expr
+
+    $default  reduce using rule 76 (binop)
+
+
+State 103
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+   77      | expr PERCENT expr .
+
+    $default  reduce using rule 77 (binop)
+
+
+State 104
+
+   65 binop: expr . LE expr
+   65      | expr LE expr .
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 65 (binop)
+
+
+State 105
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   66      | expr LT expr .
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 66 (binop)
+
+
+State 106
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   67      | expr GE expr .
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 67 (binop)
+
+
+State 107
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   68      | expr GT expr .
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+
+    $default  reduce using rule 68 (binop)
+
+
+State 108
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   69      | expr EQ expr .
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+
+    $default  reduce using rule 69 (binop)
+
+
+State 109
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   70      | expr NE expr .
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+
+    $default  reduce using rule 70 (binop)
+
+
+State 110
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   71      | expr OR expr .
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+    EQ       shift, and go to state 66
+    NE       shift, and go to state 67
+    AND      shift, and go to state 69
+
+    $default  reduce using rule 71 (binop)
+
+
+State 111
+
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   72      | expr AND expr .
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+    EQ       shift, and go to state 66
+    NE       shift, and go to state 67
+
+    $default  reduce using rule 72 (binop)
+
+
+State 112
+
+   14 fundef: EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody . CURLY_R
+
+    CURLY_R  shift, and go to state 133
+
+
+State 113
+
+   15 fundef: EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L . funbody CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    INT            shift, and go to state 1
+    FLOAT          shift, and go to state 2
+    BOOL           shift, and go to state 3
+    VOID           shift, and go to state 4
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    $default  reduce using rule 18 (funbody)
+
+    funbody   go to state 134
+    vardecl   go to state 80
+    stmts     go to state 81
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+    type      go to state 92
+
+
+State 114
+
+   44 return: RETURN SEMICOLON .
+
+    $default  reduce using rule 44 (return)
+
+
+State 115
+
+   45 return: RETURN expr . SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 135
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 116
+
+   35 ifelse: IF PARENTHESIS_L . expr PARENTHESIS_R block
+   36       | IF PARENTHESIS_L . expr PARENTHESIS_R block ELSE block
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 136
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 117
+
+   41 block: CURLY_L . CURLY_R
+   42      | CURLY_L . stmts CURLY_R
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_R        shift, and go to state 137
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmts     go to state 138
+    stmt      go to state 82
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 118
+
+   43 block: stmt .
+
+    $default  reduce using rule 43 (block)
+
+
+State 119
+
+   38 dowhile: DO block . WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
+
+    WHILE  shift, and go to state 139
+
+
+State 120
+
+   37 while: WHILE PARENTHESIS_L . expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 140
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 121
+
+   39 for: FOR PARENTHESIS_L . INT ID LET expr COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L . INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R block
+
+    INT  shift, and go to state 141
+
+
+State 122
+
+   12 fundef: type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R .
+
+    $default  reduce using rule 12 (fundef)
+
+
+State 123
+
+   21 funbody: vardecl stmts .
+
+    $default  reduce using rule 21 (funbody)
+
+
+State 124
+
+   26 stmts: stmt stmts .
+
+    $default  reduce using rule 26 (stmts)
+
+
+State 125
+
+   47 assign: varlet LET . expr SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 142
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 126
+
+   46 exprstmt: expr SEMICOLON .
+
+    $default  reduce using rule 46 (exprstmt)
+
+
+State 127
+
+   22 vardecl: type ID . SEMICOLON
+   23        | type ID . LET expr SEMICOLON
+   24        | type ID . SEMICOLON vardecl
+   25        | type ID . LET expr SEMICOLON vardecl
+
+    SEMICOLON  shift, and go to state 143
+    LET        shift, and go to state 144
+
+
+State 128
+
+   13 fundef: type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody . CURLY_R
+
+    CURLY_R  shift, and go to state 145
+
+
+State 129
+
+   16 param: type ID COMMA param .
+
+    $default  reduce using rule 16 (param)
+
+
+State 130
+
+   55 expr: PARENTHESIS_L type PARENTHESIS_R expr .
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    $default  reduce using rule 55 (expr)
+
+
+State 131
+
+   56 expr: ID PARENTHESIS_L exprs PARENTHESIS_R .
+
+    $default  reduce using rule 56 (expr)
+
+
+State 132
+
+   49 exprs: expr COMMA . exprs
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    exprs     go to state 146
+    expr      go to state 98
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 133
+
+   14 fundef: EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R .
+
+    $default  reduce using rule 14 (fundef)
+
+
+State 134
+
+   15 fundef: EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody . CURLY_R
+
+    CURLY_R  shift, and go to state 147
+
+
+State 135
+
+   45 return: RETURN expr SEMICOLON .
+
+    $default  reduce using rule 45 (return)
+
+
+State 136
+
+   35 ifelse: IF PARENTHESIS_L expr . PARENTHESIS_R block
+   36       | IF PARENTHESIS_L expr . PARENTHESIS_R block ELSE block
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    PARENTHESIS_R  shift, and go to state 148
+    MINUS          shift, and go to state 57
+    PLUS           shift, and go to state 58
+    STAR           shift, and go to state 59
+    SLASH          shift, and go to state 60
+    PERCENT        shift, and go to state 61
+    LE             shift, and go to state 62
+    LT             shift, and go to state 63
+    GE             shift, and go to state 64
+    GT             shift, and go to state 65
+    EQ             shift, and go to state 66
+    NE             shift, and go to state 67
+    OR             shift, and go to state 68
+    AND            shift, and go to state 69
+
+
+State 137
+
+   41 block: CURLY_L CURLY_R .
+
+    $default  reduce using rule 41 (block)
+
+
+State 138
+
+   42 block: CURLY_L stmts . CURLY_R
+
+    CURLY_R  shift, and go to state 149
+
+
+State 139
+
+   38 dowhile: DO block WHILE . PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 150
+
+
+State 140
+
+   37 while: WHILE PARENTHESIS_L expr . PARENTHESIS_R block
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    PARENTHESIS_R  shift, and go to state 151
+    MINUS          shift, and go to state 57
+    PLUS           shift, and go to state 58
+    STAR           shift, and go to state 59
+    SLASH          shift, and go to state 60
+    PERCENT        shift, and go to state 61
+    LE             shift, and go to state 62
+    LT             shift, and go to state 63
+    GE             shift, and go to state 64
+    GT             shift, and go to state 65
+    EQ             shift, and go to state 66
+    NE             shift, and go to state 67
+    OR             shift, and go to state 68
+    AND            shift, and go to state 69
+
+
+State 141
+
+   39 for: FOR PARENTHESIS_L INT . ID LET expr COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT . ID LET expr COMMA expr COMMA expr PARENTHESIS_R block
+
+    ID  shift, and go to state 152
+
+
+State 142
+
+   47 assign: varlet LET expr . SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 153
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 143
+
+   22 vardecl: type ID SEMICOLON .
+   24        | type ID SEMICOLON . vardecl
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    $default  reduce using rule 22 (vardecl)
+
+    vardecl  go to state 154
+    type     go to state 92
+
+
+State 144
+
+   23 vardecl: type ID LET . expr SEMICOLON
+   25        | type ID LET . expr SEMICOLON vardecl
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 155
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 145
+
+   13 fundef: type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R .
+
+    $default  reduce using rule 13 (fundef)
+
+
+State 146
+
+   49 exprs: expr COMMA exprs .
+
+    $default  reduce using rule 49 (exprs)
+
+
+State 147
+
+   15 fundef: EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R .
+
+    $default  reduce using rule 15 (fundef)
+
+
+State 148
+
+   35 ifelse: IF PARENTHESIS_L expr PARENTHESIS_R . block
+   36       | IF PARENTHESIS_L expr PARENTHESIS_R . block ELSE block
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 156
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 149
+
+   42 block: CURLY_L stmts CURLY_R .
+
+    $default  reduce using rule 42 (block)
+
+
+State 150
+
+   38 dowhile: DO block WHILE PARENTHESIS_L . expr PARENTHESIS_R SEMICOLON
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 157
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 151
+
+   37 while: WHILE PARENTHESIS_L expr PARENTHESIS_R . block
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 158
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 152
+
+   39 for: FOR PARENTHESIS_L INT ID . LET expr COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID . LET expr COMMA expr COMMA expr PARENTHESIS_R block
+
+    LET  shift, and go to state 159
+
+
+State 153
+
+   47 assign: varlet LET expr SEMICOLON .
+
+    $default  reduce using rule 47 (assign)
+
+
+State 154
+
+   24 vardecl: type ID SEMICOLON vardecl .
+
+    $default  reduce using rule 24 (vardecl)
+
+
+State 155
+
+   23 vardecl: type ID LET expr . SEMICOLON
+   25        | type ID LET expr . SEMICOLON vardecl
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    SEMICOLON  shift, and go to state 160
+    MINUS      shift, and go to state 57
+    PLUS       shift, and go to state 58
+    STAR       shift, and go to state 59
+    SLASH      shift, and go to state 60
+    PERCENT    shift, and go to state 61
+    LE         shift, and go to state 62
+    LT         shift, and go to state 63
+    GE         shift, and go to state 64
+    GT         shift, and go to state 65
+    EQ         shift, and go to state 66
+    NE         shift, and go to state 67
+    OR         shift, and go to state 68
+    AND        shift, and go to state 69
+
+
+State 156
+
+   35 ifelse: IF PARENTHESIS_L expr PARENTHESIS_R block .
+   36       | IF PARENTHESIS_L expr PARENTHESIS_R block . ELSE block
+
+    ELSE  shift, and go to state 161
+
+    $default  reduce using rule 35 (ifelse)
+
+
+State 157
+
+   38 dowhile: DO block WHILE PARENTHESIS_L expr . PARENTHESIS_R SEMICOLON
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    PARENTHESIS_R  shift, and go to state 162
+    MINUS          shift, and go to state 57
+    PLUS           shift, and go to state 58
+    STAR           shift, and go to state 59
+    SLASH          shift, and go to state 60
+    PERCENT        shift, and go to state 61
+    LE             shift, and go to state 62
+    LT             shift, and go to state 63
+    GE             shift, and go to state 64
+    GT             shift, and go to state 65
+    EQ             shift, and go to state 66
+    NE             shift, and go to state 67
+    OR             shift, and go to state 68
+    AND            shift, and go to state 69
+
+
+State 158
+
+   37 while: WHILE PARENTHESIS_L expr PARENTHESIS_R block .
+
+    $default  reduce using rule 37 (while)
+
+
+State 159
+
+   39 for: FOR PARENTHESIS_L INT ID LET . expr COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID LET . expr COMMA expr COMMA expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 163
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 160
+
+   23 vardecl: type ID LET expr SEMICOLON .
+   25        | type ID LET expr SEMICOLON . vardecl
+
+    INT    shift, and go to state 1
+    FLOAT  shift, and go to state 2
+    BOOL   shift, and go to state 3
+    VOID   shift, and go to state 4
+
+    $default  reduce using rule 23 (vardecl)
+
+    vardecl  go to state 164
+    type     go to state 92
+
+
+State 161
+
+   36 ifelse: IF PARENTHESIS_L expr PARENTHESIS_R block ELSE . block
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 165
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 162
+
+   38 dowhile: DO block WHILE PARENTHESIS_L expr PARENTHESIS_R . SEMICOLON
+
+    SEMICOLON  shift, and go to state 166
+
+
+State 163
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr . COMMA expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID LET expr . COMMA expr COMMA expr PARENTHESIS_R block
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    COMMA    shift, and go to state 167
+    MINUS    shift, and go to state 57
+    PLUS     shift, and go to state 58
+    STAR     shift, and go to state 59
+    SLASH    shift, and go to state 60
+    PERCENT  shift, and go to state 61
+    LE       shift, and go to state 62
+    LT       shift, and go to state 63
+    GE       shift, and go to state 64
+    GT       shift, and go to state 65
+    EQ       shift, and go to state 66
+    NE       shift, and go to state 67
+    OR       shift, and go to state 68
+    AND      shift, and go to state 69
+
+
+State 164
+
+   25 vardecl: type ID LET expr SEMICOLON vardecl .
+
+    $default  reduce using rule 25 (vardecl)
+
+
+State 165
+
+   36 ifelse: IF PARENTHESIS_L expr PARENTHESIS_R block ELSE block .
+
+    $default  reduce using rule 36 (ifelse)
+
+
+State 166
+
+   38 dowhile: DO block WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON .
+
+    $default  reduce using rule 38 (dowhile)
+
+
+State 167
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr COMMA . expr PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID LET expr COMMA . expr COMMA expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 168
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 168
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr . PARENTHESIS_R block
+   40    | FOR PARENTHESIS_L INT ID LET expr COMMA expr . COMMA expr PARENTHESIS_R block
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    PARENTHESIS_R  shift, and go to state 169
+    COMMA          shift, and go to state 170
+    MINUS          shift, and go to state 57
+    PLUS           shift, and go to state 58
+    STAR           shift, and go to state 59
+    SLASH          shift, and go to state 60
+    PERCENT        shift, and go to state 61
+    LE             shift, and go to state 62
+    LT             shift, and go to state 63
+    GE             shift, and go to state 64
+    GT             shift, and go to state 65
+    EQ             shift, and go to state 66
+    NE             shift, and go to state 67
+    OR             shift, and go to state 68
+    AND            shift, and go to state 69
+
+
+State 169
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr PARENTHESIS_R . block
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 171
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 170
+
+   40 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA . expr PARENTHESIS_R block
+
+    PARENTHESIS_L  shift, and go to state 31
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 38
+
+    expr      go to state 172
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 171
+
+   39 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr PARENTHESIS_R block .
+
+    $default  reduce using rule 39 (for)
+
+
+State 172
+
+   40 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr . PARENTHESIS_R block
+   65 binop: expr . LE expr
+   66      | expr . LT expr
+   67      | expr . GE expr
+   68      | expr . GT expr
+   69      | expr . EQ expr
+   70      | expr . NE expr
+   71      | expr . OR expr
+   72      | expr . AND expr
+   73      | expr . MINUS expr
+   74      | expr . PLUS expr
+   75      | expr . STAR expr
+   76      | expr . SLASH expr
+   77      | expr . PERCENT expr
+
+    PARENTHESIS_R  shift, and go to state 173
+    MINUS          shift, and go to state 57
+    PLUS           shift, and go to state 58
+    STAR           shift, and go to state 59
+    SLASH          shift, and go to state 60
+    PERCENT        shift, and go to state 61
+    LE             shift, and go to state 62
+    LT             shift, and go to state 63
+    GE             shift, and go to state 64
+    GT             shift, and go to state 65
+    EQ             shift, and go to state 66
+    NE             shift, and go to state 67
+    OR             shift, and go to state 68
+    AND            shift, and go to state 69
+
+
+State 173
+
+   40 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R . block
+
+    PARENTHESIS_L  shift, and go to state 31
+    CURLY_L        shift, and go to state 117
+    MINUS          shift, and go to state 32
+    NEG            shift, and go to state 33
+    TRUEVAL        shift, and go to state 34
+    FALSEVAL       shift, and go to state 35
+    RETURN         shift, and go to state 73
+    IF             shift, and go to state 74
+    DO             shift, and go to state 75
+    WHILE          shift, and go to state 76
+    FOR            shift, and go to state 77
+    NUM            shift, and go to state 36
+    FLOATNUM       shift, and go to state 37
+    ID             shift, and go to state 78
+
+    stmt      go to state 118
+    ifelse    go to state 83
+    while     go to state 84
+    dowhile   go to state 85
+    for       go to state 86
+    block     go to state 174
+    return    go to state 87
+    exprstmt  go to state 88
+    assign    go to state 89
+    varlet    go to state 90
+    expr      go to state 91
+    constant  go to state 40
+    floatval  go to state 41
+    intval    go to state 42
+    boolval   go to state 43
+    binop     go to state 44
+    monop     go to state 45
+
+
+State 174
+
+   40 for: FOR PARENTHESIS_L INT ID LET expr COMMA expr COMMA expr PARENTHESIS_R block .
+
+    $default  reduce using rule 40 (for)
