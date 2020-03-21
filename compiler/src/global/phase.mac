@@ -39,6 +39,12 @@ SUBPHASE( pst,
           ALWAYS,
           ca)
 
+SUBPHASE( cvi, 
+          "ChangeVariableInitialisations",
+          CVIdoChangeVariableInitialisations, 
+          ALWAYS,
+          ca)
+
 ENDPHASE( ca) 
 
 
