@@ -38,16 +38,12 @@
             </traversal>
 
             <traversal id="CVI" name="Change variable initialisations" default="sons" include="change_variable_initialisations.h">
-                <travsons>
-                    <node name="Decls" />
+                <travuser>
                     <node name="FunBody" />
-                    <node name="GlobDecl" />
                     <node name="GlobDef" />
-                    <node name="Stmts" />
                     <node name="VarDecl" />
-
-                    
-                </travsons>
+                    <node name="Decls" />
+                </travuser>
             </traversal>
 
         </general>
