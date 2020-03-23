@@ -33,11 +33,11 @@ PHASE( ca,
        "Context analysis",
        ALWAYS)
 
-/**SUBPHASE( pst, 
+SUBPHASE( pst, 
           "ProcessSymbolTable",
           PSTdoProcessSymbolTable, 
           ALWAYS,
-          ca)*/
+          ca)
 
 SUBPHASE( cvi, 
           "ChangeVariableInitialisations",
