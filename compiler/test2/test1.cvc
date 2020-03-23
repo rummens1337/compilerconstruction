@@ -24,3 +24,8 @@ void foo(int g) {
     a = a - -1;
     a = ------a;
 }
+
+void foo2(int g) {
+    int a = 3;
+    bool b = true;
+}

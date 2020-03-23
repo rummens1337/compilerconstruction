@@ -8,6 +8,7 @@
  *
  * Change all variable initialisations by separating the initialisation
  * and declaration.
+ * Global scope's initialisation is moved to an __init function per compilation unit.
  *
  *****************************************************************************/
 
@@ -69,21 +70,27 @@ static info *FreeInfo(info *info)
     DBUG_RETURN(info);
 }
 
+
+/**
+ * Traverse over decls (globdefs) and separate declaration and initialisation.
+ */
 node *CVIdecls(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CVIdecls");
     DBUG_PRINT("CVI", ("CVIdecls"));
 
-    info *info = MakeInfo();
+    // Is traversed multiple times, so only create new info once.
+    info *info = arg_info ? arg_info : MakeInfo();
+
     TRAVopt(DECLS_DECL(arg_node), info);
     TRAVopt(DECLS_NEXT(arg_node), info);
 
-
-    if(DECLS_NEXT(arg_node) == NULL){
-        STMTS_NEXT(INFO_LAST(info)) = FUNBODY_STMTS(arg_node);
-        node * stmts = INFO_FRONT(info);
-        node * funbod = TBmakeFunbody (NULL, NULL, stmts);
-        TBmakeFundef(T_void, "__init", funbod, NULL);
+    // When there are no more decls, create __init function with initialisations of global.
+    if (DECLS_NEXT(arg_node) == NULL)
+    {
+        node *stmts = INFO_FRONT(info);
+        node *funbod = TBmakeFunbody(NULL, NULL, stmts);
+        DECLS_NEXT(arg_node) = TBmakeFundef(T_void, "__init", funbod, NULL);
     }
 
     DBUG_RETURN(arg_node);
@@ -93,14 +100,10 @@ node *CVIglobdef(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CVIglobdef");
     DBUG_PRINT("CVI", ("CVIglobdef"));
-    PRTglobdef(arg_node,NULL);
     node *expr = GLOBDEF_INIT(arg_node);
-
 
     if (expr)
     {
-        printf("%s:%d\n", __FILE__, __LINE__);
-
         GLOBDEF_INIT(arg_node) = NULL;
         node *varlet = TBmakeVarlet(STRcpy(GLOBDEF_NAME(arg_node)), NULL, NULL);
         node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
@@ -112,24 +115,19 @@ node *CVIglobdef(node *arg_node, info *arg_info)
         }
         else
         {
-            node * node = TBmakeStmts(assign, NULL);
+            node *node = TBmakeStmts(assign, NULL);
             STMTS_NEXT(INFO_LAST(arg_info)) = node;
             INFO_LAST(arg_info) = node;
         }
-        printf("%s:%d\n", __FILE__, __LINE__);
-
-            //         PRTstmts(INFO_FRONT(arg_info), arg_info);
-            // printf("%s:%d\n", __FILE__, __LINE__);
-        // TRAVopt(GLOBDEF_NEXT(arg_node), arg_info);
-
-        // INFO_INITS ( arg_info) = init;
     }
-
-
 
     DBUG_RETURN(arg_node);
 }
 
+/**
+ * Traverse over funbodies and separate declaration and initialisation of vardecls
+ * that have an initilisation.
+ */
 node *CVIfunbody(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CVIfunbody");
@@ -164,15 +162,11 @@ node *CVIvardecl(node *arg_node, info *arg_info)
         }
         else
         {
-            node * node = TBmakeStmts(assign, NULL);
+            node *node = TBmakeStmts(assign, NULL);
             STMTS_NEXT(INFO_LAST(arg_info)) = node;
             INFO_LAST(arg_info) = node;
         }
-            //         PRTstmts(INFO_FRONT(arg_info), arg_info);
-            // printf("%s:%d\n", __FILE__, __LINE__);
         TRAVopt(VARDECL_NEXT(arg_node), arg_info);
-
-        // INFO_INITS ( arg_info) = init;
     }
 
     DBUG_RETURN(arg_node);
