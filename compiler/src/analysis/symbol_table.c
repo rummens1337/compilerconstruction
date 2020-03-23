@@ -147,6 +147,17 @@ node *STlastEntry(node *list)
 }
 
 /**
+ *  The current offset of a table
+ *  @param  table   the symbol table
+ *  @return int
+ */
+int SToffset(node *table)
+{
+    node *last = STend(table);
+
+    return last == NULL ? 0 : SYMBOLTABLEENTRY_OFFSET(last);
+}
+/**
  *  Add an entry to the list
  *  @param  table       the symbol table
  *  @param  type        new entry to add

@@ -33,6 +33,12 @@ PHASE( ca,
        "Context analysis",
        ALWAYS)
 
+SUBPHASE( nfl,
+          "normalizeForLoops",
+          NFLdoNormalizeForLoops,
+          ALWAYS,
+          ca)
+
 SUBPHASE( pst, 
           "ProcessSymbolTable",
           PSTdoProcessSymbolTable, 

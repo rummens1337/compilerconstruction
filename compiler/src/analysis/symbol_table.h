@@ -37,7 +37,7 @@ node *STdeepSearchByName(node *table, const char *name);
  *  @param  list        the linked list
  *  @return node|NULL
  */
-extern node *STlast(node *list);
+extern node *STend(node *list);
 
 /**
  *  Add an entry to the list
@@ -54,5 +54,11 @@ extern node *STadd(node *list, node *entry);
  */
 extern void STtraverse(node *table, void callback( void *));
 
+/**
+ *  The current offset of a table
+ *  @param  table   the symbol table
+ *  @return int
+ */
+extern int SToffset(node *table);
 
 #endif

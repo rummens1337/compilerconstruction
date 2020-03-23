@@ -2,7 +2,7 @@
  *
  * Module: process symbol table
  *
- * Prefix: CI
+ * Prefix: PST
  *
  * Description:
  *
@@ -52,9 +52,11 @@ static info *MakeInfo(node *parent)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_SYMBOL_TABLE( result) = TBmakeSymboltable(NULL);
+  int distance = parent ? SYMBOLTABLE_DISTANCE ( parent) + 1 : 0;
 
-  SYMBOLTABLE_PARENT( INFO_SYMBOL_TABLE( result)) = parent;
+  node *table = TBmakeSymboltable(distance, NULL);
+  SYMBOLTABLE_PARENT ( table) = parent;
+  INFO_SYMBOL_TABLE( result) = table;
 
   DBUG_RETURN( result);
 }
@@ -211,7 +213,7 @@ node *PSTfuncall(node * arg_node, info * arg_info)
     // add to the current scope
     if (!STdeepSearchByName(INFO_SYMBOL_TABLE ( arg_info), VAR_NAME ( arg_node)))
     {
-        DBUG_ASSERT (0, "Undefined variable");
+        DBUG_ASSERT (0, STRcat ( "Undefined function ", VAR_NAME ( arg_node)));
     }
    
     DBUG_RETURN( arg_node);
@@ -232,13 +234,13 @@ node *PSTfundef(node * arg_node, info * arg_info)
     DBUG_PRINT ("PST", ("PSTfundef 3"));
 
     // create the entry
-    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, arg_node, NULL, INFO_SYMBOL_TABLE ( info));
+    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), SToffset(table) + 1, arg_node, NULL, INFO_SYMBOL_TABLE ( info));
     DBUG_PRINT ("PST", ("PSTfundef 4"));
 
     // add to the current scope
     if (!STadd(table, entry))
     {
-        DBUG_ASSERT (0, "Variable already declared");
+        DBUG_ASSERT (0, STRcat ( "Function name invalid ", FUNDEF_NAME ( arg_node)));
     }
 
     DBUG_PRINT ("PST", ("PSTfundef 5"));
@@ -280,13 +282,16 @@ node *PSTglobdef(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTglobdef");
     DBUG_PRINT ("PST", ("PSTglobdef"));
 
+    // the symbol table
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
     // create the entry
-    node *entry = TBmakeSymboltableentry(GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry(GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), SToffset(table) + 1, arg_node, NULL, NULL);
 
     // add to the current scope
-    if (!STadd(INFO_SYMBOL_TABLE ( arg_info), entry))
+    if (!STadd(table, entry))
     {
-        DBUG_ASSERT (0, "Variable already declared");
+        DBUG_ASSERT (0, STRcat ( "Variable already declared ", GLOBDEF_NAME ( arg_node)));
     }
 
     DBUG_RETURN( arg_node);
@@ -334,13 +339,16 @@ node *PSTparam(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTparam");
     DBUG_PRINT ("PST", ("PSTparam"));
 
+    // the symbol table
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
     // create the entry
-    node *entry = TBmakeSymboltableentry(PARAM_NAME ( arg_node), PARAM_TYPE ( arg_node), 0, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry(PARAM_NAME ( arg_node), PARAM_TYPE ( arg_node), SToffset(table) + 1, arg_node, NULL, NULL);
 
     // add to the current scope
-    if (!STadd(INFO_SYMBOL_TABLE ( arg_info), entry))
+    if (!STadd(table, entry))
     {
-        DBUG_ASSERT (0, "Variable already declared");
+        DBUG_ASSERT (0, STRcat ( "Parameter already declared ", PARAM_NAME ( arg_node)));
     }
 
     // traverse over the sons
@@ -353,6 +361,9 @@ node *PSTprogram(node * arg_node, info * arg_info)
 {
     DBUG_ENTER("PSTprogram");
     DBUG_PRINT ("PST", ("PSTprogram"));
+
+    // link the symbol table
+    PROGRAM_SYMBOLTABLE ( arg_node) = INFO_SYMBOL_TABLE ( arg_info);
 
     // traverse over the sons
     TRAVopt ( PROGRAM_DECLS(arg_node), arg_info);
@@ -387,7 +398,7 @@ node *PSTvar(node * arg_node, info * arg_info)
     // add to the current scope
     if (!STdeepSearchByName(INFO_SYMBOL_TABLE ( arg_info), VAR_NAME ( arg_node)))
     {
-        DBUG_ASSERT (0, "Undefined variable");
+        DBUG_ASSERT (0, STRcat ( "Undefined variable ", VAR_NAME ( arg_node)));
     }
 
     DBUG_RETURN( arg_node);
@@ -398,18 +409,16 @@ node *PSTvardecl(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTvardecl");
     DBUG_PRINT ("PST", ("PSTvardecl"));
 
+    // the symbol table
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
     // create the entry
-    node *entry = TBmakeSymboltableentry(VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), SToffset(table) + 1, arg_node, NULL, NULL);
 
     // add to the current scope
-    if (!STadd(INFO_SYMBOL_TABLE ( arg_info), entry))
+    if (!STadd(table, entry))
     {
-        DBUG_ASSERT (0, "Variable already declared");
-    }
-
-    if (SYMBOLTABLE_ENTRY( INFO_SYMBOL_TABLE (arg_info)) == NULL)
-    {
-        DBUG_ASSERT (0, "No entry found");
+        DBUG_ASSERT (0, STRcat ( "Variable already declared ", VARDECL_NAME ( arg_node)));
     }
 
     // traverse over the sons
@@ -426,7 +435,7 @@ node *PSTvarlet(node * arg_node, info * arg_info)
     // add to the current scope
     if (!STdeepSearchByName(INFO_SYMBOL_TABLE ( arg_info), VARLET_NAME ( arg_node)))
     {
-        DBUG_ASSERT (0, "Undefined variable");
+        DBUG_ASSERT (0, STRcat ( "Undefined variable ", VARLET_NAME ( arg_node)));
     }
 
     DBUG_RETURN( arg_node);

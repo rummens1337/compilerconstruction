@@ -1,0 +1,16 @@
+void foo(int g) {
+    int a;
+    bool b;
+    a = 1 + 2;
+    
+
+    for (int oke = 1, 1)
+    {
+        oke = 2;
+
+        for (int oke = 1, 1)
+        {
+            oke = 2;
+        }
+    }
+}

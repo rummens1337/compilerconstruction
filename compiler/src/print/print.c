@@ -908,13 +908,32 @@ PRTfor (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfor");
 
-  printf("%s", FOR_LOOPVAR(arg_node)); // print the loop variable.
+  print(arg_info, "for ( int %s = ", FOR_LOOPVAR(arg_node)); // print the loop variable.
 
   // todo - print
   FOR_START( arg_node) = TRAVdo( FOR_START( arg_node), arg_info);
+
+  printf(", ");
   FOR_STOP( arg_node) = TRAVdo( FOR_STOP( arg_node), arg_info);
-  FOR_STEP( arg_node) = TRAVopt( FOR_STEP( arg_node), arg_info);
+
+  if (FOR_STEP ( arg_node) != NULL)
+  {
+    printf(", ");
+    FOR_STEP( arg_node) = TRAVopt( FOR_STEP( arg_node), arg_info);
+  }
+
+  printf(")\n");
+
+  print(arg_info, "{\n");
+
+  // increment the number of tabs
+  INFO_TABS(arg_info)++;
   FOR_BLOCK( arg_node) = TRAVopt( FOR_BLOCK( arg_node), arg_info);
+  
+  // decrease the number of tabs
+  INFO_TABS(arg_info)--;
+
+  print(arg_info, "}\n");
 
   DBUG_RETURN (arg_node);
 }
