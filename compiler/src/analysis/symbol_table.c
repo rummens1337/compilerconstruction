@@ -13,10 +13,45 @@
 /**
  *  Forward decleration
  */
-static node *STsearchEntry(node *list, const char *name, type type);
-static node *STsearchEntryByName(node *list, const char *name);
+static node *STgetEntry(node *list, int offset);
+static node *STsearchVariableEntry(node *list, const char *name, type type);
+static node *STsearchFundefEntry(node *list, const char *name);
 static node *STlastEntry(node *list);
 static void STtraverseEntries(node *list, void callback( void *));
+static void STdisplayEntry(node *list, size_t tabs);
+
+/**
+ *  Find an entry in a linked list of Symbol Table Entry nodes
+ *  @param  table       the symbol table
+ *  @param  offset      the offset
+ *  @return node|NULL
+ */
+node *STget(node *table, int offset)
+{
+    // the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // return the result
+    return STgetEntry( entry, offset);
+}
+
+/**
+ *  Find an entry in a linked list of Symbol Table Entry nodes
+ *  @param  list        the symbol table entry node
+ *  @param  offset      the offset
+ *  @return node|NULL
+ */
+node *STgetEntry(node *list, int offset)
+{
+    // do we have a valid entry
+    if ( list == NULL) return NULL;
+
+    // check if the name is the same
+    if ( SYMBOLTABLEENTRY_OFFSET (list) != offset) return STgetEntry(SYMBOLTABLEENTRY_NEXT (list), offset);
+
+    // return the result
+    return list;
+}
 
 /**
  *  Find an entry in a linked list of Symbol Table Entry nodes
@@ -25,13 +60,13 @@ static void STtraverseEntries(node *list, void callback( void *));
  *  @param  type        the type of node
  *  @return node|NULL
  */
-node *STsearch(node *table, const char *name, type type)
+node *STsearchVariable(node *table, const char *name, type type)
 {
     // the entry
     node *entry = SYMBOLTABLE_ENTRY ( table);
 
     // return the result
-    return STsearchEntry( entry, name, type);
+    return STsearchVariableEntry( entry, name, type);
 }
 
 /**
@@ -41,16 +76,19 @@ node *STsearch(node *table, const char *name, type type)
  *  @param  type        the type of node
  *  @return node|NULL
  */
-node *STsearchEntry(node *list, const char *name, type type)
+node *STsearchVariableEntry(node *list, const char *name, type type)
 {
     // do we have a valid entry
     if ( list == NULL) return NULL;
 
+    // skip fundefs
+    if ( SYMBOLTABLEENTRY_TABLE ( list) != NULL) return STsearchVariableEntry(SYMBOLTABLEENTRY_NEXT (list), name, type);
+
     // check if the name is the same
-    if ( strcmp(SYMBOLTABLEENTRY_NAME (list), name) != 0) return STsearchEntry(SYMBOLTABLEENTRY_NEXT (list), name, type);
+    if ( strcmp(SYMBOLTABLEENTRY_NAME ( list), name) != 0) return STsearchVariableEntry(SYMBOLTABLEENTRY_NEXT (list), name, type);
 
     // check if the type is the same
-    if ( SYMBOLTABLEENTRY_TYPE (list) != type) return STsearchEntry(SYMBOLTABLEENTRY_NEXT (list), name, type);
+    if ( type != T_unknown && SYMBOLTABLEENTRY_TYPE ( list) != type) return STsearchVariableEntry(SYMBOLTABLEENTRY_NEXT (list), name, type);
 
     // return the result
     return list;
@@ -63,32 +101,13 @@ node *STsearchEntry(node *list, const char *name, type type)
  *  @param  type        the type of node
  *  @return node|NULL
  */
-node *STsearchByName(node *table, const char *name)
+node *STsearchVariableByName(node *table, const char *name)
 {
     // the entry
     node *entry = SYMBOLTABLE_ENTRY ( table);
 
     // return the result
-    return STsearchEntryByName( entry, name);
-}
-
-/**
- *  Find an entry by its name in a linked list of Symbol Table Entry nodes
- *  @param  list        the symbol table entry node
- *  @param  name        the name of the node
- *  @param  type        the type of node
- *  @return node|NULL
- */
-node *STsearchEntryByName(node *list, const char *name)
-{
-    // do we have a valid entry
-    if ( list == NULL) return NULL;
-
-    // check if the name is the same
-    if ( strcmp(SYMBOLTABLEENTRY_NAME (list), name) != 0) return STsearchEntryByName(SYMBOLTABLEENTRY_NEXT (list), name);
-
-    // return the result
-    return list;
+    return STsearchVariableEntry( entry, name, T_unknown);
 }
 
 /**
@@ -97,13 +116,10 @@ node *STsearchEntryByName(node *list, const char *name)
  *  @param  name        the name of the node
  *  @return node|NULL
  */
-node *STdeepSearchByName(node *table, const char *name)
+node *STdeepSearchVariableByName(node *table, const char *name)
 {
-    // the entry
-    node *entry = SYMBOLTABLE_ENTRY ( table);
-
     // search for the node in the current scope
-    node *found = STsearchEntryByName( entry, name);
+    node *found = STsearchVariableByName( table, name);
 
     // do we have a node?
     if (found != NULL) return found;
@@ -115,7 +131,69 @@ node *STdeepSearchByName(node *table, const char *name)
     if (parent == NULL) return NULL;
 
     // search for the node in the parent table
-    return STdeepSearchByName(parent, name);
+    return STdeepSearchVariableByName(parent, name);
+}
+
+/**
+ *  Find an entry in a linked list of Symbol Table Entry nodes
+ *  @param  table       the symbol table
+ *  @param  name        the name of the node
+ *  @param  type        the type of node
+ *  @return node|NULL
+ */
+node *STsearchFundef(node *table, const char *name)
+{
+    // the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // return the result
+    return STsearchFundefEntry( entry, name);
+}
+
+/**
+ *  Find an entry in a linked list of Symbol Table Entry nodes
+ *  @param  list        the symbol table entry node
+ *  @param  name        the name of the node
+ *  @param  type        the type of node
+ *  @return node|NULL
+ */
+node *STsearchFundefEntry(node *list, const char *name)
+{
+    // do we have a valid entry
+    if ( list == NULL) return NULL;
+
+    // skip fundefs
+    if ( SYMBOLTABLEENTRY_TABLE (list) == NULL) return STsearchFundefEntry(SYMBOLTABLEENTRY_NEXT (list), name);
+
+    // check if the name is the same
+    if ( strcmp(SYMBOLTABLEENTRY_NAME (list), name) != 0) return STsearchFundefEntry(SYMBOLTABLEENTRY_NEXT (list), name);
+
+    // return the result
+    return list;
+}
+
+/**
+ *  Find an entry  by its name in a linked list of Symbol Table Entry nodes
+ *  @param  table       the symbol table
+ *  @param  name        the name of the node
+ *  @return node|NULL
+ */
+node *STdeepSearchFundef(node *table, const char *name)
+{
+    // search for the node in the current scope
+    node *found = STsearchFundef( table, name);
+
+    // do we have a node?
+    if (found != NULL) return found;
+
+    // get the parent table
+    node *parent = SYMBOLTABLE_PARENT ( table);
+
+    // do we have a parent table?
+    if (parent == NULL) return NULL;
+
+    // search for the node in the parent table
+    return STdeepSearchFundef(parent, name);
 }
 
 /**
@@ -148,15 +226,28 @@ node *STlastEntry(node *list)
 
 /**
  *  The current offset of a table
- *  @param  table   the symbol table
+ *  @param  list    list of nodes
  *  @return int
  */
-int SToffset(node *table)
+int STcount(node *list)
 {
-    node *last = STend(table);
+    // is the list not set?
+    if (list == NULL) return 0;
 
-    return last == NULL ? 0 : SYMBOLTABLEENTRY_OFFSET(last);
+    // call ourself with the next node
+    return 1 + STcount ( SYMBOLTABLEENTRY_NEXT (list));
 }
+
+/**
+ *  Check if the table is empty
+ *  @param  table   the symbol table
+ *  @return bool
+ */
+bool STempty(node *table)
+{
+    return SYMBOLTABLE_ENTRY (table) == NULL;
+}
+
 /**
  *  Add an entry to the list
  *  @param  table       the symbol table
@@ -166,7 +257,13 @@ int SToffset(node *table)
 node *STadd(node *table, node *entry)
 {
     // check if we already have a similar node
-    if (STsearchByName( table, SYMBOLTABLEENTRY_NAME( entry)) != NULL) return NULL;
+    if (STsearchVariableByName( table, SYMBOLTABLEENTRY_NAME( entry)) != NULL) return NULL;
+
+    if (STsearchFundef( table, SYMBOLTABLEENTRY_NAME( entry)) != NULL) return NULL;
+
+    // set the offset
+    if (STempty ( table)) SYMBOLTABLEENTRY_OFFSET( entry) = 0;
+    else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( SYMBOLTABLE_ENTRY ( table));
 
     // find the last entry
     node *last = STend(table);
@@ -209,4 +306,56 @@ void STtraverseEntries(node *list, void callback( void *))
 
     // check if the name is the same
     STtraverseEntries(SYMBOLTABLEENTRY_NEXT (list), callback);
+}
+
+/**
+ *  Display the symbol table
+ *  @param  table   the symbol table
+ *  @param  tabs    numbers of tabs to show
+ */
+void STdisplay(node *table, size_t tabs)
+{
+    STdisplayEntry ( SYMBOLTABLE_ENTRY ( table), tabs);
+}
+
+/**
+ *  Display the symbol table
+ *  @param  table   the symbol table
+ *  @param  tabs    numbers of tabs to show
+ */
+void STdisplayEntry(node *list, size_t tabs)
+{
+    // do we have a node?
+    if (list == NULL) return;
+
+    // print the tabs
+    for (size_t i=0; i < tabs; i++) printf("\t");
+
+    // print the type
+    printf("Type: ");
+    switch (SYMBOLTABLEENTRY_TYPE ( list)) {
+        case T_void:
+        printf("void");
+        break;
+        case T_bool:
+        printf("bool");
+        break;
+        case T_int:
+        printf("int");
+        break;
+        case T_float:
+        printf("float");
+        break;
+        case T_unknown:
+        DBUG_ASSERT( 0, "unknown type detected!");
+    }
+
+    // print the name
+    printf(", Name: %s\n", SYMBOLTABLEENTRY_NAME ( list));
+
+    // doe we have a nested table
+    if (SYMBOLTABLEENTRY_TABLE ( list) != NULL) STdisplay(SYMBOLTABLEENTRY_TABLE ( list), tabs + 1);
+
+    // display the next node
+    STdisplayEntry (SYMBOLTABLEENTRY_NEXT ( list), tabs);
 }

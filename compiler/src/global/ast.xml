@@ -28,31 +28,60 @@
       <traversal id="FREE" name="Free Syntax Tree" default="user" include="free_node.h" />
       <traversal id="CHK" name="Check Syntax Tree" default="user" include="check.h" />
 
-        <traversal id="PST" name="Process symbol table" default="user" include="process_symbol_table.h">
-            <travuser>
-                <node name="FunDef" />
-                <node name="GlobDef" />
-                <node name="VarDecl" />
-            </travuser>
-        </traversal>
+    <traversal id="PST" name="Process symbol table" default="sons" include="process_symbol_table.h">
+        <travuser>
+            <node name="Program" />
+            <node name="GlobDef" />
+            <node name="FunDef" />
+            <node name="Param" />
+            <node name="FunCall" />
+            <node name="Exprs" />
+            <node name="VarDecl" />
+            <node name="VarLet" />
+            <node name="Var" />
+        </travuser>
+    </traversal>
 
-        <traversal id="CVI" name="Change variable initialisations" default="sons" include="change_variable_initialisations.h">
-            <travuser>
-                <node name="FunBody" />
-                <node name="GlobDef" />
-                <node name="VarDecl" />
-                <node name="Decls" />
-            </travuser>
-        </traversal>
-      
-        <traversal id="NFL" name="Normalize For Loops" default="sons" include="normalize_for_loops.h">
-            <travuser>
-                <node name="FunBody" />
-                <node name="For" />
-                <node name="VarLet" />
-                <node name="Var" />
-            </travuser>
-      </traversal>
+    <traversal id="NFL" name="Normalize For Loops" default="sons" include="normalize_for_loops.h">
+        <travuser>
+            <node name="FunBody" />
+            <node name="For" />
+            <node name="VarDecl" />
+            <node name="VarLet" />
+            <node name="Var" />
+        </travuser>
+    </traversal>
+
+    <traversal id="CVI" name="Change variable initialisations" default="sons" include="change_variable_initialisations.h">
+        <travuser>
+            <node name="Program" />
+            <node name="FunBody" />
+            <node name="GlobDef" />
+            <node name="VarDecl" />
+            <node name="Decls" />
+        </travuser>
+    </traversal>
+
+    <traversal id="TC" name="Type checking" default="sons" include="type_checking.h">
+        <travuser>
+            <node name="Program" />
+            <node name="FunDef" />
+            <!-- <node name="FunBody" /> -->
+            <node name="Return" />
+            <node name="Assign" />
+            <node name="ExprStmt" />
+            <node name="Expr" />
+            <node name="FunCall" />
+            <node name="Exprs" />
+            <node name="Var"/>
+            <node name="BinOp" />
+            <!-- <node name="MonOp"/> -->
+            <node name="Num" />
+            <node name="Float" />
+            <node name="Bool" />
+            <node name="Cast" />
+        </travuser>
+    </traversal>
     </general>
 </phases>
 <nodesets>
@@ -82,9 +111,9 @@
     </nodeset>
     <nodeset name="Decl">
         <target>
-            <node name="FunDef"/>
             <node name="GlobDecl"/>
             <node name="GlobDef"/>
+            <node name="FunDef"/>
         </target>
     </nodeset>
 </nodesets>
@@ -221,10 +250,10 @@
                     </targets>
                 </type>
             </attribute>
-            <attribute name="Node">
-                <type name="Link">
+            <attribute name="Params">
+                <type name="Int">
                     <targets>
-                        <target mandatory="yes">
+                        <target mandatory="no">
                             <any/>
                             <phases>
                                 <all/>

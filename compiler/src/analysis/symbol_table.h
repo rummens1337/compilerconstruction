@@ -13,7 +13,8 @@
  *  @param  type        the type of node
  *  @return node|NULL
  */
-extern node *STsearch(node *list, const char *name, type type);
+extern node *STsearchVariable(node *list, const char *name, type type);
+extern node *STsearchVariableByName(node *table, const char *name);
 
 /**
  *  Find an entry  by its name in a linked list of Symbol Table Entry nodes
@@ -22,7 +23,7 @@ extern node *STsearch(node *list, const char *name, type type);
  *  @param  type        the type of node
  *  @return node|NULL
  */
-extern node *STsearchByName(node *table, const char *name);
+extern node *STsearchFundef(node *table, const char *name);
 
 /**
  *  Find an entry  by its name in a linked list of Symbol Table Entry nodes
@@ -30,7 +31,9 @@ extern node *STsearchByName(node *table, const char *name);
  *  @param  name        the name of the node
  *  @return node|NULL
  */
-node *STdeepSearchByName(node *table, const char *name);
+extern node *STdeepSearchVariableByName(node *table, const char *name);
+extern node *STdeepSearchFundef(node *table, const char *name);
+
 
 /**
  *  Find the last entry in the list
@@ -60,5 +63,21 @@ extern void STtraverse(node *table, void callback( void *));
  *  @return int
  */
 extern int SToffset(node *table);
+
+/**
+ *  Find an entry in a linked list of Symbol Table Entry nodes
+ *  @param  table       the symbol table
+ *  @param  offset      the offset
+ *  @return node|NULL
+ */
+extern node *STget(node *table, int offset);
+
+
+/**
+ *  Display the symbol table
+ *  @param  table   the symbol table
+ *  @param  tabs    numbers of tabs to show
+ */
+extern void STdisplay(node *table, size_t tabs);
 
 #endif

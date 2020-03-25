@@ -34,20 +34,26 @@ PHASE( ca,
        ALWAYS)
 
 SUBPHASE( nfl,
-          "normalizeForLoops",
+          "Normalizing For Loops",
           NFLdoNormalizeForLoops,
           ALWAYS,
           ca)
 
 SUBPHASE( pst, 
-          "ProcessSymbolTable",
+          "Processing Symbol Table",
           PSTdoProcessSymbolTable, 
           ALWAYS,
           ca)
 
 SUBPHASE( cvi, 
-          "ChangeVariableInitialisations",
+          "Changing Variable Initializations",
           CVIdoChangeVariableInitialisations, 
+          ALWAYS,
+          ca)
+
+SUBPHASE( tc, 
+          "Type Checking",
+          TCdoTypeChecking, 
           ALWAYS,
           ca)
 

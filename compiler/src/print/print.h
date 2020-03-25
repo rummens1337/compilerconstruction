@@ -46,6 +46,19 @@ extern node *PRTdecls (node * arg_node, info * arg_info);
 extern node *PRTsymboltable (node * arg_node, info * arg_info);
 extern node *PRTsymboltableentry (node * arg_node, info * arg_info);
 
+/** <!--******************************************************************-->
+ *
+ * @fn stype
+ *
+ * @brief returns the type specified as a string.
+ *
+ * @param type the type of the arg_node
+ *
+ * @return void
+ *
+ ***************************************************************************/
+extern const char *stype(type type);
+
 extern node *PRTdoPrint( node *syntaxtree);
 
 #endif /* _SAC_PRT_NODE_H_ */

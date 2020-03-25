@@ -1,31 +1,23 @@
-int h = 5;
-int c = 1;
-void foo(int g) {
-    int a = 3;
-    bool b = true;
-    a = 1 + 2;
-    a = a - 1;
-    a = a * 45;
-    a = a / 9;
-    a = a % 4;
-    b = a < 1;
-    b = a > 2;
-    b = a <= 3;
-    b = a >= 4;
-    b = a == 5;
-    b = a != 6;
-    b = a != 6 && a >= 4;
-    b = a == 6 || a <= 4;
-    a = -a;
-    b = !b;
+int foo(int g) {
+    int a;
+    bool b;
+    a = 1 + 2 + (float)true;
+    
 
-    c = 1;
+    for (int oke = 1, 1)
+    {
+        oke = 2;
 
-    a = a - -1;
-    a = ------a;
+        for (int oke = 1, 1)
+        {
+            oke = 2;
+        }
+    }
+
+    return 1;
 }
 
-void foo2(int g) {
-    int a = 3;
-    bool b = true;
+void foo1 () {
+
+    return foo(9);
 }

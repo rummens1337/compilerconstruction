@@ -5,13 +5,11 @@
 
 extern node *NFLdoNormalizeForLoops(node *syntaxtree);
 
-extern node *NFLfor (node * arg_node, info * arg_info);
 extern node *NFLfunbody (node * arg_node, info * arg_info);
-// extern node *NFLfundef (node * arg_node, info * arg_info);
-// extern node *NFLfundefs (node * arg_node, info * arg_info);
+extern node *NFLfor (node * arg_node, info * arg_info);
 
-node *NFLvar(node * arg_node, info * arg_info);
-node *NFLvarlet(node * arg_node, info * arg_info);
-node *NFLvar(node * arg_node, info * arg_info);
+extern node *NFLvardecl(node * arg_node, info * arg_info);
+extern node *NFLvarlet(node * arg_node, info * arg_info);
+extern node *NFLvar(node * arg_node, info * arg_info);
 
 #endif

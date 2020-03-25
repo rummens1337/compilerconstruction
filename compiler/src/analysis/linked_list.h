@@ -21,11 +21,6 @@ typedef void (*callback)(listnode* data);
 listnode *LLcreate(const char *key, const char *value, listnode* next)
 {
     listnode* new_listnode = (listnode*)malloc(sizeof(listnode));
-    if(new_listnode == NULL)
-    {
-        printf("Error creating a new listnode.\n");
-        exit(0);
-    }
     new_listnode->key = key;
     new_listnode->value = value;
     new_listnode->next = next;
@@ -155,7 +150,7 @@ listnode *LLremove_any(listnode* head, listnode* nd)
  */
 void LLdisplay(listnode* cursor)
 {
-        while(cursor!=NULL)
+    while (cursor!=NULL)
     {
         printf("%s: %s\n", cursor->key, cursor->value);
         cursor = cursor->next;
@@ -172,10 +167,9 @@ listnode *LLsearch(listnode* head, const char * key)
 {
 
     listnode *cursor = head;
-    while(cursor!=NULL)
+    while (cursor!=NULL)
     {
-        if(strcmp ( cursor->key, key) == 0)
-            return cursor;
+        if (strcmp ( cursor->key, key) == 0) return cursor;
 
         cursor = cursor->next;
     }
@@ -189,11 +183,11 @@ void LLdispose(listnode *head)
 {
     listnode *cursor, *tmp;
 
-    if(head != NULL)
+    if (head != NULL)
     {
         cursor = head->next;
         head->next = NULL;
-        while(cursor != NULL)
+        while (cursor != NULL)
         {
             tmp = cursor->next;
             free(cursor);
@@ -208,7 +202,7 @@ int LLcount(listnode *head)
 {
     listnode *cursor = head;
     int c = 0;
-    while(cursor != NULL)
+    while (cursor != NULL)
     {
         c++;
         cursor = cursor->next;
