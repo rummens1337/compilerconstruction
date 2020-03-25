@@ -14,6 +14,7 @@
 
 #include "change_variable_initialisations.h"
 
+#include "symbol_table.h"
 #include "types.h"
 #include "tree_basic.h"
 #include "traverse.h"
@@ -32,6 +33,7 @@
 
 struct INFO
 {
+    node* table;
     node *front;
     node *last;
 };
@@ -42,21 +44,8 @@ struct INFO
 
 #define INFO_FRONT(n) ((n)->front)
 #define INFO_LAST(n) ((n)->last)
+#define INFO_SYMBOL_TABLE(n) ((n)->table)
 
-// static void freeNode(node *node)
-// {
-//     nodetype type = NODE_TYPE (node);
-
-//     if (type == N_binop) FREEbinop(node, NULL);
-//     else if (type == N_monop) FREEmonop(node, NULL);
-//     else if (type == N_funcall) FREEfuncall(node, NULL);
-//     else if (type == N_cast) FREEcast(node, NULL);
-//     else if (type == N_var) FREEvar(node, NULL);
-//     else if (type == N_num) FREEnum(node, NULL);
-//     else if (type == N_float) FREEfloat(node, NULL);
-//     else if (type == N_bool) FREEbool(node, NULL);
-//     else if (type == N_arrexpr) FREEarrexpr(node, NULL);
-// }
 
 /*
  * INFO functions
@@ -70,8 +59,9 @@ static info *MakeInfo(void)
 
     result = (info *)MEMmalloc(sizeof(info));
 
-    INFO_FRONT(result) = NULL;
-    INFO_LAST(result) = NULL;
+    INFO_SYMBOL_TABLE ( result) = NULL;
+    INFO_FRONT ( result) = NULL;
+    INFO_LAST ( result) = NULL;
 
     DBUG_RETURN(result);
 }
@@ -90,13 +80,11 @@ node *CVIprogram (node *arg_node, info *arg_info)
     DBUG_ENTER("CVIprogram");
     DBUG_PRINT("CVI", ("CVIprogram"));
 
-    // create make info
-    info *info = MakeInfo();
+    // set the symbol table
+    INFO_SYMBOL_TABLE (arg_info) = PROGRAM_SYMBOLTABLE ( arg_node);
 
     // traverse over the decls
-    TRAVopt ( PROGRAM_DECLS ( arg_node), info);
-
-    FreeInfo(info);
+    TRAVopt ( PROGRAM_DECLS ( arg_node), arg_info);
 
     DBUG_RETURN(arg_node);
 }
@@ -109,17 +97,38 @@ node *CVIdecls(node *arg_node, info *arg_info)
     DBUG_ENTER("CVIdecls");
     DBUG_PRINT("CVI", ("CVIdecls"));
 
+    // traverse over the declerations
     TRAVopt(DECLS_DECL(arg_node), arg_info);
     TRAVopt(DECLS_NEXT(arg_node), arg_info);
 
+    // get the added statements
     node *stmts = INFO_FRONT(arg_info);
 
-    // When there are no more decls, create __init function with initialisations of global.
-    if (DECLS_NEXT(arg_node) == NULL && stmts != NULL)
-    {
-        node *funbod = TBmakeFunbody(NULL, NULL, stmts);
-        DECLS_NEXT(arg_node) = TBmakeFundef(T_void, STRcpy("__init"), funbod, NULL);
-    }
+    // Do we have any more declerations?
+    if (DECLS_NEXT(arg_node) != NULL) DBUG_RETURN(arg_node);
+    
+    // do we need to append statements?
+    if (stmts == NULL) DBUG_RETURN(arg_node);
+    
+    // create the __init function definition
+    node *funbod = TBmakeFunbody(NULL, NULL, stmts);
+    node *init = TBmakeFundef(T_void, STRcpy("__init"), funbod, NULL);
+
+    // append the functon definition
+    DECLS_NEXT(arg_node) = init;
+
+    // refernce to the symbol table
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
+    // create a new symbol table for this function definition
+    node *inittable = TBmakeSymboltable ( 1, NULL );
+    SYMBOLTABLE_PARENT ( inittable) = table;
+
+    // create the symbol table
+    node *entry = TBmakeSymboltableentry ( STRcpy(FUNDEF_NAME ( init)), FUNDEF_TYPE ( init), 0, NULL, inittable);
+    
+    // add the entry to the symbol table
+    STadd(table, entry);
 
     DBUG_RETURN(arg_node);
 }
@@ -130,25 +139,25 @@ node *CVIglobdef(node *arg_node, info *arg_info)
     DBUG_PRINT("CVI", ("CVIglobdef"));
     node *expr = GLOBDEF_INIT(arg_node);
 
-    if (expr)
+    // do we have expressions?
+    if (expr == NULL) DBUG_RETURN(arg_node);
+    
+    node *varlet = TBmakeVarlet(STRcpy(GLOBDEF_NAME(arg_node)), NULL, NULL);
+    node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
+
+    FREEdoFreeTree(expr);
+    GLOBDEF_INIT(arg_node) = NULL;
+
+    if (INFO_FRONT(arg_info) == NULL)
     {
-        node *varlet = TBmakeVarlet(STRcpy(GLOBDEF_NAME(arg_node)), NULL, NULL);
-        node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
-
-        FREEdoFreeTree(expr);
-        GLOBDEF_INIT(arg_node) = NULL;
-
-        if (INFO_FRONT(arg_info) == NULL)
-        {
-            INFO_FRONT(arg_info) = TBmakeStmts(assign, NULL);
-            INFO_LAST(arg_info) = INFO_FRONT(arg_info);
-        }
-        else
-        {
-            node *node = TBmakeStmts(assign, NULL);
-            STMTS_NEXT(INFO_LAST(arg_info)) = node;
-            INFO_LAST(arg_info) = node;
-        }
+        INFO_FRONT(arg_info) = TBmakeStmts(assign, NULL);
+        INFO_LAST(arg_info) = INFO_FRONT(arg_info);
+    }
+    else
+    {
+        node *node = TBmakeStmts(assign, NULL);
+        STMTS_NEXT(INFO_LAST(arg_info)) = node;
+        INFO_LAST(arg_info) = node;
     }
 
     DBUG_RETURN(arg_node);
@@ -182,25 +191,25 @@ node *CVIvardecl(node *arg_node, info *arg_info)
 
     node *expr = VARDECL_INIT ( arg_node);
 
-    if (expr)
+    // do we have expressions?
+    if (expr == NULL) DBUG_RETURN(arg_node);
+    
+    node *varlet = TBmakeVarlet(STRcpy(VARDECL_NAME(arg_node)), NULL, NULL);
+    node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
+
+    FREEdoFreeTree(expr);
+    VARDECL_INIT(arg_node) = NULL;
+
+    if (INFO_FRONT(arg_info) == NULL)
     {
-        node *varlet = TBmakeVarlet(STRcpy(VARDECL_NAME(arg_node)), NULL, NULL);
-        node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
-
-        FREEdoFreeTree(expr);
-        VARDECL_INIT(arg_node) = NULL;
-
-        if (INFO_FRONT(arg_info) == NULL)
-        {
-            INFO_FRONT(arg_info) = TBmakeStmts(assign, NULL);
-            INFO_LAST(arg_info) = INFO_FRONT(arg_info);
-        }
-        else
-        {
-            node *node = TBmakeStmts(assign, NULL);
-            STMTS_NEXT(INFO_LAST(arg_info)) = node;
-            INFO_LAST(arg_info) = node;
-        }
+        INFO_FRONT(arg_info) = TBmakeStmts(assign, NULL);
+        INFO_LAST(arg_info) = INFO_FRONT(arg_info);
+    }
+    else
+    {
+        node *node = TBmakeStmts(assign, NULL);
+        STMTS_NEXT(INFO_LAST(arg_info)) = node;
+        INFO_LAST(arg_info) = node;
     }
 
     TRAVopt(VARDECL_NEXT(arg_node), arg_info);

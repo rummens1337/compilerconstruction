@@ -250,7 +250,7 @@ while: WHILE PARENTHESIS_L expr PARENTHESIS_R block
 
 dowhile: DO block WHILE PARENTHESIS_L expr PARENTHESIS_R SEMICOLON
         {
-            $$ = TBmakeDowhile( $2, $5);
+            $$ = TBmakeDowhile( $5, $2);
         }
     ;
 

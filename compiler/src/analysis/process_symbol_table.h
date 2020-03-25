@@ -10,6 +10,7 @@ extern node *PSTfundef (node * arg_node, info * arg_info);
 extern node *PSTglobdef (node * arg_node, info * arg_info);
 extern node *PSTparam (node * arg_node, info * arg_info);
 extern node *PSTfuncall (node * arg_node, info * arg_info);
+extern node *PSTexprs (node * arg_node, info * arg_info);
 extern node *PSTvardecl (node * arg_node, info * arg_info);
 extern node *PSTvarlet (node * arg_node, info * arg_info);
 extern node *PSTvar (node * arg_node, info * arg_info);

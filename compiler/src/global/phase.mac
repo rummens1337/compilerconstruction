@@ -33,19 +33,32 @@ PHASE( ca,
        "Context analysis",
        ALWAYS)
 
+SUBPHASE( nfl,
+          "Normalizing For Loops",
+          NFLdoNormalizeForLoops,
+          ALWAYS,
+          ca)
+
 SUBPHASE( pst, 
-          "ProcessSymbolTable",
+          "Processing Symbol Table",
           PSTdoProcessSymbolTable, 
           ALWAYS,
           ca)
 
+SUBPHASE( cvi, 
+          "Changing Variable Initializations",
+          CVIdoChangeVariableInitialisations, 
+          ALWAYS,
+          ca)
+
 SUBPHASE( tc, 
-          "TypeChecker",
-          TCdoTypeChecker, 
+          "Type Checking",
+          TCdoTypeChecking, 
           ALWAYS,
           ca)
 
 ENDPHASE( ca) 
+
 
 /******************************************************************************/
 
