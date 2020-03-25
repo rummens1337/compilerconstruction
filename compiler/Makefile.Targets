@@ -78,7 +78,8 @@ print       = print.o
 
 codegen     = gen_byte_code.o
 
-analysis    = process_symbol_table.o symbol_table.o type_checker.o
+analysis    = process_symbol_table.o symbol_table.o change_variable_initialisations.o \
+              normalize_for_loops.o type_checking.o
 
 
 ###############################################################################

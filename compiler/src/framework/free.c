@@ -145,6 +145,7 @@ FREEdoFreeTree (node * free_node)
   info *arg_info;
 
   DBUG_ENTER ("FREEfreeTree");
+  
 
   arg_info = MakeInfo ();
   INFO_FREE_FLAG (arg_info) = NULL;

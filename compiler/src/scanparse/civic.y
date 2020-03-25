@@ -72,10 +72,9 @@ static int yyerror( char *errname);
 
 %%
 
-program: 
-        decls
+program: decls
         {
-            parseresult = $1;
+            parseresult = TBmakeProgram($1);
         }
     ;
 
@@ -89,7 +88,7 @@ decls: decl decls
         }
     ;
 
-decl: globdecl
+decl: fundef
         {
             $$ = $1;
         }
@@ -97,7 +96,7 @@ decl: globdecl
         {
             $$ = $1;
         }
-    |   fundef
+    |   globdecl
         {
             $$ = $1;
         }
@@ -468,7 +467,7 @@ node *YYparseTree( void)
 {
     DBUG_ENTER("YYparseTree");
 
-    yydebug = 1;
+    // yydebug = 1;
     yyparse();
 
     DBUG_RETURN( parseresult);
