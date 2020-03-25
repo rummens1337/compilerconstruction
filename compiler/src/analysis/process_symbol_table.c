@@ -150,9 +150,6 @@ node *PSTparam(node * arg_node, info * arg_info)
     // increment the number of params
     INFO_PARAMS ( arg_info) += 1;
 
-    // the symbol table
-    node *table = INFO_SYMBOL_TABLE ( arg_info);
-
     // create the entry
     node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, NULL, NULL);
 
