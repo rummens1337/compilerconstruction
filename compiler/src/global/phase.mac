@@ -63,11 +63,20 @@ ENDPHASE( ca)
 /******************************************************************************/
 
 PHASE( cg,
-       "Generating Code",
+       "Code generation",
        ALWAYS)
 
-SUBPHASE( prt, "Generating byte code", GBCdoGenByteCode, ALWAYS, cg)      
-SUBPHASE( prt_ast, "Print ast", PRTdoPrint, ALWAYS, cg)      
+SUBPHASE( GBC, 
+          "Generating byte code", 
+          GBCdoGenByteCode, 
+          ALWAYS,
+          cg)
+
+SUBPHASE( prt_ast, 
+          "Print ast", 
+          PRTdoPrint, 
+          ALWAYS, 
+          cg)
 
 SUBPHASE( frtr, 
           "De-allocating syntax tree representation",

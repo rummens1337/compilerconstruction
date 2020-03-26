@@ -1,4 +1,9 @@
-a = (42 + 
-(13
-                * tutu));
+int a = 42 + 5;
+int n = 42 + 5;
+int c = 42 + 5;
 
+int lel(){
+    int a = 5;
+
+    return 5;
+}

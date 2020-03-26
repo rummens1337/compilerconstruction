@@ -82,6 +82,9 @@
             <node name="Cast" />
         </travuser>
     </traversal>
+
+    <traversal id="GBC" name="Generate byte code" default="user" include="gen_byte_code.h"/>
+
     </general>
 </phases>
 <nodesets>
