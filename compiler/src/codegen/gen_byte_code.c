@@ -12,7 +12,11 @@
 #include "memory.h"
 #include "free.h"
 #include "str.h"
+#include "print.h"
 
+
+// TODO parameters funcall
+// TODO funcalls
 
 /*
  * INFO structure
@@ -60,7 +64,7 @@ void addToConstPool(info *arg_info, const char * byte_string)
     if ( INFO_BYTE_STRING ( arg_info) == NULL) INFO_BYTE_STRING ( arg_info) = LLcreate(byte_string, NULL);
 
     // append the value
-    else LLprepend (INFO_BYTE_STRING ( arg_info), byte_string);
+    else LLappend (INFO_BYTE_STRING ( arg_info), byte_string);
 }
 
 void printGlobals(info *arg_info)
@@ -165,10 +169,10 @@ node *GBCreturn(node *arg_node, info *arg_info)
 
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
-    // this is the return type
-    // SYMBOLTABLE_RETURNTYPE ( arg_info);
 
-    fprintf(INFO_FILE ( arg_info), "\t%s\n", "?return");
+    // this is the return type
+
+    fprintf(INFO_FILE ( arg_info), "\t%s\n", stype(SYMBOLTABLE_RETURNTYPE ( table)));
 
     TRAVopt(RETURN_EXPR(arg_node), arg_info);
 
@@ -224,14 +228,14 @@ node *GBCfundef(node *arg_node, info *arg_info)
     node *entry = STsearchFundef ( table, FUNDEF_NAME ( arg_node));
 
     // set the symbol table for the upcoming scope
-    INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
+    INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry); // nested symbol table
 
     // traverse over the params and body
     TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
     TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
 
     // revert the symbol table
-    INFO_SYMBOL_TABLE ( arg_info) = table;
+    INFO_SYMBOL_TABLE ( arg_info) = table; // global symbol table
 
     DBUG_RETURN(arg_node);
 }
@@ -331,11 +335,18 @@ node *GBCvardecl(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCvardecl");
     DBUG_PRINT("GBC", ("GBCvardecl"));
     
-    addToConstPool(arg_info, VARDECL_NAME(arg_node));
+    // addToConstPool(arg_info, VARDECL_NAME(arg_node));
+
+
 
     TRAVopt(VARDECL_DIMS(arg_node), arg_info);
     TRAVopt(VARDECL_INIT(arg_node), arg_info);
     TRAVopt(VARDECL_NEXT(arg_node), arg_info);
+
+    // store op basis van type
+    if(VARDECL_TYPE(arg_node)){
+        printf("WOPS");
+    }
 
     DBUG_RETURN(arg_node);
 }
@@ -483,8 +494,7 @@ node *GBCdoGenByteCode(node *syntaxtree)
 
     INFO_FILE ( info) = fopen("src/codegen/global.outfile", "w");
 
-    // @todo shouldn't this be replace by CTIabort?
-    if ( INFO_FILE ( info) == NULL) CTIerror ("Could not open file: %s", "src/codegen/global.outfile");
+    if ( INFO_FILE ( info) == NULL) CTIabort ("Could not open file: %s", "src/codegen/global.outfile");
 
     TRAVpush(TR_gbc);
     syntaxtree = TRAVdo(syntaxtree, info);

@@ -1,10 +1,11 @@
 int a = 42 + 5;
 int n = 42 + 5;
-int c = 42 + 5;
+int c = 42 + 13;
 
 int lel(){
-    int a = 5;
-	int b = 10;
+    int a = 5 + 3;
+    int c = 5 + 3;
+	int b = 10 + c;
 
     return 5;
 }

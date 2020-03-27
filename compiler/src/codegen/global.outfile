@@ -1,7 +1,13 @@
 lel:
 	iloadc 0
 	iloadc 0
-	?return
+	iadd
+	iloadc 0
+	iloadc 0
+	iadd
+	iloadc 0
+	iadd
+	int
 	iloadc 0
 __init:
 	iloadc 0
@@ -13,4 +19,3 @@ __init:
 	iloadc 0
 	iloadc 0
 	iadd
-	a
