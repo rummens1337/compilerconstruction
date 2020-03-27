@@ -100,6 +100,7 @@
 [ \t]                      { global.col += yyleng;
                            } 
 
-[ \t\n]+  ;               // White space
-\/\/(.*) ;                // SingleLine comment
-\/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+\/ ;          // Multiline comment   ____ BELOW NEEDS ONE EXTRA BLANK LINE! ____
+[ \t\n]+                      // White space
+"//".*                        // SingleLine comment
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+[/][*]                                    { yy_fatal_error("Unterminated comment"); }  // Multiline comment   ____ BELOW NEEDS ONE EXTRA BLANK LINE! ____

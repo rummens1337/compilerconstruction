@@ -4,6 +4,7 @@ int c = 42 + 5;
 
 int lel(){
     int a = 5;
+	int b = 10;
 
     return 5;
 }
