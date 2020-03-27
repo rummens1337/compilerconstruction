@@ -2,13 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct listnode
+typedef struct kvlistnode
 {
+    const char *key;
     const char *value;
-    struct listnode* next;
-} listnode;
+    struct kvlistnode* next;
+} kvlistnode;
 
-typedef void (*callback)(listnode* data);
+typedef void (*callback)(kvlistnode* data);
 
 
 /**
@@ -17,55 +18,50 @@ typedef void (*callback)(listnode* data);
  *
  *  return the newly created listnode
 */
-listnode *LLcreate(const char *value, listnode* next)
+kvlistnode *KVLLcreate(const char *key, const char *value, kvlistnode* next)
 {
-    listnode* new_listnode = (listnode*)malloc(sizeof(listnode));
-    new_listnode->value = value;
-    new_listnode->next = next;
+    kvlistnode* new_kvlistnode = (kvlistnode*)malloc(sizeof(kvlistnode));
+    new_kvlistnode->key = key;
+    new_kvlistnode->value = value;
+    new_kvlistnode->next = next;
 
-    return new_listnode;
+    return new_kvlistnode;
 }
 
 /**
  *  add a new listnode at the beginning of the list
  */
-listnode *LLprepend(listnode* head, const char *value)
+kvlistnode *KVLLprepend(kvlistnode* head, const char *key, const char *value)
 {
-    listnode* new_listnode = LLcreate(value, head);
-    head = new_listnode;
+    kvlistnode* new_kvlistnode = KVLLcreate(key, value, head);
+    head = new_kvlistnode;
     return head;
 }
 
 /**
  *  add a new listnode at the end of the list
  */
-listnode *LLappend(listnode* head, const char *value)
+kvlistnode *KVLLappend(kvlistnode* head, const char * key, const char *value)
 {
-    // do we have a head?
-    if (head == NULL) return NULL;
+    if(head == NULL) return NULL;
+    /* go to the last listnode */
+    kvlistnode *cursor = head;
+    while(cursor->next != NULL)
+        cursor = cursor->next;
 
-    // go to the last listnode
-    listnode *cursor = head;
+    /* create a new listnode */
+    kvlistnode* new_kvlistnode =  KVLLcreate(key, value, NULL);
+    cursor->next = new_kvlistnode;
 
-    // get the last entry
-    while(cursor->next != NULL) cursor = cursor->next;
-
-    // create a new listnode
-    listnode* new_listnode =  LLcreate(value, NULL);
-
-    // set the next node
-    cursor->next = new_listnode;
-
-    // return the heads
     return head;
 }
 
 /*
  *  traverse the linked list
 */
-void LLtraverse(listnode* head, callback f)
+void KVLLtraverse(kvlistnode* head, callback f)
 {
-    listnode* cursor = head;
+    kvlistnode* cursor = head;
     while(cursor != NULL)
     {
         f(cursor);
@@ -76,10 +72,10 @@ void LLtraverse(listnode* head, callback f)
 /**
  *  remove listnode from the front of list
  */
-listnode *LLremove_front(listnode* head)
+kvlistnode *KVLLremove_front(kvlistnode* head)
 {
     if ( head == NULL) return NULL;
-    listnode *front = head;
+    kvlistnode *front = head;
     head = head->next;
     front->next = NULL;
     /* is this the last listnode in the list */
@@ -92,13 +88,13 @@ listnode *LLremove_front(listnode* head)
 /**
  *  remove listnode from the back of the list
  */
-listnode *LLremove_back(listnode* head)
+kvlistnode *KVLLremove_back(kvlistnode* head)
 {
     if(head == NULL)
         return NULL;
 
-    listnode *cursor = head;
-    listnode *back = NULL;
+    kvlistnode *cursor = head;
+    kvlistnode *back = NULL;
     while(cursor->next != NULL)
     {
         back = cursor;
@@ -120,27 +116,28 @@ listnode *LLremove_back(listnode* head)
 /**
  *  remove a listnode from the list
  */
-listnode *LLremove_any(listnode* head, listnode* nd)
+kvlistnode *KVLLremove_any(kvlistnode* head, kvlistnode* nd)
 {
     if(nd == NULL) return NULL;
     /* if the listnode is the first listnode */
-    if(nd == head) return LLremove_front(head);
+    if(nd == head) return KVLLremove_front(head);
 
     /* if the listnode is the last listnode */
     if(nd->next == NULL)
-        return LLremove_back(head);
+        return KVLLremove_back(head);
 
     /* if the listnode is in the middle */
-    listnode* cursor = head;
+    kvlistnode* cursor = head;
     while(cursor != NULL)
     {
-        if(cursor->next == nd) break;
+        if(cursor->next == nd)
+            break;
         cursor = cursor->next;
     }
 
     if(cursor != NULL)
     {
-        listnode* tmp = cursor->next;
+        kvlistnode* tmp = cursor->next;
         cursor->next = tmp->next;
         tmp->next = NULL;
         free(tmp);
@@ -151,11 +148,11 @@ listnode *LLremove_any(listnode* head, listnode* nd)
 /**
  *  display a listnode
  */
-void LLprint(listnode* cursor)
+void KVLLdisplay(kvlistnode* cursor)
 {
     while (cursor!=NULL)
     {
-        printf("%s\n", cursor->value);
+        printf("%s: %s\n", cursor->key, cursor->value);
         cursor = cursor->next;
     }
 }
@@ -166,13 +163,13 @@ void LLprint(listnode* cursor)
  *  return the first matched listnode that stores the input data,
  *  otherwise return NULL
  */
-listnode *LLsearch(listnode* head, const char *value)
+kvlistnode *KVLLsearch(kvlistnode* head, const char * key)
 {
 
-    listnode *cursor = head;
+    kvlistnode *cursor = head;
     while (cursor!=NULL)
     {
-        if (strcmp ( cursor->value, value) == 0) return cursor;
+        if (strcmp ( cursor->key, key) == 0) return cursor;
 
         cursor = cursor->next;
     }
@@ -182,9 +179,9 @@ listnode *LLsearch(listnode* head, const char *value)
 /**
  *  remove all element of the list
  */
-void LLdispose(listnode *head)
+void KVLLdispose(kvlistnode *head)
 {
-    listnode *cursor, *tmp;
+    kvlistnode *cursor, *tmp;
 
     if (head != NULL)
     {
@@ -198,12 +195,13 @@ void LLdispose(listnode *head)
         }
     }
 }
+
 /**
  *  return the number of elements in the list
  */
-int LLcount(listnode *head)
+int KVLLcount(kvlistnode *head)
 {
-    listnode *cursor = head;
+    kvlistnode *cursor = head;
     int c = 0;
     while (cursor != NULL)
     {
@@ -211,23 +209,4 @@ int LLcount(listnode *head)
         cursor = cursor->next;
     }
     return c;
-}
-
-/**
- *  reverse the linked list
- */
-listnode *LLreverse(listnode* head)
-{
-    listnode* prev    = NULL;
-    listnode* current = head;
-    listnode* next;
-    while (current != NULL)
-    {
-        next  = current->next;
-        current->next = prev;
-        prev = current;
-        current = next;
-    }
-    head = prev;
-    return head;
 }

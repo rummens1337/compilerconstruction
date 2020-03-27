@@ -61,10 +61,11 @@ static info *MakeInfo(node *parent)
   int distance = parent ? SYMBOLTABLE_DISTANCE ( parent) + 1 : 0;
 
   node *table = TBmakeSymboltable(distance, NULL);
+  SYMBOLTABLE_RETURNTYPE ( table) = T_unknown;
   SYMBOLTABLE_PARENT ( table) = parent;
   INFO_SYMBOL_TABLE( result) = table;
-  INFO_PARAMS( result) = 0;
-  INFO_ARGUMENTS( result) = 0;
+  INFO_PARAMS ( result) = 0;
+  INFO_ARGUMENTS ( result) = 0;
 
   DBUG_RETURN( result);
 }
@@ -119,6 +120,7 @@ node *PSTfundef(node * arg_node, info * arg_info)
 
     // make a new struct for the coming scope
     info *info = MakeInfo(table);
+    SYMBOLTABLE_RETURNTYPE ( INFO_SYMBOL_TABLE ( info)) = FUNDEF_TYPE ( arg_node);
 
     // create the entry
     node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, NULL, INFO_SYMBOL_TABLE ( info));

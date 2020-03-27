@@ -32,7 +32,6 @@
 struct INFO {
   node *table;
   type var_type;
-  type return_type;
   size_t has_return_type;
   size_t offset;
 };
@@ -44,9 +43,9 @@ struct INFO {
 
 #define INFO_SYMBOL_TABLE(n)  ((n)->table)
 #define INFO_VAR_TYPE(n)  ((n)->var_type)
-#define INFO_RETURN_TYPE(n)  ((n)->return_type)
 #define INFO_HAS_RETURN_TYPE(n)  ((n)->has_return_type)
 #define INFO_OFFSET(n)  ((n)->offset)
+
 
 /*
  * INFO functions
@@ -61,7 +60,6 @@ static info *MakeInfo()
   result = (info *)MEMmalloc(sizeof(info));
   INFO_SYMBOL_TABLE( result) = NULL;
   INFO_VAR_TYPE ( result) = T_unknown;
-  INFO_RETURN_TYPE ( result) = T_unknown;
   INFO_HAS_RETURN_TYPE ( result) = 0;
   INFO_OFFSET ( result) = 0;
 
@@ -103,8 +101,6 @@ node *TCfundef(node * arg_node, info * arg_info)
 
     INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
 
-    // remember the type
-    INFO_RETURN_TYPE( arg_info) = FUNDEF_TYPE ( arg_node);
     // traverse over the body
     TRAVopt ( FUNDEF_FUNBODY ( arg_node), arg_info);
 
@@ -140,18 +136,19 @@ node *TCreturn(node *arg_node, info *arg_info)
 
     // the expression
     node *expr = RETURN_EXPR ( arg_node);
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // do nothing for void methods
-    if (expr == NULL && INFO_RETURN_TYPE ( arg_info) == T_void) DBUG_RETURN( arg_node);
+    if (expr == NULL && SYMBOLTABLE_RETURNTYPE ( table) == T_void) DBUG_RETURN( arg_node);
 
     // do the types match
     TRAVopt ( RETURN_EXPR ( arg_node), arg_info);
 
     // do we have the corrrect return type?
-    if (INFO_VAR_TYPE ( arg_info) == INFO_RETURN_TYPE ( arg_info)) DBUG_RETURN( arg_node);
+    if (INFO_VAR_TYPE ( arg_info) == SYMBOLTABLE_RETURNTYPE ( table)) DBUG_RETURN( arg_node);
 
     // report the error
-    CTIerror ("invalid conversion from `%s` to `%s`\n", stype(INFO_RETURN_TYPE ( arg_info)), stype(INFO_VAR_TYPE ( arg_info)));
+    CTIerror ("invalid conversion from `%s` to `%s`\n", stype(SYMBOLTABLE_RETURNTYPE ( table)), stype(INFO_VAR_TYPE ( arg_info)));
 
     DBUG_RETURN( arg_node);
 }

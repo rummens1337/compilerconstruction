@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 #include "normalize_for_loops.h"
-#include "linked_list.h"
+#include "key_value_linked_list.h"
 
 #include "types.h"
 #include "tree_basic.h"
@@ -37,7 +37,7 @@
 struct INFO {
   node *front;
   node *back;
-  listnode *names;
+  kvlistnode *names;
 };
 
 /*
@@ -139,16 +139,16 @@ node *NFLfor(node * arg_node, info * arg_info)
     }
 
     // add the name to the list
-    if (INFO_NAMES( arg_info) == NULL) INFO_NAMES( arg_info) = LLcreate(varname, name, NULL);
+    if (INFO_NAMES( arg_info) == NULL) INFO_NAMES( arg_info) = KVLLcreate(varname, name, NULL);
 
     // prepend the the new head
-    else INFO_NAMES( arg_info) = LLprepend(INFO_NAMES( arg_info), varname, name);
+    else INFO_NAMES( arg_info) = KVLLprepend(INFO_NAMES( arg_info), varname, name);
 
     // traverse over the nodes
     TRAVopt ( FOR_BLOCK ( arg_node), arg_info);
 
     // remove the node from the list
-    INFO_NAMES( arg_info) = LLremove_front ( INFO_NAMES( arg_info));
+    INFO_NAMES( arg_info) = KVLLremove_front ( INFO_NAMES( arg_info));
 
     // done
     DBUG_RETURN( arg_node);
@@ -180,7 +180,7 @@ node *NFLvarlet(node * arg_node, info * arg_info)
     DBUG_PRINT ("NFL", ("NFLvarlet"));
 
     // search the list
-    listnode *node = LLsearch ( INFO_NAMES (arg_info), VARLET_NAME ( arg_node));
+    kvlistnode *node = KVLLsearch ( INFO_NAMES (arg_info), VARLET_NAME ( arg_node));
 
     // do we need to replace the name of the varlet?
     if (node == NULL) DBUG_RETURN( arg_node);
@@ -198,7 +198,7 @@ node *NFLvar(node * arg_node, info * arg_info)
     DBUG_PRINT ("NFL", ("NFLvar"));
 
     // search the list
-    listnode *node = LLsearch ( INFO_NAMES (arg_info), VAR_NAME ( arg_node));
+    kvlistnode *node = KVLLsearch ( INFO_NAMES (arg_info), VAR_NAME ( arg_node));
 
     // do we need to replace the name of the varlet?
     if (node == NULL) DBUG_RETURN( arg_node);

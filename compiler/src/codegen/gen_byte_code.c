@@ -1,4 +1,5 @@
 #include "gen_byte_code.h"
+#include "linked_list.h"
 #include "symbol_table.h"
 
 #include "types.h"
@@ -13,17 +14,19 @@
 #include "str.h"
 
 
-// Global file pointer, used by many nodes.
-FILE * fptr;
-node * symbol_table; // TODO remove?
+/*
+ * INFO structure
+ */
 
-struct INFO{
-    const char *byte_string;
-    info * next;
+struct INFO {
+    FILE * fptr;
+    node * symbol_table;
+    listnode *byte_string;
 };
 
+#define INFO_FILE(n) ((n)->fptr)
+#define INFO_SYMBOL_TABLE(n) ((n)->symbol_table)
 #define INFO_BYTE_STRING(n) ((n)->byte_string)
-#define INFO_NEXT(n) ((n)->next)
 
 /*
  * INFO functions
@@ -35,8 +38,9 @@ static info *MakeInfo(){
     DBUG_ENTER("MakeInfo");
 
     result = (info *)MEMmalloc(sizeof(info));
+    INFO_FILE ( result) = NULL;
+    INFO_SYMBOL_TABLE ( result) = NULL;
     INFO_BYTE_STRING ( result) = NULL;
-    INFO_NEXT ( result) = NULL;
 
     DBUG_RETURN(result);
 }
@@ -50,65 +54,28 @@ static info *FreeInfo(info *info)
     DBUG_RETURN(info);
 }
 
-// /**
-//  * SYMTAB functions
-//  */
-// typedef struct SYMTAB symtab;
-// struct SYMTAB{
-//     node * table;
-// };
+void addToConstPool(info *arg_info, const char * byte_string)
+{
+    // is the linked list set?
+    if ( INFO_BYTE_STRING ( arg_info) == NULL) INFO_BYTE_STRING ( arg_info) = LLcreate(byte_string, NULL);
 
-// #define SYMTAB_TABLE(n) ((n)->table)
-
-// static symtab *MakeSymtab(){
-//     symtab *result;
-
-//     DBUG_ENTER("MakeSymtab");
-
-//     result = (symtab *)MEMmalloc(sizeof(symtab));
-//     SYMTAB_TABLE ( result) = NULL;
-
-//     DBUG_RETURN(result);
-// }
-
-void addToConstPool(info * arg_info, const char * byte_string){
-    /* 2. allocate new node */
-    info * next = MakeInfo();
-    /* 3. put new data in node */
-    INFO_BYTE_STRING(next) = byte_string;
-    /* 4. Make next of new node as next of prev_node */
-    INFO_NEXT(next) = INFO_NEXT(arg_info);
-    /* 5. move the next of prev_node as new_node */
-    INFO_NEXT(arg_info) = next;
+    // append the value
+    else LLprepend (INFO_BYTE_STRING ( arg_info), byte_string);
 }
 
-/* Function to reverse the linked list */
-static void reverse(info** head_ref) 
-{ 
-    info* prev = NULL; 
-    info* current = *head_ref; 
-    info* next = NULL; 
-    while (current != NULL) { 
-        // Store next 
-        next = current->next; 
-  
-        // Reverse current node's pointer 
-        INFO_NEXT(current) = prev; 
-  
-        // Move pointers one position ahead. 
-        prev = current; 
-        current = next; 
-    } 
-    *head_ref = prev; 
-} 
+void printGlobals(info *arg_info)
+{
+    // the byte_string list
+    listnode *byte_string = INFO_BYTE_STRING ( arg_info);
+    FILE * fileptr = INFO_FILE ( arg_info);
 
-void printGlobals(info * node){
-    reverse(&node);
+    while (byte_string != NULL)
+    {
+        // print to the file
+        fprintf(fileptr, "\t%s\n", byte_string->value);
 
-    while (node != NULL) {
-        if(INFO_BYTE_STRING(node) != NULL)
-            fprintf(fptr, "\t%s\n", INFO_BYTE_STRING(node));
-        node = INFO_NEXT(node); 
+        // get the next value
+        byte_string = byte_string->next;
     }
 }
 
@@ -118,7 +85,7 @@ node *GBCprogram(node *arg_node, info *arg_info)
     DBUG_PRINT("GBC", ("GBCprogram"));
 
     // link the symbol table
-    symbol_table = PROGRAM_SYMBOLTABLE ( arg_node);
+    INFO_SYMBOL_TABLE ( arg_info) = PROGRAM_SYMBOLTABLE ( arg_node);
 
     TRAVdo(PROGRAM_DECLS(arg_node), arg_info);
 
@@ -196,7 +163,12 @@ node *GBCreturn(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCreturn");
     DBUG_PRINT("GBC", ("GBCreturn"));
 
-    fprintf(fptr, "\t%s\n", "?return");
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
+    // this is the return type
+    // SYMBOLTABLE_RETURNTYPE ( arg_info);
+
+    fprintf(INFO_FILE ( arg_info), "\t%s\n", "?return");
 
     TRAVopt(RETURN_EXPR(arg_node), arg_info);
 
@@ -239,13 +211,27 @@ node *GBCfundef(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCfundef");
     DBUG_PRINT("GBC", ("GBCfundef"));
 
-    fprintf(fptr, "%s:\n", FUNDEF_NAME(arg_node));
+    // print to the file
+    fprintf( INFO_FILE ( arg_info), "%s:\n", FUNDEF_NAME(arg_node));
     
-    if(FUNDEF_ISEXPORT(arg_node))
-        fprintf(fptr, "%s:\n", FUNDEF_NAME(arg_node));
+    // is this an exported fundef?
+    if (FUNDEF_ISEXPORT(arg_node)) fprintf( INFO_FILE ( arg_info), "%s:\n", FUNDEF_NAME(arg_node));
 
-    TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+    // store the symbol table
+    node *table = INFO_SYMBOL_TABLE ( arg_info);
+
+    // get the entry from the symbol table
+    node *entry = STsearchFundef ( table, FUNDEF_NAME ( arg_node));
+
+    // set the symbol table for the upcoming scope
+    INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
+
+    // traverse over the params and body
     TRAVopt(FUNDEF_PARAMS(arg_node), arg_info);
+    TRAVopt(FUNDEF_FUNBODY(arg_node), arg_info);
+
+    // revert the symbol table
+    INFO_SYMBOL_TABLE ( arg_info) = table;
 
     DBUG_RETURN(arg_node);
 }
@@ -387,22 +373,21 @@ node *GBCbinop(node *arg_node, info *arg_info)
 
     switch (BINOP_OP(arg_node)){
         case BO_add:
-            fprintf(fptr, "\t%s\n", "iadd");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "iadd");
             break;
         case BO_sub:
-            fprintf(fptr, "\t%s\n", "isub");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "isub");
             break;
         case BO_mul:
-            fprintf(fptr, "\t%s\n", "imul");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "imul");
             break;
         case BO_div:
-            fprintf(fptr, "\t%s\n", "idiv");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "idiv");
             break;
         case BO_mod:
-            fprintf(fptr, "\t%s\n", "irem"); // Klopt deze?
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "irem"); // Klopt deze?
             break;
-        default:
-            "nope";
+        default: break;
     }
     
     DBUG_RETURN(arg_node);
@@ -443,7 +428,7 @@ node *GBCnum(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCnum");
     DBUG_PRINT("GBC", ("GBCnum"));
 
-    fprintf(fptr, "\t%s %d\n", "iloadc", 0);
+    fprintf( INFO_FILE ( arg_info), "\t%s %d\n", "iloadc", 0);
 
     DBUG_RETURN(arg_node);
 }
@@ -453,7 +438,7 @@ node *GBCfloat(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCfloat");
     DBUG_PRINT("GBC", ("GBCfloat"));
 
-    fprintf(fptr, "\t%s %d\n", "floadc", 0);
+    fprintf( INFO_FILE ( arg_info), "\t%s %d\n", "floadc", 0);
 
     DBUG_RETURN(arg_node);
 }
@@ -465,10 +450,10 @@ node *GBCbool(node *arg_node, info *arg_info)
 
     switch(BOOL_VALUE(arg_node)){
         case TRUE:
-            fprintf(fptr, "\t%s\n", "bload_t");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "bload_t");
             break;
         case FALSE:
-            fprintf(fptr, "\t%s\n", "bload_f");
+            fprintf( INFO_FILE ( arg_info), "\t%s\n", "bload_f");
         break;
     }
 
@@ -494,14 +479,12 @@ node *GBCdoGenByteCode(node *syntaxtree)
     DBUG_ENTER("GBCdoGenByteCode");
     DBUG_PRINT("GBC", ("GBCdoGenByteCode"));
 
-    fptr = fopen("src/codegen/global.outfile", "w");
-
-    if (fptr == NULL)
-    {
-        CTIerror ("Could not open file: %s", "src/codegen/global.outfile");
-    }
-
     info *info = MakeInfo();
+
+    INFO_FILE ( info) = fopen("src/codegen/global.outfile", "w");
+
+    // @todo shouldn't this be replace by CTIabort?
+    if ( INFO_FILE ( info) == NULL) CTIerror ("Could not open file: %s", "src/codegen/global.outfile");
 
     TRAVpush(TR_gbc);
     syntaxtree = TRAVdo(syntaxtree, info);

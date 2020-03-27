@@ -1,8 +1,8 @@
 lel:
 	iloadc 0
 	iloadc 0
-	bload_t
 	?return
+	iloadc 0
 __init:
 	iloadc 0
 	iloadc 0
@@ -10,10 +10,7 @@ __init:
 	iloadc 0
 	iloadc 0
 	iadd
-	floadc 0
-	bload_t
-	bload_f
+	iloadc 0
+	iloadc 0
 	iadd
 	a
-	b
-	woop
