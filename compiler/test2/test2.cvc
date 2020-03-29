@@ -1,11 +1,14 @@
 int a = 42 + 5;
 int n = 42 + 5;
 int c = 42 + 13;
+bool woop = true + false + false;
 
-int lel(){
+export int lel(){
+    bool k = true;
     int a = 5 + 3;
     int c = 5 + 3;
 	int b = 10 + c;
+    float z = 5.0;
 
     return 5;
 }

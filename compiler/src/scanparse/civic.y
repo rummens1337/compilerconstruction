@@ -120,10 +120,12 @@ globdef: type ID SEMICOLON
     |   EXPORT type ID SEMICOLON
         {
             $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, NULL);
+            GLOBDEF_ISEXPORT($$) = 1;
         }
     |   EXPORT type ID LET expr SEMICOLON
         {
             $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, $5);
+            GLOBDEF_ISEXPORT($$) = 1;
         }
     ;
 
@@ -138,10 +140,12 @@ fundef: type ID PARENTHESIS_L PARENTHESIS_R  CURLY_L funbody CURLY_R
     |   EXPORT type ID PARENTHESIS_L PARENTHESIS_R CURLY_L funbody CURLY_R
         {
             $$ = TBmakeFundef( $2, STRcpy( $3), $7, NULL);
+            FUNDEF_ISEXPORT($$) = 1;
         }
     |   EXPORT type ID PARENTHESIS_L param PARENTHESIS_R CURLY_L funbody CURLY_R
         {
             $$ = TBmakeFundef( $2, STRcpy( $3), $8, $5);
+            FUNDEF_ISEXPORT($$) = 1;
         }
     ;
 

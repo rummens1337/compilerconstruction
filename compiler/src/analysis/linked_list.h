@@ -5,6 +5,7 @@
 typedef struct listnode
 {
     const char *value;
+    int counter;
     struct listnode* next;
 } listnode;
 
@@ -17,10 +18,11 @@ typedef void (*callback)(listnode* data);
  *
  *  return the newly created listnode
 */
-listnode *LLcreate(const char *value, listnode* next)
+listnode *LLcreate(const char *value, int counter, listnode* next)
 {
     listnode* new_listnode = (listnode*)malloc(sizeof(listnode));
     new_listnode->value = value;
+    new_listnode->counter = counter;
     new_listnode->next = next;
 
     return new_listnode;
@@ -29,9 +31,9 @@ listnode *LLcreate(const char *value, listnode* next)
 /**
  *  add a new listnode at the beginning of the list
  */
-listnode *LLprepend(listnode* head, const char *value)
+listnode *LLprepend(listnode* head, const char *value, int counter)
 {
-    listnode* new_listnode = LLcreate(value, head);
+    listnode* new_listnode = LLcreate(value, counter, head);
     head = new_listnode;
     return head;
 }
@@ -39,7 +41,7 @@ listnode *LLprepend(listnode* head, const char *value)
 /**
  *  add a new listnode at the end of the list
  */
-listnode *LLappend(listnode* head, const char *value)
+listnode *LLappend(listnode* head, const char *value, int counter)
 {
     // do we have a head?
     if (head == NULL) return NULL;
@@ -51,7 +53,7 @@ listnode *LLappend(listnode* head, const char *value)
     while(cursor->next != NULL) cursor = cursor->next;
 
     // create a new listnode
-    listnode* new_listnode =  LLcreate(value, NULL);
+    listnode* new_listnode =  LLcreate(value, counter, NULL);
 
     // set the next node
     cursor->next = new_listnode;

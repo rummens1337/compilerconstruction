@@ -1,21 +1,68 @@
-lel:
-	iloadc 0
-	iloadc 0
-	iadd
-	iloadc 0
-	iloadc 0
-	iadd
-	iloadc 0
-	iadd
-	int
-	iloadc 0
+	istoreg
+	istoreg
+	istoreg
+	bstoreg
 __init:
 	iloadc 0
-	iloadc 0
+	iloadc 1
 	iadd
+	fadd
+	badd
 	iloadc 0
-	iloadc 0
+	iloadc 1
 	iadd
+	fadd
+	badd
 	iloadc 0
-	iloadc 0
+	iloadc 2
 	iadd
+	fadd
+	badd
+	floadc 3
+	floadc 4
+	iadd
+	fadd
+	badd
+	floadc 4
+	iadd
+	fadd
+	badd
+lel:
+	fstore
+	istore
+	istore
+	istore
+	bstore
+	floadc 3
+	iloadc 1
+	iloadc 5
+	iadd
+	fadd
+	badd
+	iloadc 1
+	iloadc 5
+	iadd
+	fadd
+	badd
+	iloadc 6
+	iadd
+	fadd
+	badd
+	floadc 7
+	ireturn
+	iloadc 1
+
+.const int 42
+.const int 5
+.const int 13
+.const bool true
+.const bool false
+.const int 3
+.const int 10
+.const float 5.000000
+.exportfun "__init" void __init
+.exportfun "lel" int lel
+.global int
+.global int
+.global int
+.global bool

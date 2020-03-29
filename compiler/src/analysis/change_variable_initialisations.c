@@ -113,9 +113,11 @@ node *CVIdecls(node *arg_node, info *arg_info)
     // create the __init function definition
     node *funbod = TBmakeFunbody(NULL, NULL, stmts);
     node *init = TBmakeFundef(T_void, STRcpy("__init"), funbod, NULL);
+    FUNDEF_ISEXPORT(init) = 1;
 
-    // append the functon definition
-    DECLS_NEXT(arg_node) = init;
+    // prepend the __init function
+    DECLS_NEXT(arg_node) = DECLS_DECL(arg_node);
+    DECLS_DECL(arg_node) = init;
 
     // refernce to the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
