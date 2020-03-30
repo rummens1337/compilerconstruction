@@ -18,13 +18,13 @@
 // TODO funcalls
 // TODO localfundefs bestaan niet? (wordt enkel aangeroepen)
 // TODO T_void als return type werkt niet.
-// TODO while(1) werkt niet -> geen bool? (klopt volgens mij volgens civic spec)
+// TODO while(GlobalVarHere) werkt niet. Wel met function variables.
 // TODO return a (a = globvar) in een function werkt niet. Breakt op type checking
 // TODO monop neg en not nalopen, kijken wat het verschil qua implementatie is.
 // TODO store counter werkt per scope, maar ook voor de scopes erboven (variabelen inladen van hogere scope) hier moet nog naar gekeken worden.
 
-// TODO Vardecl and Globdecl als counter gebruiken voor aantal locale functies.
-// TODO Varlet en Var om de store / load iets mee te doen.
+// TODO Varlet en Var om de store / load iets mee te doen. (scope en symbol table verwijzingen  )
+
 /*
  * INFO structure
  */
@@ -35,11 +35,12 @@ struct INFO
     listnode *const_pool;
     listnode *export_pool;
     listnode *global_pool;
-    int global_scope;   // Determines if scope is global {0,1}
-    int global_counter; // counts amound of globals {0..n}
-    int load_counter;   // counts amound of loads {0..n}
-    int store_counter;  // counts amound of stores - function bound {0..n}
-    int current_type;   // Current type of var {int, float, bool}
+    int global_scope;    // Determines if scope is global {0,1}
+    int global_counter;  // counts amound of globals {0..n}
+    int load_counter;    // counts amound of loads {0..n}
+    int store_counter;   // counts amound of stores - function bound {0..n}
+    int current_type;    // Current type of var {int, float, bool}
+    int vardecl_counter; // Current type of var {int, float, bool}
 };
 
 #define INFO_FILE(n) ((n)->fptr)
@@ -52,6 +53,7 @@ struct INFO
 #define INFO_LOAD_COUNTER(n) ((n)->load_counter)
 #define INFO_STORE_COUNTER(n) ((n)->store_counter)
 #define INFO_CURRENT_TYPE(n) ((n)->current_type)
+#define INFO_VARDECL_COUNTER(n) ((n)->vardecl_counter)
 
 /*
  * INFO functions
@@ -74,6 +76,7 @@ static info *MakeInfo()
     INFO_LOAD_COUNTER(result) = 0;
     INFO_STORE_COUNTER(result) = 0;
     INFO_CURRENT_TYPE(result) = T_unknown; // current const type
+    INFO_VARDECL_COUNTER(result) = 0;
 
     DBUG_RETURN(result);
 }
@@ -342,13 +345,16 @@ node *GBCfundef(node *arg_node, info *arg_info)
     if (FUNDEF_TYPE(arg_node) == T_void)
         fprintf(INFO_FILE(arg_info), "\t%s\n", "return");
 
-    // revert the symbol table
+    // reset the symbol table
     INFO_SYMBOL_TABLE(arg_info) = table; // global symbol table
     INFO_STORE_COUNTER(arg_info) = 0;    // Reset scope counter for new function.
 
-    // Reset the scope.
+    // Reset the scope
     if (strcmp(FUNDEF_NAME(arg_node), "__init") == 0)
         INFO_GLOBAL_SCOPE(arg_info) = 0;
+
+    // Reset vardecl counter per function scope
+    INFO_VARDECL_COUNTER(arg_info) = 0;
 
     DBUG_RETURN(arg_node);
 }
@@ -359,6 +365,18 @@ node *GBCfunbody(node *arg_node, info *arg_info)
     DBUG_PRINT("GBC", ("GBCfunbody"));
 
     TRAVopt(FUNBODY_VARDECLS(arg_node), arg_info);
+
+    if (INFO_VARDECL_COUNTER(arg_info) != 0)
+    {
+        // Build the enter subroutine (esr) string
+        int length = snprintf(NULL, 0, "esr %d", INFO_VARDECL_COUNTER(arg_info));
+        char *str = malloc(length + 1);
+        snprintf(str, length + 1, "esr %d", INFO_VARDECL_COUNTER(arg_info));
+
+        // Print amount of function vardecls
+        fprintf(INFO_FILE(arg_info), "\t%s\n", STRcpy(str));
+    }
+
     TRAVopt(FUNBODY_STMTS(arg_node), arg_info);
 
     DBUG_RETURN(arg_node);
@@ -472,7 +490,10 @@ node *GBCvardecl(node *arg_node, info *arg_info)
     TRAVopt(VARDECL_DIMS(arg_node), arg_info);
     TRAVopt(VARDECL_INIT(arg_node), arg_info);
 
-    fprintf(INFO_FILE(arg_info), "\t%s\n", "VARDECL");
+    // fprintf(INFO_FILE(arg_info), "\t%s\n", "VARDECL");
+
+    // Count occurences of vardecls at beginning of function
+    INFO_VARDECL_COUNTER(arg_info) += 1;
 
     TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
@@ -739,9 +760,8 @@ node *GBCvarlet(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCvarlet");
     DBUG_PRINT("GBC", ("GBCvarlet"));
 
-    fprintf(INFO_FILE(arg_info), "\t%s\n", "VARLET");
-
     TRAVopt(VARLET_INDICES(arg_node), arg_info);
+    fprintf(INFO_FILE(arg_info), "\t%s\n", "VARLET");
 
     DBUG_RETURN(arg_node);
 }

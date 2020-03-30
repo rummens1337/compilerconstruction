@@ -1,29 +1,82 @@
-__init:
+krafmaga:
+	VARDECL
+	VARDECL
+	esr 2
+
 	VARLET
 	iloadc 0
-	iloadc 1
+	istore 0
+	VARLET
+	bloadc 1
+	fstore 1
+	VAR
+	VARLET
+	iloadc 2
+	istore 2
+	iloadc 0
+	ireturn
+__init:
+	VARLET
+	iloadc 3
+	iloadc 0
 	iadd
 	istoreg 0
 	VARLET
-	bloadc 2
-	bloadc 3
+	iloadc 4
+	istoreg 1
+	VARLET
+	bloadc 1
+	bloadc 5
 	badd
-	bloadc 3
+	bloadc 5
 	badd
-	bstoreg 1
+	bstoreg 2
 	return
-krafmaga:
+lel:
+	VARDECL
+	VARDECL
+	VARDECL
+	esr 3
+
+	VARLET
+	bloadc 1
+	fstore 0
+	VARLET
+	iloadc 0
+	iloadc 2
+	iadd
+	istore 1
 	VARLET
 	iloadc 4
-	istore 0
-	iloadc 1
+	VAR
+	iadd
+	istore 2
+	VARLET
+	iloadc 4
+	istore 3
+	VAR
+	VARLET
+	iloadc 6
+	istore 4
+	VAR
+	VARLET
+	iloadc 6
+	istore 5
+	VARLET
+	iloadc 0
+	istore 6
+	iloadc 0
 	ireturn
 
-.const int 42
 .const int 5
 .const bool true
-.const bool false
 .const int 3
+.const int 42
+.const int 10
+.const bool false
+.const int 2
 .exportfun "__init" void __init
+.exportfun "lel" int lel
+.global int
 .global int
 .global bool
