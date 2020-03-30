@@ -110,12 +110,12 @@ node *CVIdecls(node *arg_node, info *arg_info)
     // do we need to append statements?
     if (stmts == NULL) DBUG_RETURN(arg_node);
     
-    // create the __init function definition
+    // Create the __init function
     node *funbod = TBmakeFunbody(NULL, NULL, stmts);
     node *init = TBmakeFundef(T_void, STRcpy("__init"), funbod, NULL);
     FUNDEF_ISEXPORT(init) = 1;
 
-    // prepend the __init function
+    // prepend the __init function to other DECLS
     DECLS_NEXT(arg_node) = DECLS_DECL(arg_node);
     DECLS_DECL(arg_node) = init;
 
