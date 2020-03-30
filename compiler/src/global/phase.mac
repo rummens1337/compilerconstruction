@@ -57,6 +57,18 @@ SUBPHASE( tc,
           ALWAYS,
           ca)
 
+SUBPHASE( cbdc,
+          "Compiling Boolean Disjunction and Conjunction",
+          CBDCdoCompilingBooleanDisjunctionAndConjunction,
+          ALWAYS,
+          ca)
+
+SUBPHASE( toce,
+          "Transformation Of Cast Expressions",
+          TOCEdoTransformationOfCastExpressions,
+          ALWAYS,
+          ca)
+
 ENDPHASE( ca) 
 
 
@@ -77,7 +89,7 @@ SUBPHASE( prt_ast,
           PRTdoPrint, 
           ALWAYS, 
           cg)
-
+          
 SUBPHASE( frtr, 
           "De-allocating syntax tree representation",
           FREEdoFreeTree, 

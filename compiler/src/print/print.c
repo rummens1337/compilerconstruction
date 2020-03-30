@@ -598,6 +598,9 @@ PRTexprstmt (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprstmt");
 
+  // print the tabs
+  printTabs ( arg_info);
+
   // print the exppresion
   EXPRSTMT_EXPR( arg_node) = TRAVdo( EXPRSTMT_EXPR( arg_node), arg_info);
 
@@ -740,10 +743,8 @@ PRTfundef (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundef");
 
-  if (FUNDEF_ISEXPORT(arg_node) == 1)
-  {
-    printf("%s ", "export");
-  }
+  // print export token
+  if (FUNDEF_ISEXPORT(arg_node) == 1) printf("%s ", "export");
 
   printf("%s %s ( ", stype(FUNDEF_TYPE (arg_node)), FUNDEF_NAME (arg_node));
 
@@ -824,6 +825,36 @@ PRTifelse (node * arg_node, info * arg_info)
 
   DBUG_RETURN (arg_node);
 }
+
+/** <!--******************************************************************-->
+ *
+ * @fn PRTternary
+ *
+ * @brief Prints the node and its sons/attributes
+ *
+ * @param arg_node letrec node to process
+ * @param arg_info pointer to info structure
+ *
+ * @return processed node
+ *
+ ***************************************************************************/
+
+node *
+PRTternary (node * arg_node, info * arg_info)
+{
+  DBUG_ENTER ("PRTternary");
+
+  printf("(");
+  TERNARY_EXPR( arg_node) = TRAVdo( TERNARY_EXPR( arg_node), arg_info);
+  printf(" ? ");
+  TERNARY_TRUE( arg_node) = TRAVdo( TERNARY_TRUE( arg_node), arg_info);
+  printf(" : ");
+  TERNARY_FALSE( arg_node) = TRAVdo( TERNARY_FALSE( arg_node), arg_info);
+  printf(")");
+
+  DBUG_RETURN (arg_node);
+}
+
 
 /** <!--******************************************************************-->
  *
@@ -992,10 +1023,8 @@ PRTglobdef (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTglobdef");
 
-  if(GLOBDEF_ISEXPORT(arg_node) == 1)
-  {
-    printf("%s ", "export ");
-  }
+  // print th export method
+  if (GLOBDEF_ISEXPORT(arg_node) == 1) printf("%s", "export ");
 
   // print identifier
   printf("%s %s", stype(GLOBDEF_TYPE(arg_node)), GLOBDEF_NAME(arg_node)); 
