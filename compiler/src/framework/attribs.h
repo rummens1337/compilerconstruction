@@ -132,14 +132,15 @@ struct ATTRIBS_N_STMTS
 struct ATTRIBS_N_SYMBOLTABLE
 {
   node *Parent;
-  int Distance;
+  type ReturnType;
 };
 struct ATTRIBS_N_SYMBOLTABLEENTRY
 {
   char *Name;
   type Type;
   int Offset;
-  int Params;
+  int Depth;
+  bool Param;
 };
 struct ATTRIBS_N_TERNARY
 {

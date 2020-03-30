@@ -1986,6 +1986,7 @@ State 110
     GT       shift, and go to state 65
     EQ       shift, and go to state 66
     NE       shift, and go to state 67
+    AND      shift, and go to state 69
 
     $default  reduce using rule 71 (binop)
 
@@ -2018,7 +2019,6 @@ State 111
     GT       shift, and go to state 65
     EQ       shift, and go to state 66
     NE       shift, and go to state 67
-    OR       shift, and go to state 68
 
     $default  reduce using rule 72 (binop)
 

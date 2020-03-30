@@ -34,6 +34,8 @@ extern node *GBCnum (node *arg_node, info *arg_info);
 extern node *GBCfloat (node *arg_node, info *arg_info);
 extern node *GBCbool (node *arg_node, info *arg_info);
 extern node *GBCerror (node *arg_node, info *arg_info);
+extern node *GBCternary (node *arg_node, info *arg_info);
+
 
 extern node *GBCdoGenByteCode( node *syntaxtree);
 

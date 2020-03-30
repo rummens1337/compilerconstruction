@@ -278,7 +278,7 @@ node *TCvar(node * arg_node, info * arg_info)
     DBUG_PRINT ("TC", ("TCvar"));
 
     // get the entry
-    node *node = STsearchVariableByName( INFO_SYMBOL_TABLE ( arg_info), VAR_NAME( arg_node));
+    node *node = STdeepSearchVariableByName( INFO_SYMBOL_TABLE ( arg_info), VAR_NAME( arg_node));
 
     // set the type
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( node);

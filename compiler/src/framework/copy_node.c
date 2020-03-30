@@ -723,13 +723,13 @@ COPYstmts (node * arg_node, info * arg_info)
 node *
 COPYsymboltable (node * arg_node, info * arg_info)
 {
-  node *result = TBmakeSymboltable (0, NULL);
+  node *result = TBmakeSymboltable (NULL);
   DBUG_ENTER ("COPYsymboltable");
   LUTinsertIntoLutP (INFO_LUT (arg_info), arg_node, result);
   /* Copy attributes */
   SYMBOLTABLE_PARENT (result) =
     LUTsearchInLutPp (INFO_LUT (arg_info), SYMBOLTABLE_PARENT (arg_node));
-  SYMBOLTABLE_DISTANCE (result) = SYMBOLTABLE_DISTANCE (arg_node);
+  SYMBOLTABLE_RETURNTYPE (result) = SYMBOLTABLE_RETURNTYPE (arg_node);
   /* Copy sons */
   SYMBOLTABLE_ENTRY (result) =
     COPYTRAV (SYMBOLTABLE_ENTRY (arg_node), arg_info);
@@ -752,14 +752,15 @@ COPYsymboltable (node * arg_node, info * arg_info)
 node *
 COPYsymboltableentry (node * arg_node, info * arg_info)
 {
-  node *result = TBmakeSymboltableentry (NULL, T_unknown, 0, NULL, NULL);
+  node *result = TBmakeSymboltableentry (NULL, T_unknown, 0, 0, NULL, NULL);
   DBUG_ENTER ("COPYsymboltableentry");
   LUTinsertIntoLutP (INFO_LUT (arg_info), arg_node, result);
   /* Copy attributes */
   SYMBOLTABLEENTRY_NAME (result) = STRcpy (SYMBOLTABLEENTRY_NAME (arg_node));
   SYMBOLTABLEENTRY_TYPE (result) = SYMBOLTABLEENTRY_TYPE (arg_node);
   SYMBOLTABLEENTRY_OFFSET (result) = SYMBOLTABLEENTRY_OFFSET (arg_node);
-  SYMBOLTABLEENTRY_PARAMS (result) = SYMBOLTABLEENTRY_PARAMS (arg_node);
+  SYMBOLTABLEENTRY_DEPTH (result) = SYMBOLTABLEENTRY_DEPTH (arg_node);
+  SYMBOLTABLEENTRY_PARAM (result) = SYMBOLTABLEENTRY_PARAM (arg_node);
   /* Copy sons */
   SYMBOLTABLEENTRY_NEXT (result) =
     COPYTRAV (SYMBOLTABLEENTRY_NEXT (arg_node), arg_info);

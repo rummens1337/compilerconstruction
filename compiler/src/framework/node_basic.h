@@ -35,8 +35,8 @@ extern node *TBmakeProgram (node * Decls);
 
 #define SYMBOLTABLE_ENTRY( n) ((n)->sons.N_symboltable->Entry)
 #define SYMBOLTABLE_PARENT( n) ((n)->attribs.N_symboltable->Parent)
-#define SYMBOLTABLE_DISTANCE( n) ((n)->attribs.N_symboltable->Distance)
-extern node *TBmakeSymboltable (int Distance, node * Entry);
+#define SYMBOLTABLE_RETURNTYPE( n) ((n)->attribs.N_symboltable->ReturnType)
+extern node *TBmakeSymboltable (node * Entry);
 
 /*****************************************************************************
  * macros and functions for N_symboltableentry
@@ -47,9 +47,10 @@ extern node *TBmakeSymboltable (int Distance, node * Entry);
 #define SYMBOLTABLEENTRY_NAME( n) ((n)->attribs.N_symboltableentry->Name)
 #define SYMBOLTABLEENTRY_TYPE( n) ((n)->attribs.N_symboltableentry->Type)
 #define SYMBOLTABLEENTRY_OFFSET( n) ((n)->attribs.N_symboltableentry->Offset)
-#define SYMBOLTABLEENTRY_PARAMS( n) ((n)->attribs.N_symboltableentry->Params)
+#define SYMBOLTABLEENTRY_DEPTH( n) ((n)->attribs.N_symboltableentry->Depth)
+#define SYMBOLTABLEENTRY_PARAM( n) ((n)->attribs.N_symboltableentry->Param)
 extern node *TBmakeSymboltableentry (char *Name, type Type, int Offset,
-				     node * Next, node * Table);
+				     int Depth, node * Next, node * Table);
 
 /*****************************************************************************
  * macros and functions for N_decls

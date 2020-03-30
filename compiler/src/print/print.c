@@ -878,14 +878,16 @@ PRTwhile (node * arg_node, info * arg_info)
   print ( arg_info, "while ( ");
 
   // print conditions
-  WHILE_COND( arg_node) = TRAVdo( WHILE_COND( arg_node), arg_info);
+  WHILE_COND ( arg_node) = TRAVdo ( WHILE_COND ( arg_node), arg_info);
 
   // print
-  print ( arg_info, " )\n");
+  printf ( " )\n");
   print ( arg_info, "{\n");
 
   // print the block
-  WHILE_BLOCK( arg_node) = TRAVopt( WHILE_BLOCK( arg_node), arg_info);
+  INFO_TABS ( arg_info)++;
+  WHILE_BLOCK ( arg_node) = TRAVopt ( WHILE_BLOCK ( arg_node), arg_info);
+  INFO_TABS ( arg_info)--;
 
   // print
   print ( arg_info, "}\n");

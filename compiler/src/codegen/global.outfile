@@ -1,82 +1,115 @@
-krafmaga:
-	VARDECL
-	VARDECL
-	esr 2
-
-	VARLET
-	iloadc 0
-	istore 0
-	VARLET
-	bloadc 1
-	fstore 1
-	VAR
-	VARLET
-	iloadc 2
-	istore 2
-	iloadc 0
-	ireturn
 __init:
-	VARLET
-	iloadc 3
 	iloadc 0
+	iloadc 1
 	iadd
 	istoreg 0
-	VARLET
-	iloadc 4
+	iloadc 2
 	istoreg 1
-	VARLET
-	bloadc 1
-	bloadc 5
+	bloadc 3
+	bloadc 4
 	badd
-	bloadc 5
+	bloadc 4
 	badd
 	bstoreg 2
 	return
-lel:
-	VARDECL
-	VARDECL
-	VARDECL
-	esr 3
 
-	VARLET
-	bloadc 1
-	fstore 0
-	VARLET
-	iloadc 0
-	iloadc 2
+krafmaga:
+	esr 4
+	iloadc 1
+	iload_0
 	iadd
-	istore 1
-	VARLET
-	iloadc 4
-	VAR
-	iadd
-	istore 2
-	VARLET
-	iloadc 4
 	istore 3
-	VAR
-	VARLET
-	iloadc 6
-	istore 4
-	VAR
-	VARLET
-	iloadc 6
+	bloadc 3
+	bstore 4
+	iload 3
+	iloadc 5
+	iadd
 	istore 5
-	VARLET
-	iloadc 0
+	iloadg 1
+	iloadc 5
+	iadd
 	istore 6
-	iloadc 0
+	bloadc 3
+	branch_f 1_else
+
+	iloadc 1
+	istore 3
+	bloadc 4
+	branch_f 3_else
+
+	iloadc 6
+	istore 3
+	jump 4_end
+
+3_else:
+	iloadc 6
+	istore 3
+
+4_end:
+	iloadc 1
+	istore 3
+	jump 2_end
+
+1_else:
+	iloadc 7
+	istore 3
+
+2_end:
+	iloadc 5
+	istore 6
+	iload_2
 	ireturn
 
-.const int 5
-.const bool true
-.const int 3
+mvoid:
+	esr 4
+	iloadc 1
+	iload_0
+	iadd
+	istore 3
+	bloadc 3
+	bstore 4
+	iload 3
+	iloadc 5
+	iadd
+	istore 5
+	iloadg 1
+	iloadc 5
+	iadd
+	istore 6
+	return
+	return
+
+lel:
+	esr 4
+	bloadc 3
+	bstore 3
+	iloadc 1
+	istore 4
+	iloadc 2
+	iload 4
+	iadd
+	istore 5
+	isrg
+	iloadc 8
+	iloadc 6
+	iloadc 9
+	jsr 3 krafmaga
+	istore 5
+	iloadg 1
+	ireturn
+
 .const int 42
+.const int 5
 .const int 10
+.const bool true
 .const bool false
+.const int 4
 .const int 2
-.exportfun "__init" void __init
-.exportfun "lel" int lel
+.const int 8
+.const int 1
+.const int 3
+.exportfun "__init" void  __init
+.exportfun "lel" int  int int int lel
 .global int
 .global int
 .global bool

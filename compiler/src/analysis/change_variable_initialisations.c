@@ -83,30 +83,15 @@ node *CVIprogram (node *arg_node, info *arg_info)
     // set the symbol table
     INFO_SYMBOL_TABLE (arg_info) = PROGRAM_SYMBOLTABLE ( arg_node);
 
+    // the decls
+    node *decls = PROGRAM_DECLS ( arg_node);
+
     // traverse over the decls
-    TRAVopt ( PROGRAM_DECLS ( arg_node), arg_info);
-
-    DBUG_RETURN(arg_node);
-}
-
-/**
- * Traverse over decls (globdefs) and separate declaration and initialisation.
- */
-node *CVIdecls(node *arg_node, info *arg_info)
-{
-    DBUG_ENTER("CVIdecls");
-    DBUG_PRINT("CVI", ("CVIdecls"));
-
-    // traverse over the declerations
-    TRAVopt(DECLS_DECL(arg_node), arg_info);
-    TRAVopt(DECLS_NEXT(arg_node), arg_info);
+    TRAVopt ( decls, arg_info);
 
     // get the added statements
     node *stmts = INFO_FRONT(arg_info);
 
-    // Do we have any more declerations?
-    if (DECLS_NEXT(arg_node) != NULL) DBUG_RETURN(arg_node);
-    
     // do we need to append statements?
     if (stmts == NULL) DBUG_RETURN(arg_node);
     
@@ -116,18 +101,17 @@ node *CVIdecls(node *arg_node, info *arg_info)
     FUNDEF_ISEXPORT(init) = 1;
 
     // prepend the __init function to other DECLS
-    DECLS_NEXT(arg_node) = DECLS_DECL(arg_node);
-    DECLS_DECL(arg_node) = init;
+    PROGRAM_DECLS(arg_node) = TBmakeDecls(init, decls);
 
     // refernce to the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create a new symbol table for this function definition
-    node *inittable = TBmakeSymboltable ( 1, NULL );
+    node *inittable = TBmakeSymboltable ( NULL );
     SYMBOLTABLE_PARENT ( inittable) = table;
 
     // create the symbol table
-    node *entry = TBmakeSymboltableentry ( STRcpy(FUNDEF_NAME ( init)), FUNDEF_TYPE ( init), 0, NULL, inittable);
+    node *entry = TBmakeSymboltableentry ( STRcpy(FUNDEF_NAME ( init)), FUNDEF_TYPE ( init), 0, 0, NULL, inittable);
     
     // add the entry to the symbol table
     STadd(table, entry);

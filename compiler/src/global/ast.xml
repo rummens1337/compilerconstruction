@@ -58,7 +58,6 @@
             <node name="FunBody" />
             <node name="GlobDef" />
             <node name="VarDecl" />
-            <node name="Decls" />
         </travuser>
     </traversal>
 
@@ -191,18 +190,6 @@
                     </targets>
                 </type>
             </attribute>
-            <attribute name="Distance">
-                <type name="Int">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
             <attribute name="ReturnType">
                 <type name="Type">
                     <targets>
@@ -278,8 +265,20 @@
                     </targets>
                 </type>
             </attribute>
-            <attribute name="Params">
+            <attribute name="Depth">
                 <type name="Int">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
+            <attribute name="Param">
+                <type name="Bool">
                     <targets>
                         <target mandatory="no">
                             <any/>

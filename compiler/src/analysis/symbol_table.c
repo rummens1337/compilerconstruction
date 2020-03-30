@@ -225,17 +225,50 @@ node *STlastEntry(node *list)
 }
 
 /**
- *  The current offset of a table
- *  @param  list    list of nodes
- *  @return int
+ *  Number of entries in the table
+ *  @param  table   the symbol table
+ *  @return size_t
  */
-int STcount(node *list)
+size_t STcount(node *table)
 {
-    // is the list not set?
-    if (list == NULL) return 0;
+    // count
+    size_t count = 0;
 
-    // call ourself with the next node
-    return 1 + STcount ( SYMBOLTABLEENTRY_NEXT (list));
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry)) count++;
+
+    // return result
+    return count;
+}
+
+/**
+ *  The number of params
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+size_t STparams(node *table)
+{
+    // count
+    size_t count = 0;
+
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        // do we have a param entry
+        if (!SYMBOLTABLEENTRY_PARAM ( entry)) continue;
+
+        // increment the count
+        count++;
+    }
+
+    // return result
+    return count;
 }
 
 /**
@@ -263,7 +296,7 @@ node *STadd(node *table, node *entry)
 
     // set the offset
     if (STempty ( table)) SYMBOLTABLEENTRY_OFFSET( entry) = 0;
-    else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( SYMBOLTABLE_ENTRY ( table));
+    else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( table);
 
     // find the last entry
     node *last = STend(table);

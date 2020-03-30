@@ -24,6 +24,7 @@
 #include "compiling_boolean_disjunction_and_conjunction.h"
 #include "transformation_of_cast_expressions.h"
 #include "type_checking.h"
+#include "gen_byte_code.h"
 
 
 travtables_t travtables = {
@@ -86,7 +87,7 @@ travtables_t travtables = {
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons}
 
   /* TR_cvi */
-  , {&TRAVerror, &CVIprogram, &TRAVsons, &TRAVsons, &CVIdecls, &TRAVsons,
+  , {&TRAVerror, &CVIprogram, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons,
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons,
      &TRAVsons, &TRAVsons, &CVIfunbody, &TRAVsons, &TRAVsons, &TRAVsons,
      &TRAVsons, &TRAVsons, &TRAVsons, &CVIglobdef, &TRAVsons, &CVIvardecl,
@@ -116,17 +117,25 @@ travtables_t travtables = {
      &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons, &TRAVsons,
      &TRAVsons, &TCassign, &TCbinop, &TRAVsons, &TRAVsons, &TCvar, &TCnum,
      &TCfloat, &TCbool, &TRAVsons}
+
+  /* TR_gbc */
+  , {&TRAVerror, &GBCprogram, &GBCsymboltable, &GBCsymboltableentry,
+     &GBCdecls, &GBCexprs, &GBCarrexpr, &GBCids, &GBCexprstmt, &GBCreturn,
+     &GBCfuncall, &GBCcast, &GBCfundefs, &GBCfundef, &GBCfunbody, &GBCifelse,
+     &GBCternary, &GBCwhile, &GBCdowhile, &GBCfor, &GBCglobdecl, &GBCglobdef,
+     &GBCparam, &GBCvardecl, &GBCstmts, &GBCassign, &GBCbinop, &GBCmonop,
+     &GBCvarlet, &GBCvar, &GBCnum, &GBCfloat, &GBCbool, &GBCerror}
 };
 
 preposttable_t pretable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
 preposttable_t posttable = {
-  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
 };
 
-const char *travnames[11] = {
+const char *travnames[12] = {
   "unknown", "prt", "copy", "free", "chk", "pst", "nfl", "cvi", "cbdc",
-    "toce", "tc"
+    "toce", "tc", "gbc"
 };

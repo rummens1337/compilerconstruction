@@ -72,12 +72,24 @@ extern int SToffset(node *table);
  */
 extern node *STget(node *table, int offset);
 
-
 /**
  *  Display the symbol table
  *  @param  table   the symbol table
  *  @param  tabs    numbers of tabs to show
  */
 extern void STdisplay(node *table, size_t tabs);
+
+/**
+ *  Number of entries in the table
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+size_t STcount(node *table);
+
+/**
+ *  The number of params
+ *  @param  table   the symbol table
+ */
+extern size_t STparams();
 
 #endif

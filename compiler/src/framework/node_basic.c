@@ -74,7 +74,7 @@ TBmakeProgram (node * Decls)
  *****************************************************************************/
 
 node *
-TBmakeSymboltable (int Distance, node * Entry)
+TBmakeSymboltable (node * Entry)
 {
   node *this;
   DBUG_ENTER ("TBmakeSymboltable");
@@ -92,7 +92,7 @@ TBmakeSymboltable (int Distance, node * Entry)
   DBUG_PRINT ("MAKE", ("assigning son Entry initial value: %s ", Entry));
   SYMBOLTABLE_ENTRY (this) = Entry;
   SYMBOLTABLE_PARENT (this) = NULL;
-  SYMBOLTABLE_DISTANCE (this) = Distance;
+  SYMBOLTABLE_RETURNTYPE (this) = T_unknown;
 #ifndef DBUG_OFF
   DBUG_PRINT ("MAKE", ("doing son target checks"));
   if ((SYMBOLTABLE_ENTRY (this) != NULL)
@@ -110,8 +110,8 @@ TBmakeSymboltable (int Distance, node * Entry)
  *****************************************************************************/
 
 node *
-TBmakeSymboltableentry (char *Name, type Type, int Offset, node * Next,
-			node * Table)
+TBmakeSymboltableentry (char *Name, type Type, int Offset, int Depth,
+			node * Next, node * Table)
 {
   node *this;
   DBUG_ENTER ("TBmakeSymboltableentry");
@@ -134,7 +134,8 @@ TBmakeSymboltableentry (char *Name, type Type, int Offset, node * Next,
   SYMBOLTABLEENTRY_NAME (this) = Name;
   SYMBOLTABLEENTRY_TYPE (this) = Type;
   SYMBOLTABLEENTRY_OFFSET (this) = Offset;
-  SYMBOLTABLEENTRY_PARAMS (this) = 0;
+  SYMBOLTABLEENTRY_DEPTH (this) = Depth;
+  SYMBOLTABLEENTRY_PARAM (this) = FALSE;
 #ifndef DBUG_OFF
   DBUG_PRINT ("MAKE", ("doing son target checks"));
   if ((SYMBOLTABLEENTRY_NEXT (this) != NULL)

@@ -58,9 +58,7 @@ static info *MakeInfo(node *parent)
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  int distance = parent ? SYMBOLTABLE_DISTANCE ( parent) + 1 : 0;
-
-  node *table = TBmakeSymboltable(distance, NULL);
+  node *table = TBmakeSymboltable(NULL);
   SYMBOLTABLE_RETURNTYPE ( table) = T_unknown;
   SYMBOLTABLE_PARENT ( table) = parent;
   INFO_SYMBOL_TABLE( result) = table;
@@ -102,7 +100,7 @@ node *PSTglobdef(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, 0, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s'\n", GLOBDEF_NAME ( arg_node));
@@ -123,16 +121,13 @@ node *PSTfundef(node * arg_node, info * arg_info)
     SYMBOLTABLE_RETURNTYPE ( INFO_SYMBOL_TABLE ( info)) = FUNDEF_TYPE ( arg_node);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, NULL, INFO_SYMBOL_TABLE ( info));
+    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, 0, NULL, INFO_SYMBOL_TABLE ( info));
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s(...)'\n", FUNDEF_NAME ( arg_node));
 
     // traverse over the sons
     TRAVopt ( FUNDEF_PARAMS( arg_node), info);
-
-    SYMBOLTABLEENTRY_PARAMS( entry) = INFO_PARAMS ( info);
-
     TRAVopt ( FUNDEF_FUNBODY( arg_node), info);
 
     // free the info
@@ -149,11 +144,9 @@ node *PSTparam(node * arg_node, info * arg_info)
     // the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
-    // increment the number of params
-    INFO_PARAMS ( arg_info) += 1;
-
     // create the entry
-    node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, NULL, NULL);
+    node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, 1, NULL, NULL);
+    SYMBOLTABLEENTRY_PARAM ( entry) = TRUE;
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerror ( "Redefinition of `%s %s` ", stype(PARAM_TYPE ( arg_node)), PARAM_NAME ( arg_node));
@@ -190,12 +183,15 @@ node *PSTfuncall(node * arg_node, info * arg_info)
         // traverse over the arguments
         TRAVopt ( args, arg_info);
 
+        // number of parameters
+        size_t params = STparams ( SYMBOLTABLEENTRY_TABLE ( entry));
+
         // do we have the right number of arguments
-        if (INFO_ARGUMENTS ( arg_info) < SYMBOLTABLEENTRY_PARAMS ( entry))
+        if (INFO_ARGUMENTS ( arg_info) < params)
         {
            CTIerror ("Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
         }
-        else if (INFO_ARGUMENTS ( arg_info) > SYMBOLTABLEENTRY_PARAMS ( entry))
+        else if (INFO_ARGUMENTS ( arg_info) > params)
         {
             CTIerror ("Too many arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
         }
@@ -205,7 +201,7 @@ node *PSTfuncall(node * arg_node, info * arg_info)
         INFO_SYMBOL_TABLE ( arg_info) = table;
     }
 
-    else if (SYMBOLTABLEENTRY_PARAMS ( entry) > 0)
+    else if ( STparams ( SYMBOLTABLEENTRY_TABLE ( entry)) > 0)
     {
         CTIerror ("Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
     }
@@ -251,7 +247,7 @@ node *PSTvardecl(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, 1, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s'\n", VARDECL_NAME ( arg_node));

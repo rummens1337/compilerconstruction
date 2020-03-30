@@ -1,23 +1,51 @@
-int foo(int g) {
-    int a;
-    bool b;
-    a = 1 + 2 + (float)true;
-    
+int a = 42 + 5;
+int z = 10;
+// int n = 42 + 5;
+// int c = 42 + 13;
+bool woop = true + false + false;
 
-    for (int oke = 1, 1)
+int krafmaga(int a, int b, int c)
+{
+    int d = 5 + a;
+    bool e = true;
+    int f = d + 4;
+    int g = z + 4;
+
+    if (true)
     {
-        oke = 2;
+        d = 5;
 
-        for (int oke = 1, 1)
-        {
-            oke = 2;
-        }
+        if (false) d = 2;
+        else d = 2;
+
+        d = 5;
+    }
+    else
+    {
+        d = 8;
     }
 
-    return 1;
+    g = 4;
+
+    return c;
 }
 
-void foo1 () {
+void mvoid(int a, int b, int c)
+{
+    int d = 5 + a;
+    bool e = true;
+    int f = d + 4;
+    int g = z + 4;
 
-    return foo(9);
+    return;
+}
+
+export int lel(int a, int b, int c)
+{
+    bool d = true;
+    int e = 5;
+    int f = 10 + e;
+    f = krafmaga(1, 2, 3);
+
+    return z;
 }

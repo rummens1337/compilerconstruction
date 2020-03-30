@@ -10,7 +10,7 @@ int krafmaga()
     int b = 5;
     bool e = true;
     // a = 2;
-    while (e)
+    while (z)
     {
         
         a = 3;

@@ -273,7 +273,7 @@
       Phases
       <ul><li><a href="#GENERALTRAVS">
         General Traversals
-      </a><ul><li><a href="#TR_PRT">Print Syntax Tree</a></li><li><a href="#TR_COPY">Copy Syntax Tree</a></li><li><a href="#TR_FREE">Free Syntax Tree</a></li><li><a href="#TR_CHK">Check Syntax Tree</a></li><li><a href="#TR_PST">Process symbol table</a></li><li><a href="#TR_NFL">Normalize For Loops</a></li><li><a href="#TR_CVI">Change variable initialisations</a></li><li><a href="#TR_CBDC">Compiling Boolean Disjunction and Conjunction</a></li><li><a href="#TR_TOCE">Transformation Of Cast Expressions</a></li><li><a href="#TR_TC">Type checking</a></li></ul></li></ul></li>
+      </a><ul><li><a href="#TR_PRT">Print Syntax Tree</a></li><li><a href="#TR_COPY">Copy Syntax Tree</a></li><li><a href="#TR_FREE">Free Syntax Tree</a></li><li><a href="#TR_CHK">Check Syntax Tree</a></li><li><a href="#TR_PST">Process symbol table</a></li><li><a href="#TR_NFL">Normalize For Loops</a></li><li><a href="#TR_CVI">Change variable initialisations</a></li><li><a href="#TR_CBDC">Compiling Boolean Disjunction and Conjunction</a></li><li><a href="#TR_TOCE">Transformation Of Cast Expressions</a></li><li><a href="#TR_TC">Type checking</a></li><li><a href="#TR_GBC">Generate byte code</a></li></ul></li></ul></li>
         <li> Nodesets
       <ul><li><a href="#Expr">{Expr}</a></li><li><a href="#Stmt">{Stmt}</a></li><li><a href="#Decl">{Decl}</a></li></ul></li>
         <li>
@@ -454,6 +454,13 @@
             <tr>
               <td class="heading">
                 <a name="TR_TC" id="TR_TC">Type checking</a>
+              </td>
+            </tr>
+          </table>
+          <table class="inner">
+            <tr>
+              <td class="heading">
+                <a name="TR_GBC" id="TR_GBC">Generate byte code</a>
               </td>
             </tr>
           </table>
@@ -2058,7 +2065,7 @@
         </td>
       </tr>
       <tr>
-        <td class="ccode">node *TBmakeSymboltable( int Distance ,node * Entry)</td>
+        <td class="ccode">node *TBmakeSymboltable( node * Entry)</td>
       </tr>
       <tr>
         <td class="heading">Sons</td>
@@ -2102,9 +2109,9 @@
               <td></td>
             </tr>
             <tr>
-              <td>Distance</td>
+              <td>ReturnType</td>
               <td>
-                <div class="type"><a href="#atype_Int">Int</a> (  ) </div>
+                <div class="type"><a href="#atype_Type">Type</a> (  ) </div>
               </td>
               <td class="ccode"></td>
               <td></td>
@@ -2129,7 +2136,7 @@
         </td>
       </tr>
       <tr>
-        <td class="ccode">node *TBmakeSymboltableentry( char* Name ,type Type ,int Offset ,node * Next ,node * Table)</td>
+        <td class="ccode">node *TBmakeSymboltableentry( char* Name ,type Type ,int Offset ,int Depth ,node * Next ,node * Table)</td>
       </tr>
       <tr>
         <td class="heading">Sons</td>
@@ -2195,9 +2202,17 @@
               <td></td>
             </tr>
             <tr>
-              <td>Params</td>
+              <td>Depth</td>
               <td>
                 <div class="type"><a href="#atype_Int">Int</a> (  ) </div>
+              </td>
+              <td class="ccode"></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Param</td>
+              <td>
+                <div class="type"><a href="#atype_Bool">Bool</a> (  ) </div>
               </td>
               <td class="ccode"></td>
               <td></td>
