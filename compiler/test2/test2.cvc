@@ -1,23 +1,29 @@
 int a = 42 + 5;
 int z = 10;
-// int n = 42 + 5;
-// int c = 42 + 13;
+int n = 42 + 5;
+int c = 42 + 13;
+float el = 5.0;
 bool woop = true + false + false;
 
 int krafmaga()
 {
     // int a = 3;
-    int b = 5;
-    bool e = true;
-    // a = 2;
-    while (z)
-    {
+    bool k = true;
+    k = !k;
+    // k = (bool)el;
+    // n = (int)el;
+    a = 2;
+k = 1 == 2;
+    
+    // do
+    // {
         
-        a = 3;
-    //     // a = 2;
-    //     // a = a + a;
-    }
+    //     a = 3;
+    // // //     // a = 2;
+    // // //     // a = a + a;
+    // } while(true);
 
+    
     // for (int i = 0, 3) {
     //     a = 5;
     //     // print the value
@@ -25,23 +31,27 @@ int krafmaga()
     return 5;
 }
 
-export int lel()
-{
-    bool k = true;
-    int c = 5 + 3;
-    int b = 10 + c;
-    c = 10;
+// export int lel(int a, int b, int c, int d, int e, int f, int g)
+// {
+//     bool k = true;
 
-    while (k)
-    {
-        c = 2;
-    }
+//     c = 5 + 3;
+//     b = 10 + c;
+//     d = c;
+//     e = f;
+//     f = g;
+//     c = 10;
 
-    while (k)
-    {
-        c = 2;
-        b = 5;
-    }
+//     while (k)
+//     {
+//         c = 2;
+//     }
 
-    return 5;
-}
+//     while (k)
+//     {
+//         c = 2;
+//         b = 5;
+//     }
+
+//     return 5;
+// }

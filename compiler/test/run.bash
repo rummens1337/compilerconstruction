@@ -22,7 +22,7 @@ function echo_failed {
 # expected output.
 function check_output {
     file=$1
-    expect_file=${file%.*}.out
+    expect_file=../src/codegen/${file%.*}.out
 
     if [ ! -f $file ]; then return; fi
 
