@@ -191,15 +191,7 @@ node *TCbinop (node * arg_node, info * arg_info)
         case BO_sub:
         case BO_mul:
         case BO_div:
-
-        case BO_lt:
-        case BO_le:
-        case BO_gt:
-        case BO_ge:
-        case BO_eq:
-        case BO_ne:
-        case BO_and:
-        case BO_or:
+        {
             TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
 
             type leftype = INFO_VAR_TYPE ( arg_info);
@@ -208,7 +200,32 @@ node *TCbinop (node * arg_node, info * arg_info)
 
             if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
 
-            // printf ( "%s = %s\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+            break;
+        }
+        case BO_lt:
+        case BO_le:
+        case BO_gt:
+        case BO_ge:
+        case BO_eq:
+        case BO_ne:
+        {
+            TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
+
+            type leftype = INFO_VAR_TYPE ( arg_info);
+
+            TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
+
+            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+
+            INFO_VAR_TYPE ( arg_info) = T_bool;
+
+            break;
+        }
+        case BO_and:
+        case BO_or:
+
+            if (INFO_VAR_TYPE ( arg_info) == T_bool) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(T_bool), stype(INFO_VAR_TYPE ( arg_info)));
+
             break;
         case BO_mod:
 

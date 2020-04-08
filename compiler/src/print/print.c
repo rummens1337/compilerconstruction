@@ -59,7 +59,7 @@ static info *FreeInfo( info *info)
  */
 void printTabs(info *info)
 {
-  for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
+   for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
 }
 
 /**
@@ -177,7 +177,7 @@ PRTassign (node * arg_node, info * arg_info)
 node *
 PRTbinop (node * arg_node, info * arg_info)
 {
-  char *tmp;
+  const char *tmp;
 
   DBUG_ENTER ("PRTbinop");
 
@@ -1103,6 +1103,8 @@ PRTparam (node * arg_node, info * arg_info)
 node *
 PRTvardecl (node * arg_node, info * arg_info)
 {
+  DBUG_ENTER ("PRTvardecl");
+
   // print tabs
   printTabs(arg_info);
 
@@ -1128,7 +1130,6 @@ PRTvardecl (node * arg_node, info * arg_info)
   // print the next decleration
   VARDECL_NEXT( arg_node) = TRAVopt( VARDECL_NEXT( arg_node), arg_info);
 
-  DBUG_ENTER ("PRTvardecl");
   DBUG_RETURN (arg_node);
 }
 

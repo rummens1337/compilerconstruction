@@ -84,12 +84,19 @@ extern void STdisplay(node *table, size_t tabs);
  *  @param  table   the symbol table
  *  @return size_t
  */
-size_t STcount(node *table);
+extern size_t STcount(node *table);
 
 /**
  *  The number of params
  *  @param  table   the symbol table
  */
 extern size_t STparams();
+
+/**
+ *  The number of var decls
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+extern size_t STVardecls(node *table);
 
 #endif

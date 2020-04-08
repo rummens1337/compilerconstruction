@@ -272,6 +272,33 @@ size_t STparams(node *table)
 }
 
 /**
+ *  The number of var decls
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+size_t STVardecls(node *table)
+{
+    // count
+    size_t count = 0;
+
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        // do we have a param entry
+        if (SYMBOLTABLEENTRY_PARAM ( entry)) continue;
+
+        // increment the count
+        count++;
+    }
+
+    // return result
+    return count;
+}
+
+/**
  *  Check if the table is empty
  *  @param  table   the symbol table
  *  @return bool
