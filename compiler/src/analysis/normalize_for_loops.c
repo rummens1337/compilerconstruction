@@ -30,6 +30,8 @@
 #include "copy.h"
 #include "ctinfo.h"
 
+#include "print.h"
+
 /*
  * INFO structure
  */
@@ -52,16 +54,13 @@ void append(node *front, node *new)
     // no need to continue if the node is empty
     if (front == NULL) return;
 
-    // process the node
-    switch (NODE_TYPE ( front))
+    if (NODE_TYPE ( front) == N_stmts)
     {
-        case N_stmts:
-            // did we reach the end?
-            if (STMTS_NEXT ( front) == NULL) return STMTS_NEXT (front) = new;
+        // did we reach the end?
+        if (STMTS_NEXT ( front) == NULL)STMTS_NEXT (front) = new;
 
-            // get the next node
-            append(STMTS_NEXT(front), new);
-        break;
+        // get the next node
+        else append(STMTS_NEXT(front), new);
     }
 }
 /*

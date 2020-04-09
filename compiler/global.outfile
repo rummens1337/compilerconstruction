@@ -1,0 +1,145 @@
+f:
+	esr 23
+	iloadc 0
+	iloadc 1
+	iadd
+	iloadc 2
+	iadd
+	iloadc 3
+	iadd
+	istore 0
+	floadc 4
+	floadc 5
+	fadd
+	floadc 6
+	fadd
+	fstore 1
+	bloadc 7
+	bloadc 7
+	badd
+	bstore 2
+	iloadc 0
+	iloadc 1
+	isub
+	iloadc 2
+	isub
+	iloadc 3
+	isub
+	istore 3
+	floadc 4
+	floadc 5
+	fsub
+	floadc 6
+	fsub
+	fstore 4
+	iloadc 0
+	iloadc 1
+	imul
+	iloadc 8
+	imul
+	istore 5
+	floadc 9
+	floadc 10
+	fmul
+	fstore 6
+	bloadc 11
+	bloadc 7
+	bmul
+	bstore 7
+	iloadc 2
+	iloadc 1
+	idiv
+	istore 8
+	iloadc 12
+	iloadc 13
+	idiv
+	istore 9
+	floadc 14
+	floadc 10
+	fdiv
+	fstore 10
+	floadc 15
+	floadc 16
+	fdiv
+	fstore 11
+	iloadc 17
+	iloadc 18
+	irem
+	iloadc 1
+	irem
+	istore 12
+	iloadc 19
+	iloadc 19
+	ilt
+	bstore 13
+	floadc 5
+	floadc 20
+	flt
+	bstore 14
+	iloadc 19
+	iloadc 19
+	ile
+	bstore 15
+	floadc 5
+	floadc 20
+	fle
+	bstore 16
+	iloadc 21
+	iloadc 22
+	ilt
+	iloadc 23
+	iloadc 24
+	igt
+	bloadc 7
+	bloadc 11
+	bloadc 11
+	bstore 17
+	floadc 5
+	floadc 10
+	fgt
+	bstore 18
+	iloadc 18
+	iloadc 18
+	ine
+	bstore 19
+	iloadc 18
+	iloadc 18
+	ieq
+	bstore 20
+	floadc 25
+	floadc 26
+	fne
+	bstore 21
+	bloadc 11
+	bloadc 7
+	bne
+	bstore 22
+	return
+
+.const int 2
+.const int 3
+.const int 4
+.const int 5
+.const float 39.000000
+.const float 3.000000
+.const float 21.000000
+.const bool false
+.const int 1
+.const float 3.140000
+.const float 2.000000
+.const bool true
+.const int 6
+.const int 0
+.const float 5.000000
+.const float 9.000000
+.const float 0.000000
+.const int 12
+.const int 8
+.const int 20
+.const float 6.100000
+.const int 60
+.const int 50
+.const int 30
+.const int 10
+.const float 1.200000
+.const float 2.100000

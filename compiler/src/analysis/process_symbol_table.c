@@ -103,7 +103,7 @@ node *PSTglobdef(node * arg_node, info * arg_info)
     node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, 0, NULL, NULL);
 
     // add to the current scope
-    if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s'\n", GLOBDEF_NAME ( arg_node));
+    if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", GLOBDEF_NAME ( arg_node));
 
     DBUG_RETURN( arg_node);
 }
@@ -124,7 +124,7 @@ node *PSTfundef(node * arg_node, info * arg_info)
     node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, 0, NULL, INFO_SYMBOL_TABLE ( info));
 
     // add to the current scope
-    if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s(...)'\n", FUNDEF_NAME ( arg_node));
+    if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s(...)'\n", FUNDEF_NAME ( arg_node));
 
     // traverse over the sons
     TRAVopt ( FUNDEF_PARAMS( arg_node), info);
@@ -149,7 +149,7 @@ node *PSTparam(node * arg_node, info * arg_info)
     SYMBOLTABLEENTRY_PARAM ( entry) = TRUE;
 
     // add to the current scope
-    if (!STadd(table, entry)) CTIerror ( "Redefinition of `%s %s` ", stype(PARAM_TYPE ( arg_node)), PARAM_NAME ( arg_node));
+    if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node),  "Redefinition of `%s %s` ", stype(PARAM_TYPE ( arg_node)), PARAM_NAME ( arg_node));
 
     // traverse over the sons
     TRAVopt ( PARAM_NEXT( arg_node), arg_info);
@@ -172,7 +172,7 @@ node *PSTfuncall(node * arg_node, info * arg_info)
     node *entry = STdeepSearchFundef ( table, FUNCALL_NAME ( arg_node));
 
     // add to the current scope
-    if (entry == NULL) CTIerror ("`%s()` was not declared in this scope\n", FUNCALL_NAME ( arg_node));
+    if (entry == NULL) CTIerrorLine ( NODE_LINE ( arg_node), "`%s()` was not declared in this scope\n", FUNCALL_NAME ( arg_node));
 
     // do we have paramters
     else if (args != NULL)
@@ -189,11 +189,11 @@ node *PSTfuncall(node * arg_node, info * arg_info)
         // do we have the right number of arguments
         if (INFO_ARGUMENTS ( arg_info) < params)
         {
-           CTIerror ("Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+           CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
         }
         else if (INFO_ARGUMENTS ( arg_info) > params)
         {
-            CTIerror ("Too many arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+            CTIerrorLine ( NODE_LINE ( arg_node), "Too many arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
         }
 
         // restore the info properties
@@ -203,7 +203,7 @@ node *PSTfuncall(node * arg_node, info * arg_info)
 
     else if ( STparams ( SYMBOLTABLEENTRY_TABLE ( entry)) > 0)
     {
-        CTIerror ("Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+        CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
     }
    
     DBUG_RETURN( arg_node);
@@ -229,10 +229,13 @@ node *PSTvar(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTvar");
     DBUG_PRINT ("PST", ("PSTvar"));
 
+
+    STdisplay(INFO_SYMBOL_TABLE ( arg_info), 0);
+
     // add to the current scope
     if (!STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VAR_NAME ( arg_node)))
     {
-        CTIerror ("`%s` was not declared in this scope\n", VAR_NAME ( arg_node));
+        CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VAR_NAME ( arg_node));
     }
 
     DBUG_RETURN( arg_node);
@@ -250,7 +253,7 @@ node *PSTvardecl(node * arg_node, info * arg_info)
     node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, 1, NULL, NULL);
 
     // add to the current scope
-    if (!STadd(table, entry)) CTIerror ("Multiple definition of `%s'\n", VARDECL_NAME ( arg_node));
+    if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", VARDECL_NAME ( arg_node));
 
     // traverse over the sons
     TRAVopt ( VARDECL_NEXT( arg_node), arg_info);
@@ -266,7 +269,7 @@ node *PSTvarlet(node * arg_node, info * arg_info)
     // add to the current scope
     if (!STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VARLET_NAME ( arg_node)))
     {
-        CTIerror ("`%s` was not declared in this scope\n", VARLET_NAME ( arg_node));
+        CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VARLET_NAME ( arg_node));
     }
 
     DBUG_RETURN( arg_node);

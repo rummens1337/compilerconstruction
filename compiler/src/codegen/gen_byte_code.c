@@ -293,8 +293,6 @@ node *GBCcast(node *arg_node, info *arg_info)
 
     TRAVdo(CAST_EXPR(arg_node), arg_info);
 
-    node *entry = INFO_SYMBOL_TABLE_ENTRY(arg_info);
-
     switch (CAST_TYPE(arg_node))
     {
     case T_int:
@@ -734,8 +732,7 @@ node *GBCbinop(node *arg_node, info *arg_info)
         break;
     }
 
-    node *entry = INFO_SYMBOL_TABLE_ENTRY(arg_info);
-    switch (SYMBOLTABLEENTRY_TYPE ( entry))
+    switch (INFO_CURRENT_TYPE(arg_info))
     {
     case T_int:   fprintf(INFO_FILE(arg_info), "\ti%s\n", operation); break;
     case T_float: fprintf(INFO_FILE(arg_info), "\tf%s\n", operation); break;
@@ -768,8 +765,7 @@ node *GBCmonop(node *arg_node, info *arg_info)
         break;
     }
 
-    node *entry = INFO_SYMBOL_TABLE_ENTRY(arg_info);
-    switch (SYMBOLTABLEENTRY_TYPE(entry))
+    switch (INFO_CURRENT_TYPE(arg_info))
     {
     case T_int:
         fprintf(INFO_FILE(arg_info), "\ti%s\n", operation);
@@ -833,9 +829,7 @@ node *GBCnum(node *arg_node, info *arg_info)
     DBUG_PRINT("GBC", ("GBCnum"));
 
     // Create const pool byte code string
-    int length = snprintf(NULL, 0, "int %d", NUM_VALUE(arg_node));
-    char *str = malloc(length + 1);
-    snprintf(str, length + 1, "int %d", NUM_VALUE(arg_node));
+    char *str = STRcat("int ", STRitoa(NUM_VALUE(arg_node)));
 
     // Search linked list for const value
     listnode *const_pool = LLsearch(INFO_CONST_POOL(arg_info), str);
@@ -844,13 +838,14 @@ node *GBCnum(node *arg_node, info *arg_info)
     // Else extract values from linked list and print to file.
     if (const_pool == NULL)
     {
-        addToConstPool(arg_info, STRcpy(str), INFO_LOAD_COUNTER(arg_info));
+        addToConstPool(arg_info, str, INFO_LOAD_COUNTER(arg_info));
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "iloadc", INFO_LOAD_COUNTER(arg_info));
         INFO_LOAD_COUNTER(arg_info) += 1;
     }
     else
     {
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "iloadc", const_pool->counter);
+        free(str);
     }
 
     // Set current type to int
@@ -876,13 +871,14 @@ node *GBCfloat(node *arg_node, info *arg_info)
     // Else extract values from linked list and print to file.
     if (const_pool == NULL)
     {
-        addToConstPool(arg_info, STRcpy(str), INFO_LOAD_COUNTER(arg_info));
+        addToConstPool(arg_info, str, INFO_LOAD_COUNTER(arg_info));
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "floadc", INFO_LOAD_COUNTER(arg_info));
         INFO_LOAD_COUNTER(arg_info) += 1;
     }
     else
     {
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "floadc", const_pool->counter);
+        free(str);
     }
 
     // Set current type to float
@@ -897,9 +893,7 @@ node *GBCbool(node *arg_node, info *arg_info)
     DBUG_PRINT("GBC", ("GBCbool"));
 
     // Create const pool byte code string
-    int length = snprintf(NULL, 0, "bool %s", BOOL_VALUE(arg_node) ? "true" : "false");
-    char *str = malloc(length + 1);
-    snprintf(str, length + 1, "bool %s", BOOL_VALUE(arg_node) ? "true" : "false");
+    char *str = STRcat("bool ", BOOL_VALUE(arg_node) ? "true" : "false");
 
     // Search linked list for const value
     listnode *const_pool = LLsearch(INFO_CONST_POOL(arg_info), str);
@@ -908,13 +902,14 @@ node *GBCbool(node *arg_node, info *arg_info)
     // Else extract values from linked list and print to file.
     if (const_pool == NULL)
     {
-        addToConstPool(arg_info, STRcpy(str), INFO_LOAD_COUNTER(arg_info));
+        addToConstPool(arg_info, str, INFO_LOAD_COUNTER(arg_info));
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "bloadc", INFO_LOAD_COUNTER(arg_info));
         INFO_LOAD_COUNTER(arg_info) += 1;
     }
     else
     {
         fprintf(INFO_FILE(arg_info), "\t%s %d\n", "bloadc", const_pool->counter);
+        free(str);
     }
 
     // Set current type to bool

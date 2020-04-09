@@ -107,8 +107,9 @@ node *TCfundef(node * arg_node, info * arg_info)
     // do we have a return statement
     if (FUNDEF_TYPE ( arg_node) != T_void && INFO_HAS_RETURN_TYPE ( arg_info) == 0)
     {
-        CTIerror ("No return type %s expted for %s(...)\n", stype(FUNDEF_TYPE ( arg_node)), FUNDEF_NAME ( arg_node));
+        CTIerrorLine ( NODE_LINE ( arg_node), "No return type %s expted for %s(...)\n", stype(FUNDEF_TYPE ( arg_node)), FUNDEF_NAME ( arg_node));
     }
+    
 
     INFO_HAS_RETURN_TYPE ( arg_info) = 0;
     INFO_SYMBOL_TABLE ( arg_info) = table;
@@ -148,7 +149,7 @@ node *TCreturn(node *arg_node, info *arg_info)
     if (INFO_VAR_TYPE ( arg_info) == SYMBOLTABLE_RETURNTYPE ( table)) DBUG_RETURN( arg_node);
 
     // report the error
-    CTIerror ("invalid conversion from `%s` to `%s`\n", stype(SYMBOLTABLE_RETURNTYPE ( table)), stype(INFO_VAR_TYPE ( arg_info)));
+    CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(SYMBOLTABLE_RETURNTYPE ( table)), stype(INFO_VAR_TYPE ( arg_info)));
 
     DBUG_RETURN( arg_node);
 }
@@ -198,7 +199,7 @@ node *TCbinop (node * arg_node, info * arg_info)
 
             TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
 
-            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
 
             break;
         }
@@ -215,7 +216,7 @@ node *TCbinop (node * arg_node, info * arg_info)
 
             TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
 
-            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
 
             INFO_VAR_TYPE ( arg_info) = T_bool;
 
@@ -224,7 +225,7 @@ node *TCbinop (node * arg_node, info * arg_info)
         case BO_and:
         case BO_or:
 
-            if (INFO_VAR_TYPE ( arg_info) == T_bool) CTIerror ("invalid conversion from `%s` to `%s`\n", stype(T_bool), stype(INFO_VAR_TYPE ( arg_info)));
+            if (INFO_VAR_TYPE ( arg_info) != T_bool) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(T_bool), stype(INFO_VAR_TYPE ( arg_info)));
 
             break;
         case BO_mod:
@@ -232,7 +233,7 @@ node *TCbinop (node * arg_node, info * arg_info)
             TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
 
             // mod operator only support intergers
-            if (INFO_VAR_TYPE ( arg_info) != T_int) CTIerror("Modulo operator only supports interger types\n");
+            if (INFO_VAR_TYPE ( arg_info) != T_int) CTIerrorLine ( NODE_LINE ( arg_node), "Modulo operator only supports interger types\n");
 
             break;
 
