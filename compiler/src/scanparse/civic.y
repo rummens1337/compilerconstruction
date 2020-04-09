@@ -102,13 +102,14 @@ decl: fundef
         }
     ;
 
-globdecl: EXTERN type ID SEMICOLON
+// TODO: dafuq this shit yoo
+// original was $2 and $3 and one EXTERN.
+globdecl: EXTERN EXTERN EXTERN type ID SEMICOLON
         {
-            $$ = TBmakeGlobdecl($2, STRcpy( $3), NULL);
+            $$ = TBmakeGlobdecl($4, STRcpy( $5), NULL);
         }
     ;
 
-// @todo check how to pass export flag
 globdef: type ID SEMICOLON
         {
             $$ = TBmakeGlobdef($1, STRcpy( $2), NULL, NULL);
@@ -126,6 +127,11 @@ globdef: type ID SEMICOLON
         {
             $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, $5);
             GLOBDEF_ISEXPORT($$) = 1;
+        }
+    |   EXTERN type ID SEMICOLON
+        {
+            $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, NULL);
+            GLOBDEF_ISIMPORT($$) = 1;
         }
     ;
 
@@ -146,6 +152,18 @@ fundef: type ID PARENTHESIS_L PARENTHESIS_R  CURLY_L funbody CURLY_R
         {
             $$ = TBmakeFundef( $2, STRcpy( $3), $8, $5);
             FUNDEF_ISEXPORT($$) = 1;
+        }
+    |   EXTERN type ID PARENTHESIS_L PARENTHESIS_R SEMICOLON
+        {
+            $$ = TBmakeFundef( $2, STRcpy( $3), NULL, NULL);
+            FUNDEF_ISIMPORT($$) = 1;
+
+        }
+    |   EXTERN type ID PARENTHESIS_L param PARENTHESIS_R SEMICOLON
+        {
+            $$ = TBmakeFundef( $2, STRcpy( $3), NULL, $5);
+            FUNDEF_ISIMPORT($$) = 1;
+
         }
     ;
 

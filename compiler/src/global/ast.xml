@@ -563,6 +563,7 @@
         </attributes>
         <flags>
             <flag name="IsExport" />
+            <flag name="IsImport" />
         </flags>
     </node>
 
@@ -892,6 +893,7 @@
         </attributes>
         <flags>
             <flag name="IsExport" />
+            <flag name="IsImport" />
         </flags>
     </node>
 

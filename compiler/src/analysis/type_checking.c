@@ -105,7 +105,7 @@ node *TCfundef(node * arg_node, info * arg_info)
     TRAVopt ( FUNDEF_FUNBODY ( arg_node), arg_info);
 
     // do we have a return statement
-    if (FUNDEF_TYPE ( arg_node) != T_void && INFO_HAS_RETURN_TYPE ( arg_info) == 0)
+    if (FUNDEF_TYPE ( arg_node) != T_void && INFO_HAS_RETURN_TYPE ( arg_info) == 0 && FUNDEF_ISIMPORT(arg_node) < 1)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "No return type %s expted for %s(...)\n", stype(FUNDEF_TYPE ( arg_node)), FUNDEF_NAME ( arg_node));
     }
