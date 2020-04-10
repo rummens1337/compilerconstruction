@@ -3,6 +3,7 @@ __init:
 	istoreg 0
 	return
 
+<<<<<<< Updated upstream
 main:
 	iloadg 0
 	jsr 1 printInt
@@ -15,3 +16,9 @@ main:
 .exportfun "main" int  main
 .global int
 .importfun "printInt" void  int
+=======
+.const int 222
+.exportfun "__init" void  __init
+.exportvar "foo" 0
+.global int
+>>>>>>> Stashed changes

@@ -347,6 +347,10 @@ expr:
         {
             $$ = TBmakeVar( STRcpy( $1), NULL, NULL);
         }
+    |   PARENTHESIS_L expr PARENTHESIS_R
+        {
+            $$ = $2;
+        }
     |   binop
         {
             $$ = $1;

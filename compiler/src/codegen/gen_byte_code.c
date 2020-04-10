@@ -320,7 +320,7 @@ node *GBCfuncall(node *arg_node, info *arg_info)
 
     if (FUNDEF_ISIMPORT(link) == 1)
     {
-        fprintf(INFO_FILE(arg_info), "\tjsre %ld\n", STparams(table));
+        fprintf(INFO_FILE(arg_info), "\tjsre %d\n", 0); // TODO: add this as second param STparams(table)
     }
     else
         fprintf(INFO_FILE(arg_info), "\tjsr %ld %s\n", STparams(table), FUNCALL_NAME(arg_node));

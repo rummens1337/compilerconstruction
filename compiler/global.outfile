@@ -1,0 +1,68 @@
+__init:
+	bloadc 0
+	bloadc 1
+	badd
+	bloadc 1
+	badd
+	bstoreg 0
+	return
+
+foobar2:
+	iloadc 2
+	ireturn
+
+foobar:
+	isrg
+	jsr 0 foobar2
+	ipop
+	iloadc 2
+	ireturn
+
+foo44:
+	isrg
+	jsr 0 foobar
+	ipop
+	return
+
+main:
+	esr 2
+	iloadc 2
+	istore 0
+	iloadc 3
+	istore 1
+	iload_0
+	iload_1
+	ilt
+	branch_f 1_end
+
+	iloadc 4
+	istore 0
+1_end:
+	iload_0
+	iload_1
+	ilt
+	iload_1
+	iload_0
+	ilt
+	bloadc 1
+	bloadc 0
+	bloadc 0
+	branch_f 2_end
+
+	iloadc 4
+	istore 0
+2_end:
+	iloadc 5
+	ireturn
+
+.const bool true
+.const bool false
+.const int 5
+.const int 6
+.const int 7
+.const int 0
+.exportfun "__init" void  __init
+.exportfun "foo44" void  int int int foo44
+.exportfun "main" int  main
+.global bool
+.importfun "printInt" void  int
