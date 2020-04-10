@@ -111,7 +111,7 @@ node *CVIprogram (node *arg_node, info *arg_info)
     SYMBOLTABLE_PARENT ( inittable) = table;
 
     // create the symbol table
-    node *entry = TBmakeSymboltableentry ( STRcpy(FUNDEF_NAME ( init)), FUNDEF_TYPE ( init), 0, 0, NULL, inittable);
+    node *entry = TBmakeSymboltableentry ( STRcpy(FUNDEF_NAME ( init)), FUNDEF_TYPE ( init), 0, 0, arg_node, NULL, inittable);
     
     // add the entry to the symbol table
     STadd(table, entry);

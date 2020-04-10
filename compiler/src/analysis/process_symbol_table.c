@@ -100,7 +100,7 @@ node *PSTglobdef(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, 0, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", GLOBDEF_NAME ( arg_node));
@@ -121,7 +121,7 @@ node *PSTfundef(node * arg_node, info * arg_info)
     SYMBOLTABLE_RETURNTYPE ( INFO_SYMBOL_TABLE ( info)) = FUNDEF_TYPE ( arg_node);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, 0, NULL, INFO_SYMBOL_TABLE ( info));
+    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, INFO_SYMBOL_TABLE ( info));
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s(...)'\n", FUNDEF_NAME ( arg_node));
@@ -145,7 +145,7 @@ node *PSTparam(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, 1, NULL, NULL);
+    node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
     SYMBOLTABLEENTRY_PARAM ( entry) = TRUE;
 
     // add to the current scope
@@ -250,7 +250,7 @@ node *PSTvardecl(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, 1, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", VARDECL_NAME ( arg_node));

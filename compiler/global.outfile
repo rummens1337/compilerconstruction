@@ -1,20 +1,68 @@
 __init:
 	iloadc 0
-	istoreg 6
-	iloadg 6
-	iloadc 0
+	iloadc 1
 	iadd
-	istoreg 7
+	istoreg 0
+	iloadc 2
+	istoreg 1
+	iloadc 0
+	iloadc 1
+	iadd
+	istoreg 2
+	iloadc 0
+	iloadc 3
+	iadd
+	istoreg 3
+	floadc 4
+	fstoreg 4
+	bloadc 5
+	bloadc 6
+	badd
+	bloadc 6
+	badd
+	bstoreg 5
 	return
 
+foobar2:
+	iloadc 1
+	ireturn
+
+foobar:
+	isrg
+	jsr 0 foobar2
+	ipop
+	iloadc 1
+	ireturn
+
+foo44:
+	isrg
+	jsr 0 foobar
+	ipop
+	return
+
+main:
+	esr 1
+	iloadc 1
+	istore 0
+	iloadc 7
+	ireturn
+
+.const int 42
+.const int 5
 .const int 10
+.const int 13
+.const float 5.000000
+.const bool true
+.const bool false
+.const int 0
 .exportfun "__init" void  __init
-.exportvar "foo0" 2
+.exportfun "foo44" void  foo44
+.exportfun "main" int  main
 .global int
 .global int
 .global int
+.global int
+.global float
+.global bool
 .importfun "printInt" void  int
 .importfun "printNewlines" void  int
-.importvar "foo1" int
-.importfun "foo3" int 
-.importfun "foo4" int  bool int int

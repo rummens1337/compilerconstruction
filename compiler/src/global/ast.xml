@@ -289,6 +289,18 @@
                     </targets>
                 </type>
             </attribute>
+            <attribute name="Link">
+                <type name="Link">
+                    <targets>
+                        <target mandatory="yes">
+                            <any/>
+                            <phases>
+                                <all/>
+                            </phases>
+                        </target>
+                    </targets>
+                </type>
+            </attribute>
         </attributes>
     </node>
 

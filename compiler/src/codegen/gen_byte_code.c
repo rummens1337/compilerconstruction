@@ -291,16 +291,18 @@ node *GBCfuncall(node *arg_node, info *arg_info)
 
     node *entry = STdeepSearchFundef(INFO_SYMBOL_TABLE(arg_info), FUNCALL_NAME(arg_node));
 
+    char type;
+
     switch (SYMBOLTABLEENTRY_TYPE(entry))
     {
     case T_int:
-        fprintf(INFO_FILE(arg_info), "\tisrg\n");
+        type = 'i';
         break;
     case T_float:
-        fprintf(INFO_FILE(arg_info), "\tfsrg\n");
+        type = 'f';
         break;
     case T_bool:
-        fprintf(INFO_FILE(arg_info), "\tbsrg\n");
+        type = 'b';
         break;
     case T_void:
         break;
@@ -308,11 +310,23 @@ node *GBCfuncall(node *arg_node, info *arg_info)
         break;
     }
 
+    fprintf(INFO_FILE(arg_info), "\tisrg\n");
+
     TRAVopt(FUNCALL_ARGS(arg_node), arg_info);
 
     // print
     node *table = SYMBOLTABLEENTRY_TABLE(entry);
-    fprintf(INFO_FILE(arg_info), "\tjsr %ld %s\n", STparams(table), FUNCALL_NAME(arg_node));
+    node *link = SYMBOLTABLEENTRY_LINK(entry);
+
+    if (FUNDEF_ISIMPORT(link) == 1)
+    {
+        fprintf(INFO_FILE(arg_info), "\tjsre %ld\n", STparams(table));
+    }
+    else
+        fprintf(INFO_FILE(arg_info), "\tjsr %ld %s\n", STparams(table), FUNCALL_NAME(arg_node));
+
+    if (SYMBOLTABLEENTRY_TYPE(entry) != T_void)
+        fprintf(INFO_FILE(arg_info), "\t%cpop\n", type);
 
     DBUG_RETURN(arg_node);
 }
