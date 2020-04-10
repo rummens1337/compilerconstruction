@@ -31,6 +31,7 @@
 
 struct INFO {
   node *table;
+  node *fundef;
   type var_type;
   size_t has_return_type;
   size_t offset;
@@ -43,6 +44,7 @@ struct INFO {
 
 #define INFO_SYMBOL_TABLE(n)  ((n)->table)
 #define INFO_VAR_TYPE(n)  ((n)->var_type)
+#define INFO_FUNDEF(n)  ((n)->fundef)
 #define INFO_HAS_RETURN_TYPE(n)  ((n)->has_return_type)
 #define INFO_OFFSET(n)  ((n)->offset)
 
@@ -60,6 +62,7 @@ static info *MakeInfo()
   result = (info *)MEMmalloc(sizeof(info));
   INFO_SYMBOL_TABLE( result) = NULL;
   INFO_VAR_TYPE ( result) = T_unknown;
+  INFO_FUNDEF ( result) = NULL;
   INFO_HAS_RETURN_TYPE ( result) = 0;
   INFO_OFFSET ( result) = 0;
 
@@ -109,7 +112,6 @@ node *TCfundef(node * arg_node, info * arg_info)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "No return type %s expted for %s(...)\n", stype(FUNDEF_TYPE ( arg_node)), FUNDEF_NAME ( arg_node));
     }
-    
 
     INFO_HAS_RETURN_TYPE ( arg_info) = 0;
     INFO_SYMBOL_TABLE ( arg_info) = table;
@@ -178,7 +180,6 @@ node *TCassign(node *arg_node, info *arg_info)
     INFO_VAR_TYPE ( arg_info) = type;
 
     DBUG_RETURN( arg_node);
-
 }
 
 node *TCbinop (node * arg_node, info * arg_info)
@@ -241,20 +242,14 @@ node *TCfuncall(node * arg_node, info * arg_info)
     DBUG_ENTER ( "TCfuncall");
     DBUG_PRINT ( "TC", ("TCfuncall"));
 
-    // get the symbol table
-    node *table = INFO_SYMBOL_TABLE ( arg_info);
-
     // get the entry
-    node *entry = STdeepSearchFundef ( table, FUNCALL_NAME ( arg_node));
+    node *entry = STdeepSearchFundef ( INFO_SYMBOL_TABLE ( arg_info), FUNCALL_NAME ( arg_node));
 
     // set the new symbol table
-    INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
+    INFO_FUNDEF ( arg_info) = entry;
 
     // traverse over the arguments
     TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
-
-    // restore the table
-    INFO_SYMBOL_TABLE ( arg_info) = table;
 
     // set the type
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( entry);
@@ -289,6 +284,8 @@ node *TCvar(node * arg_node, info * arg_info)
 
     // get the entry
     node *node = STdeepSearchVariableByName( INFO_SYMBOL_TABLE ( arg_info), VAR_NAME( arg_node));
+
+    STdisplay(INFO_SYMBOL_TABLE ( arg_info), 0);
 
     // set the type
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( node);

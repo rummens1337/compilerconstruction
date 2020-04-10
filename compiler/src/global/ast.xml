@@ -69,6 +69,13 @@
 
     <traversal id="TOCE" name="Transformation Of Cast Expressions" default="sons" include="transformation_of_cast_expressions.h">
         <travuser>
+            <node name="Program" />
+            <node name="FunDef" />
+            <node name="Cast" />
+            <node name="Var"/>
+            <node name="Num" />
+            <node name="Float" />
+            <node name="Bool" />
             <node name="Cast" />
         </travuser>
     </traversal>
