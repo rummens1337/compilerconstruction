@@ -355,6 +355,10 @@ expr:
         {
             $$ = $1;
         }
+    |   PARENTHESIS_L expr PARENTHESIS_R
+        {
+            $$ = $2;
+        }
     |   PARENTHESIS_L type PARENTHESIS_R expr
         {
             $$ = TBmakeCast( $2, $4);

@@ -159,13 +159,13 @@ node *NFLfor(node * arg_node, info * arg_info)
     {
         // set front and back
         INFO_FRONT ( arg_info) = start;
-        INFO_BACK ( arg_info) = start;
+        INFO_BACK ( arg_info) = step;
     }
     else
     {
         // set the new back
         VARDECL_NEXT ( INFO_BACK (arg_info)) = start;
-        INFO_BACK ( arg_info) = start;
+        INFO_BACK ( arg_info) = step;
     }
 
     // add the name to the list
@@ -175,7 +175,7 @@ node *NFLfor(node * arg_node, info * arg_info)
     else INFO_NAMES( arg_info) = KVLLprepend(INFO_NAMES( arg_info), varname, name);
 
     // traverse over the nodes
-    TRAVopt ( FOR_BLOCK ( arg_node), arg_info);
+    TRAVopt ( block, arg_info);
 
     // remove the node from the list
     INFO_NAMES( arg_info) = KVLLremove_front ( INFO_NAMES( arg_info));

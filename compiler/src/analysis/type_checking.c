@@ -186,54 +186,46 @@ node *TCbinop (node * arg_node, info * arg_info)
     DBUG_ENTER("TCbinop");
     DBUG_PRINT ("TC", ("TCbinop"));
 
+    TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
+
+    type leftype = INFO_VAR_TYPE ( arg_info);
+
+    TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
+
+    type righttype = INFO_VAR_TYPE ( arg_info);
+
     switch (BINOP_OP( arg_node))
     {
         case BO_add:
         case BO_sub:
         case BO_mul:
         case BO_div:
-        {
-            TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
 
-            type leftype = INFO_VAR_TYPE ( arg_info);
-
-            TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
-
-            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+            if (leftype != righttype) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(righttype));
 
             break;
-        }
         case BO_lt:
         case BO_le:
         case BO_gt:
         case BO_ge:
         case BO_eq:
         case BO_ne:
-        {
-            TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
 
-            type leftype = INFO_VAR_TYPE ( arg_info);
-
-            TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
-
-            if (leftype != INFO_VAR_TYPE ( arg_info)) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(INFO_VAR_TYPE ( arg_info)));
+            if (leftype != righttype) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(leftype), stype(righttype));
 
             INFO_VAR_TYPE ( arg_info) = T_bool;
 
             break;
-        }
         case BO_and:
         case BO_or:
 
-            if (INFO_VAR_TYPE ( arg_info) != T_bool) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(T_bool), stype(INFO_VAR_TYPE ( arg_info)));
+            if (righttype != T_bool) CTIerrorLine ( NODE_LINE ( arg_node), "invalid conversion from `%s` to `%s`\n", stype(T_bool), stype(righttype));
 
             break;
         case BO_mod:
 
-            TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
-
             // mod operator only support intergers
-            if (INFO_VAR_TYPE ( arg_info) != T_int) CTIerrorLine ( NODE_LINE ( arg_node), "Modulo operator only supports interger types\n");
+            if (righttype != T_int) CTIerrorLine ( NODE_LINE ( arg_node), "Modulo operator only supports interger types\n");
 
             break;
 

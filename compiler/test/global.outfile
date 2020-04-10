@@ -1,19 +1,17 @@
-testVarInits:
-	esr 4
+__init:
 	iloadc 0
-	istore 0
-	iloadc 1
-	istore 1
-	iload_0
-	iload_1
-	iadd
-	istore 2
-	iload_0
-	iloadc 2
-	iadd
-	istore 3
+	istoreg 0
 	return
 
-.const int 3
-.const int 5
-.const int 2
+main:
+	iloadg 0
+	jsr 1 printInt
+	iloadc 1
+	ireturn
+
+.const int -157638144
+.const int 0
+.exportfun "__init" void  __init
+.exportfun "main" int  main
+.global int
+.importfun "printInt" void  int
