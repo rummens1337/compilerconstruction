@@ -30,8 +30,8 @@ export int main() {
     int a = 5;
     int b = 6;
 
-    if(a<b)
-        a=7;
+    // if(a<b)
+    //     a=7;
     
     if(a<b || b<a)
         a=7;

@@ -33,25 +33,17 @@ main:
 	iload_0
 	iload_1
 	ilt
-	branch_f 1_end
-
-	iloadc 4
-	istore 0
-1_end:
-	iload_0
-	iload_1
-	ilt
 	iload_1
 	iload_0
 	ilt
 	bloadc 1
 	bloadc 0
 	bloadc 0
-	branch_f 2_end
+	branch_f 1_end
 
 	iloadc 4
 	istore 0
-2_end:
+1_end:
 	iloadc 5
 	ireturn
 
