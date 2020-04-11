@@ -1,17 +1,29 @@
-__init:
-	iloadc 0
-	istoreg 2
-	return
-
 main:
-	iloadc 1
+	esr 1
+	iloadc 0
+	istoreg 0
+	iloadc 0
+	istoreg 1
+	iloadc 0
+	istoreg 0
+	iloadc 0
+	istoreg 1
+	iloade 0
+	iloadg 0
+	iadd
+	istore 0
+	isrg
+	iloade 0
+	jsre 0
+	isrg
+	jsre 1
+	iloadc 0
 	ireturn
 
-.const int 222
-.const int 0
-.exportfun "__init" void  __init
-.exportvar "foo" 2
-.exportfun "main" int  main
+.const int 5
 .global int
-.importfun "printInt" void 
-.importfun "woopsie" int 
+.global int
+.importfun "printInt" void  int
+.importfun "printInt1" void 
+.importvar "woopsie" int
+.importvar "woopsie2" int

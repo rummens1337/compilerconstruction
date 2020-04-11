@@ -116,6 +116,7 @@ node *
 PRTstmts (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTstmts");
+  DBUG_PRINT ("PRT", ("PRTstmts"));
 
   STMTS_STMT( arg_node) = TRAVdo( STMTS_STMT( arg_node), arg_info);
   
@@ -142,6 +143,7 @@ node *
 PRTassign (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTassign");
+  DBUG_PRINT ("PRT", ("PRTassign"));
 
   printTabs(arg_info);
 
@@ -180,6 +182,7 @@ PRTbinop (node * arg_node, info * arg_info)
   const char *tmp;
 
   DBUG_ENTER ("PRTbinop");
+  DBUG_PRINT ("PRT", ("PRTbinop"));
 
   BINOP_LEFT( arg_node) = TRAVdo( BINOP_LEFT( arg_node), arg_info);
 
@@ -252,6 +255,7 @@ node *
 PRTfloat (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfloat");
+  DBUG_PRINT ("PRT", ("PRTfloat"));
 
   printf( "%f", FLOAT_VALUE( arg_node));
 
@@ -277,6 +281,7 @@ node *
 PRTnum (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTnum");
+  DBUG_PRINT ("PRT", ("PRTnum"));
 
   printf( "%i", NUM_VALUE( arg_node));
 
@@ -301,6 +306,7 @@ node *
 PRTbool (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTbool");
+  DBUG_PRINT ("PRT", ("PRTbool"));
 
   if (BOOL_VALUE( arg_node)) {
     printf( "true");
@@ -331,6 +337,7 @@ node *
 PRTvar (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvar");
+  DBUG_PRINT ("PRT", ("PRTvar"));
 
   printf( "%s", VAR_NAME( arg_node));
 
@@ -355,6 +362,7 @@ node *
 PRTvarlet (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvarlet");
+  DBUG_PRINT ("PRT", ("PRTvarlet"));
 
   printf( "%s", VARLET_NAME( arg_node));
 
@@ -380,6 +388,7 @@ PRTerror (node * arg_node, info * arg_info)
   bool first_error;
 
   DBUG_ENTER ("PRTerror");
+  DBUG_PRINT ("PRT", ("PRTerror"));
 
   if (NODE_ERROR (arg_node) != NULL) {
     NODE_ERROR (arg_node) = TRAVdo (NODE_ERROR (arg_node), arg_info);
@@ -436,6 +445,7 @@ node *
 PRTmonop (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTmonop");
+  DBUG_PRINT ("PRT", ("PRTmonop"));
   char *tmp;
   
   switch (MONOP_OP( arg_node)) {
@@ -473,6 +483,7 @@ node *
 PRTprogram (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTprogram");
+  DBUG_PRINT ("PRT", ("PRTprogram"));
 
   PROGRAM_DECLS( arg_node) = TRAVdo( PROGRAM_DECLS( arg_node), arg_info);
 
@@ -496,6 +507,7 @@ node *
 PRTdecls (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTdecls");
+  DBUG_PRINT ("PRT", ("PRTdecls"));
 
   // todo print
   DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
@@ -521,6 +533,7 @@ node *
 PRTexprs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprs");
+  DBUG_PRINT ("PRT", ("PRTexprs"));
 
   // todo print  
   EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info);
@@ -546,6 +559,7 @@ node *
 PRTarrexpr (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTarrexpr");
+  DBUG_PRINT ("PRT", ("PRTarrexpr"));
 
   // todo print  
   ARREXPR_EXPRS( arg_node) = TRAVdo( ARREXPR_EXPRS( arg_node), arg_info);
@@ -570,6 +584,7 @@ node *
 PRTids (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTids");
+  DBUG_PRINT ("PRT", ("PRTids"));
 
   printf("%s", IDS_NAME(arg_node));
 
@@ -597,6 +612,7 @@ node *
 PRTexprstmt (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprstmt");
+  DBUG_PRINT ("PRT", ("PRTexprstmt"));
 
   // print the tabs
   printTabs ( arg_info);
@@ -627,6 +643,7 @@ node *
 PRTreturn (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTreturn");
+  DBUG_PRINT ("PRT", ("PRTreturn"));
 
   // print the return statement
   print(arg_info, "return");
@@ -664,9 +681,9 @@ node *
 PRTfuncall (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfuncall");
+  DBUG_PRINT ("PRT", ("PRTfuncall"));
 
-  
-  print(arg_info, "%s(", FUNCALL_NAME(arg_node));
+  printf("%s(", FUNCALL_NAME(arg_node));
 
   FUNCALL_ARGS( arg_node) = TRAVopt( FUNCALL_ARGS( arg_node), arg_info);
 
@@ -692,6 +709,7 @@ node *
 PRTcast (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTcast");
+  DBUG_PRINT ("PRT", ("PRTcast"));
 
   printf( "( %s )", stype(CAST_TYPE(arg_node)));
 
@@ -717,6 +735,7 @@ node *
 PRTfundefs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundefs");
+  DBUG_PRINT ("PRT", ("PRTfundefs"));
 
   // print the function definitions
   FUNDEFS_FUNDEF( arg_node) = TRAVdo( FUNDEFS_FUNDEF( arg_node), arg_info);
@@ -742,6 +761,7 @@ node *
 PRTfundef (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfundef");
+  DBUG_PRINT ("PRT", ("PRTfundef"));
 
   // print export token
   if (FUNDEF_ISEXPORT(arg_node) == 1) printf("%s ", "export");
@@ -794,6 +814,7 @@ node *
 PRTfunbody (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfunbody");
+  DBUG_PRINT ("PRT", ("PRTfunbody"));
 
   // print the nodes
   FUNBODY_VARDECLS( arg_node) = TRAVopt( FUNBODY_VARDECLS( arg_node), arg_info);
@@ -820,6 +841,7 @@ node *
 PRTifelse (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTifelse");
+  DBUG_PRINT ("PRT", ("PRTifelse"));
 
   print(arg_info, "if ( ");
   // todo - print
@@ -854,6 +876,7 @@ node *
 PRTternary (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTternary");
+  DBUG_PRINT ("PRT", ("PRTternary"));
 
   printf("(");
   TERNARY_EXPR( arg_node) = TRAVdo( TERNARY_EXPR( arg_node), arg_info);
@@ -884,6 +907,7 @@ node *
 PRTwhile (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTwhile");
+  DBUG_PRINT ("PRT", ("PRTwhile"));
 
   // print the prefix
   print ( arg_info, "while ( ");
@@ -923,6 +947,7 @@ node *
 PRTdowhile (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTdowhile");
+  DBUG_PRINT ("PRT", ("PRTdowhile"));
 
   // print the prefix
   print ( arg_info, "do\n");
@@ -959,6 +984,7 @@ node *
 PRTfor (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTfor");
+  DBUG_PRINT ("PRT", ("PRTfor"));
 
   print(arg_info, "for ( int %s = ", FOR_LOOPVAR(arg_node)); // print the loop variable.
 
@@ -1007,6 +1033,7 @@ node *
 PRTglobdecl (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTglobdecl");
+  DBUG_PRINT ("PRT", ("PRTglobdecl"));
 
   // print the syntax
   printf("extern2 %s %s;\n", stype(GLOBDECL_TYPE(arg_node)), GLOBDECL_NAME(arg_node));
@@ -1035,6 +1062,7 @@ node *
 PRTglobdef (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTglobdef");
+  DBUG_PRINT ("PRT", ("PRTglobdef"));
 
   // print th export method
   if (GLOBDEF_ISEXPORT(arg_node) == 1) printf("%s", "export ");
@@ -1082,6 +1110,7 @@ node *
 PRTparam (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTparam");
+  DBUG_PRINT ("PRT", ("PRTparam"));
 
   // print identifier
   printf("%s %s", stype(PARAM_TYPE(arg_node)), PARAM_NAME(arg_node));
@@ -1119,6 +1148,7 @@ node *
 PRTvardecl (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTvardecl");
+  DBUG_PRINT ("PRT", ("PRTvardecl"));
 
   // print tabs
   printTabs(arg_info);
@@ -1164,6 +1194,7 @@ PRTvardecl (node * arg_node, info * arg_info)
 node *PRTsymboltable (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTsymboltable");
+  DBUG_PRINT ("PRT", ("PRTsymboltable"));
 
   printf("PRTsymboltable");
 
@@ -1187,6 +1218,7 @@ node *PRTsymboltable (node * arg_node, info * arg_info)
 node *PRTsymboltableentry (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTsymboltableentry");
+  DBUG_PRINT ("PRT", ("PRTsymboltableentry"));
 
   printf("PRTsymboltableentry");
 

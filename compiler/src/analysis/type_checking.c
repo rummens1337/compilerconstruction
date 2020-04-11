@@ -285,8 +285,6 @@ node *TCvar(node * arg_node, info * arg_info)
     // get the entry
     node *node = STdeepSearchVariableByName( INFO_SYMBOL_TABLE ( arg_info), VAR_NAME( arg_node));
 
-    STdisplay(INFO_SYMBOL_TABLE ( arg_info), 0);
-
     // set the type
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( node);
 

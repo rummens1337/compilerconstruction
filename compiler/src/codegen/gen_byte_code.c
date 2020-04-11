@@ -31,7 +31,6 @@ struct INFO
     listnode *import_pool;
     listnode *global_pool;
 
-    int extern_counter; // counts amound of externs {0..n}
     int load_counter;   // counts amound of loads {0..n}
     int branch_count;   // counts amound of stores - function bound {0..n}
     int current_type;   // Current type of var {int, float, bool}
@@ -45,7 +44,6 @@ struct INFO
 #define INFO_EXPORT_POOL(n) ((n)->export_pool)
 #define INFO_IMPORT_POOL(n) ((n)->import_pool)
 #define INFO_GLOBAL_POOL(n) ((n)->global_pool)
-#define INFO_EXTERN_COUNTER(n) ((n)->extern_counter)
 #define INFO_LOAD_COUNTER(n) ((n)->load_counter)
 #define INFO_BRANCH_COUNT(n) ((n)->branch_count)
 #define INFO_CURRENT_TYPE(n) ((n)->current_type)
@@ -68,7 +66,6 @@ static info *MakeInfo()
     INFO_EXPORT_POOL(result) = NULL;
     INFO_IMPORT_POOL(result) = NULL;
     INFO_GLOBAL_POOL(result) = NULL;
-    INFO_EXTERN_COUNTER(result) = 0;
     INFO_LOAD_COUNTER(result) = 0;
     INFO_BRANCH_COUNT(result) = 0;
     INFO_CURRENT_TYPE(result) = T_unknown; // current const type
@@ -320,7 +317,7 @@ node *GBCfuncall(node *arg_node, info *arg_info)
 
     if (FUNDEF_ISEXTERN(link) == 1)
     {
-        fprintf(INFO_FILE(arg_info), "\tjsre %d\n", 0); // TODO: add this as second param STparams(table)
+        fprintf(INFO_FILE(arg_info), "\tjsre %d\n", SYMBOLTABLEENTRY_OFFSET ( entry));
     }
     else
         fprintf(INFO_FILE(arg_info), "\tjsr %ld %s\n", STparams(table), FUNCALL_NAME(arg_node));
@@ -971,21 +968,13 @@ node *GBCvar(node *arg_node, info *arg_info)
     // is this the global scope?
     if (SYMBOLTABLEENTRY_DEPTH(entry) == 0)
     {
-        // Set default scope to global, as this is most common.
-        char scope = 'g';
-        int offset = SYMBOLTABLEENTRY_OFFSET(entry);
-
         // change scope to extern if flag is set.
-        if (GLOBDEF_ISEXTERN(SYMBOLTABLEENTRY_LINK(entry))){
-            scope = 'e';
-            offset = INFO_EXTERN_COUNTER(arg_info);
-            INFO_EXTERN_COUNTER(arg_info) += 1;
-        }
+        char scope = GLOBDEF_ISEXTERN(SYMBOLTABLEENTRY_LINK(entry)) ? 'e' : 'g';
 
         if (SYMBOLTABLEENTRY_TYPE(entry) == T_int)
-            fprintf(INFO_FILE(arg_info), "\tiload%c %d\n", scope, offset);
+            fprintf(INFO_FILE(arg_info), "\tiload%c %d\n", scope, SYMBOLTABLEENTRY_OFFSET(entry));
         else if (SYMBOLTABLEENTRY_TYPE(entry) == T_float)
-            fprintf(INFO_FILE(arg_info), "\tfload%c %d\n", scope, offset);
+            fprintf(INFO_FILE(arg_info), "\tfload%c %d\n", scope, SYMBOLTABLEENTRY_OFFSET(entry));
     }
     else
     {

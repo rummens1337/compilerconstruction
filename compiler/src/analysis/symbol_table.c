@@ -224,6 +224,73 @@ node *STlastEntry(node *list)
     return STlastEntry(SYMBOLTABLEENTRY_NEXT (list));
 }
 
+
+/**
+ *  Number of external globdecls entries in the table
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+size_t STcountGlobdecls(node *table)
+{
+    // count
+    size_t count = 0;
+
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        // get the node
+        node *link = SYMBOLTABLEENTRY_LINK ( entry);
+
+        // is it a globef node
+        if ( NODE_TYPE (link) != N_globdef) continue;
+
+        // is at en decl
+        if ( !GLOBDEF_ISEXTERN (link)) continue;
+
+        count++;
+    }
+
+    // return result
+    return count;
+}
+
+
+/**
+ *  Number of external fundecls entries in the table
+ *  @param  table   the symbol table
+ *  @return size_t
+ */
+size_t STcountFunDecls(node *table)
+{
+    // count
+    size_t count = 0;
+
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        // get the node
+        node *link = SYMBOLTABLEENTRY_LINK ( entry);
+
+        // is it a fundef node
+        if ( NODE_TYPE (link) != N_fundef) continue;
+
+        // is at en decl
+        if ( !FUNDEF_ISEXTERN (link)) continue;
+
+        // increment the counter
+        count++;
+    }
+
+    // return result
+    return count;
+}
+
 /**
  *  Number of entries in the table
  *  @param  table   the symbol table
@@ -238,7 +305,20 @@ size_t STcount(node *table)
     node *entry = SYMBOLTABLE_ENTRY ( table);
 
     // loop over the entries
-    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry)) count++;
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        // get the node
+        node *link = SYMBOLTABLEENTRY_LINK ( entry);
+
+        // is it a globef node
+        if ( NODE_TYPE (link) == N_fundef && FUNDEF_ISEXTERN (link)) continue;
+
+        // is it a globef node
+        if ( NODE_TYPE (link) == N_globdef && GLOBDEF_ISEXTERN (link)) continue;
+
+        // increment the counter
+        count++;
+    }
 
     // return result
     return count;
@@ -319,11 +399,18 @@ node *STadd(node *table, node *entry)
     // check if we already have a similar node
     if (STsearchVariableByName( table, SYMBOLTABLEENTRY_NAME( entry)) != NULL) return NULL;
 
+    // 
     if (STsearchFundef( table, SYMBOLTABLEENTRY_NAME( entry)) != NULL) return NULL;
 
+    // get the node
+    node *link = SYMBOLTABLEENTRY_LINK ( entry);
+
     // set the offset
-    if (STempty ( table)) SYMBOLTABLEENTRY_OFFSET( entry) = 0;
+    if ( NODE_TYPE ( link) == N_globdef && GLOBDEF_ISEXTERN ( link))SYMBOLTABLEENTRY_OFFSET( entry) = STcountGlobdecls ( table);
+    else if ( NODE_TYPE (link) == N_fundef && FUNDEF_ISEXTERN ( link)) SYMBOLTABLEENTRY_OFFSET( entry) = STcountFunDecls ( table);
     else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( table);
+
+    printf("Name: %s, Offset: %d\n", SYMBOLTABLEENTRY_NAME (entry), SYMBOLTABLEENTRY_OFFSET(entry));
 
     // find the last entry
     node *last = STend(table);
