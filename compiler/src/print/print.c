@@ -59,7 +59,7 @@ static info *FreeInfo( info *info)
  */
 void printTabs(info *info)
 {
-   for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
+  for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
 }
 
 /**
