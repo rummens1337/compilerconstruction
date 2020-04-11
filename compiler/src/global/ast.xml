@@ -582,7 +582,7 @@
         </attributes>
         <flags>
             <flag name="IsExport" />
-            <flag name="IsImport" />
+            <flag name="IsExtern" />
         </flags>
     </node>
 
@@ -912,7 +912,7 @@
         </attributes>
         <flags>
             <flag name="IsExport" />
-            <flag name="IsImport" />
+            <flag name="IsExtern" />
         </flags>
     </node>
 

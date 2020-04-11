@@ -31,7 +31,7 @@ struct INFO
     listnode *import_pool;
     listnode *global_pool;
 
-    int global_counter; // counts amound of globals {0..n}
+    int extern_counter; // counts amound of externs {0..n}
     int load_counter;   // counts amound of loads {0..n}
     int branch_count;   // counts amound of stores - function bound {0..n}
     int current_type;   // Current type of var {int, float, bool}
@@ -45,7 +45,7 @@ struct INFO
 #define INFO_EXPORT_POOL(n) ((n)->export_pool)
 #define INFO_IMPORT_POOL(n) ((n)->import_pool)
 #define INFO_GLOBAL_POOL(n) ((n)->global_pool)
-#define INFO_GLOBAL_COUNTER(n) ((n)->global_counter)
+#define INFO_EXTERN_COUNTER(n) ((n)->extern_counter)
 #define INFO_LOAD_COUNTER(n) ((n)->load_counter)
 #define INFO_BRANCH_COUNT(n) ((n)->branch_count)
 #define INFO_CURRENT_TYPE(n) ((n)->current_type)
@@ -68,7 +68,7 @@ static info *MakeInfo()
     INFO_EXPORT_POOL(result) = NULL;
     INFO_IMPORT_POOL(result) = NULL;
     INFO_GLOBAL_POOL(result) = NULL;
-    INFO_GLOBAL_COUNTER(result) = 0;
+    INFO_EXTERN_COUNTER(result) = 0;
     INFO_LOAD_COUNTER(result) = 0;
     INFO_BRANCH_COUNT(result) = 0;
     INFO_CURRENT_TYPE(result) = T_unknown; // current const type
@@ -318,7 +318,7 @@ node *GBCfuncall(node *arg_node, info *arg_info)
     node *table = SYMBOLTABLEENTRY_TABLE(entry);
     node *link = SYMBOLTABLEENTRY_LINK(entry);
 
-    if (FUNDEF_ISIMPORT(link) == 1)
+    if (FUNDEF_ISEXTERN(link) == 1)
     {
         fprintf(INFO_FILE(arg_info), "\tjsre %d\n", 0); // TODO: add this as second param STparams(table)
     }
@@ -379,7 +379,7 @@ node *GBCfundef(node *arg_node, info *arg_info)
     // get the entry from the symbol table
     node *entry = STsearchFundef(table, FUNDEF_NAME(arg_node));
 
-    if (FUNDEF_ISIMPORT(arg_node))
+    if (FUNDEF_ISEXTERN(arg_node))
     {
 
         // get the entry
@@ -685,7 +685,7 @@ node *GBCglobdef(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCglobdef");
     DBUG_PRINT("GBC", ("GBCglobdef"));
 
-    if (!GLOBDEF_ISIMPORT(arg_node))
+    if (!GLOBDEF_ISEXTERN(arg_node))
     {
         switch (GLOBDEF_TYPE(arg_node))
         {
@@ -733,7 +733,7 @@ node *GBCglobdef(node *arg_node, info *arg_info)
         free(str);
     }
 
-    if (GLOBDEF_ISIMPORT(arg_node) == 1)
+    if (GLOBDEF_ISEXTERN(arg_node) == 1)
     {
         // Create import pool string
         int length = snprintf(
@@ -971,13 +971,22 @@ node *GBCvar(node *arg_node, info *arg_info)
     // is this the global scope?
     if (SYMBOLTABLEENTRY_DEPTH(entry) == 0)
     {
-        if (SYMBOLTABLEENTRY_TYPE(entry) == T_int)
-            fprintf(INFO_FILE(arg_info), "\tiloadg %d\n", SYMBOLTABLEENTRY_OFFSET(entry));
-        else if (SYMBOLTABLEENTRY_TYPE(entry) == T_float)
-            fprintf(INFO_FILE(arg_info), "\tfloadg %d\n", SYMBOLTABLEENTRY_OFFSET(entry));
-    }
+        // Set default scope to global, as this is most common.
+        char scope = 'g';
+        int offset = SYMBOLTABLEENTRY_OFFSET(entry);
 
-    //
+        // change scope to extern if flag is set.
+        if (GLOBDEF_ISEXTERN(SYMBOLTABLEENTRY_LINK(entry))){
+            scope = 'e';
+            offset = INFO_EXTERN_COUNTER(arg_info);
+            INFO_EXTERN_COUNTER(arg_info) += 1;
+        }
+
+        if (SYMBOLTABLEENTRY_TYPE(entry) == T_int)
+            fprintf(INFO_FILE(arg_info), "\tiload%c %d\n", scope, offset);
+        else if (SYMBOLTABLEENTRY_TYPE(entry) == T_float)
+            fprintf(INFO_FILE(arg_info), "\tfload%c %d\n", scope, offset);
+    }
     else
     {
         if (SYMBOLTABLEENTRY_TYPE(entry) == T_int)

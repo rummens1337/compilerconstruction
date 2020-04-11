@@ -131,7 +131,7 @@ globdef: type ID SEMICOLON
     |   EXTERN type ID SEMICOLON
         {
             $$ = TBmakeGlobdef($2, STRcpy( $3), NULL, NULL);
-            GLOBDEF_ISIMPORT($$) = 1;
+            GLOBDEF_ISEXTERN($$) = 1;
         }
     ;
 
@@ -156,13 +156,13 @@ fundef: type ID PARENTHESIS_L PARENTHESIS_R  CURLY_L funbody CURLY_R
     |   EXTERN type ID PARENTHESIS_L PARENTHESIS_R SEMICOLON
         {
             $$ = TBmakeFundef( $2, STRcpy( $3), NULL, NULL);
-            FUNDEF_ISIMPORT($$) = 1;
+            FUNDEF_ISEXTERN($$) = 1;
 
         }
     |   EXTERN type ID PARENTHESIS_L param PARENTHESIS_R SEMICOLON
         {
             $$ = TBmakeFundef( $2, STRcpy( $3), NULL, $5);
-            FUNDEF_ISIMPORT($$) = 1;
+            FUNDEF_ISEXTERN($$) = 1;
 
         }
     ;

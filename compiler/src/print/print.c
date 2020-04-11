@@ -747,17 +747,17 @@ PRTfundef (node * arg_node, info * arg_info)
   if (FUNDEF_ISEXPORT(arg_node) == 1) printf("%s ", "export");
 
   int hasParam = FUNDEF_PARAMS(arg_node) != NULL;
-  int isImport = FUNDEF_ISIMPORT(arg_node) == 1;
+  int isExtern = FUNDEF_ISEXTERN(arg_node) == 1;
   
-  if (isImport) printf("%s ", "extern");
+  if (isExtern) printf("%s ", "extern");
 
   printf("%s %s", stype(FUNDEF_TYPE (arg_node)), FUNDEF_NAME (arg_node));
 
-  if (!isImport || hasParam) printf(" (");
+  if (!isExtern || hasParam) printf(" (");
 
   FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
 
-  if (!isImport)printf(") {\n");
+  if (!isExtern)printf(") {\n");
   if (hasParam)printf(")");
 
   // increment the number of tabs
@@ -768,7 +768,7 @@ PRTfundef (node * arg_node, info * arg_info)
   // decrement the number of tabs
   INFO_TABS(arg_info)--;
 
-  if (isImport)
+  if (isExtern)
     printf(";\n");
   else
     printf("}\n"); // prints the function type.
@@ -1039,9 +1039,9 @@ PRTglobdef (node * arg_node, info * arg_info)
   // print th export method
   if (GLOBDEF_ISEXPORT(arg_node) == 1) printf("%s", "export ");
 
-  int isImport = GLOBDEF_ISIMPORT(arg_node) == 1;
+  int isExtern = GLOBDEF_ISEXTERN(arg_node) == 1;
 
-  if (isImport) printf("%s", "extern ");
+  if (isExtern) printf("%s", "extern ");
 
   // print identifier
   printf("%s %s", stype(GLOBDEF_TYPE(arg_node)), GLOBDEF_NAME(arg_node)); 
