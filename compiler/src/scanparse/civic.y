@@ -310,7 +310,6 @@ return: RETURN SEMICOLON
         }
     ;
 
-// TODO apperently not for all statements
 exprstmt: expr SEMICOLON
         {
             $$ = TBmakeExprstmt( $1);

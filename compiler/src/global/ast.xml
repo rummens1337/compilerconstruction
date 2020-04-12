@@ -67,19 +67,6 @@
         </travuser>
     </traversal>
 
-    <traversal id="CR" name="Check Range" default="sons" include="check_range.h">
-        <travuser>
-            <node name="Program" />
-            <node name="Cast" />
-            <node name="Var"/>
-            <node name="Num" />
-            <node name="Float" />
-            <node name="Bool" />
-            <node name="Cast" />
-            <node name="BinOp" />
-        </travuser>
-    </traversal>
-
     <traversal id="TOCE" name="Transformation Of Cast Expressions" default="sons" include="transformation_of_cast_expressions.h">
         <travuser>
             <node name="Program" />

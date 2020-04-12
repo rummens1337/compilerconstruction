@@ -1,70 +1,18 @@
-factorial:
-	iload_0
+__init:
 	iloadc 0
-	ieq
-	branch_f 1_end
-
-	iloadc 1
-	ireturn
-1_end:
-	iload_0
-	isrg
-	iload_0
-	iloadc 1
-	isub
-	jsr 1 factorial
-	imul
-	ireturn
+	istoreg 0
+	return
 
 main:
-	esr 3
-	iloadc 0
-	istore 0
-	iloadc 2
-	istore 1
-	iloadc 1
-	istore 2
-
-2_while:
-	iload_2
-	iloadc 0
-	igt
-	branch_f 3_false_expr
-	iload_0
-	iload_1
-	ilt
-	jump 4_end
-3_false_expr:
-	iload_0
-	iload_1
-	igt
-4_end:
-	branch_f 5_end
 	isrg
-	isrg
-	iload_0
-	jsr 1 factorial
+	iloadg 0
 	jsre 0
-	isrg
 	iloadc 1
-	jsre 2
-	iload_0
-	iload_2
-	iadd
-	istore 0
-	jump 2_while
-5_end:
-
-	isrg
-	iloadc 1
-	jsre 1
-	iloadc 0
 	ireturn
 
+.const int -157638144
 .const int 0
-.const int 1
-.const int 6
+.exportfun "__init" void  __init
 .exportfun "main" int  main
+.global int
 .importfun "printInt" void  int
-.importfun "printNewlines" void  int
-.importfun "printSpaces" void  int
