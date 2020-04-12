@@ -4,9 +4,8 @@
  *
  * Prefix: CBDC
  *
- * Description:
+ * Description: compiling boolean disjunction and conjunction
  *
- * @todo
  *
  *****************************************************************************/
 

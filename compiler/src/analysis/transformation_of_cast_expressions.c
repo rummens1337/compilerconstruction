@@ -112,17 +112,8 @@ node *TOCEbinop (node * arg_node, info * arg_info)
         case BO_le:
         case BO_gt:
         case BO_ge:
-
-            INFO_EXPR_TYPE ( arg_info) = T_bool;
-
-        break;
-
         case BO_eq:
         case BO_ne:
-
-            // BINOP_LEFT ( arg_node) = TBmakeTernary(BINOP_LEFT ( arg_node), TBmakeNum(1), TBmakeNum(0));
-            // BINOP_RIGHT ( arg_node) = TBmakeTernary(BINOP_RIGHT ( arg_node), TBmakeNum(1), TBmakeNum(0));
-
             INFO_EXPR_TYPE ( arg_info) = T_bool;
 
             break;

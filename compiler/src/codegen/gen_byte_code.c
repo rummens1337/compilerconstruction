@@ -16,9 +16,6 @@
 #include "print.h"
 #include <unistd.h>
 
-// TODO T_void als return type werkt niet.
-// Fix ternary, dont write bool glob def to the const pool
-
 /*
  * INFO structure
  */
@@ -601,16 +598,6 @@ node *GBCfor(node *arg_node, info *arg_info)
     TRAVdo(FOR_STOP(arg_node), arg_info);
     TRAVopt(FOR_STEP(arg_node), arg_info);
     TRAVopt(FOR_BLOCK(arg_node), arg_info);
-
-    DBUG_RETURN(arg_node);
-}
-
-node *GBCglobdecl(node *arg_node, info *arg_info)
-{
-    DBUG_ENTER("GBCglobdecl");
-    DBUG_PRINT("GBC", ("GBCglobdecl"));
-
-    TRAVopt(GLOBDECL_DIMS(arg_node), arg_info);
 
     DBUG_RETURN(arg_node);
 }

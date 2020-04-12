@@ -50,7 +50,7 @@ static int yyerror( char *errname);
 %type <node> stmts stmt assign varlet program 
 %type <node> return exprstmt binop exprs monop 
 %type <node> vardecl fundef funbody block ifelse
-%type <node> decl decls globdecl globdef for dowhile
+%type <node> decl decls globdef for dowhile
 %type <node> param while
 
 %type <ctype> type
@@ -95,18 +95,6 @@ decl: fundef
     |   globdef
         {
             $$ = $1;
-        }
-    |   globdecl
-        {
-            $$ = $1;
-        }
-    ;
-
-// TODO: dafuq this shit yoo
-// original was $2 and $3 and one EXTERN.
-globdecl: EXTERN EXTERN EXTERN type ID SEMICOLON
-        {
-            $$ = TBmakeGlobdecl($4, STRcpy( $5), NULL);
         }
     ;
 

@@ -4,9 +4,7 @@
  *
  * Prefix: PST
  *
- * Description:
- *
- * @todo
+ * Description: process symbol table
  *
  *****************************************************************************/
 
@@ -191,7 +189,7 @@ node *PSTfuncall(node * arg_node, info * arg_info)
             // do we have the right number of arguments
             if (INFO_ARGUMENTS ( arg_info) < params)
             {
-            CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+                CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
             }
             else if (INFO_ARGUMENTS ( arg_info) > params)
             {

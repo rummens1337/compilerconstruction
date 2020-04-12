@@ -134,7 +134,6 @@
     </nodeset>
     <nodeset name="Decl">
         <target>
-            <node name="GlobDecl"/>
             <node name="GlobDef"/>
             <node name="FunDef"/>
         </target>
@@ -813,49 +812,6 @@
                 </type>
             </attribute>
         </attributes>
-    </node>
-
-    <node name="GlobDecl">
-        <sons>
-            <son name="Dims">
-                <targets>
-                    <target mandatory="no">
-                        <node name="Ids"/>
-                        <phases>
-                            <all/>
-                        </phases>
-                    </target>
-                </targets>
-            </son>
-        </sons>
-        <attributes>
-            <attribute name="Type">
-                <type name="Type">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-            <attribute name="Name">
-                <type name="String">
-                    <targets>
-                        <target mandatory="yes">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-        </attributes>
-        <flags>
-        </flags>
     </node>
 
     <node name="GlobDef">

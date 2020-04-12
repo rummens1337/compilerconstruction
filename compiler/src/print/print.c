@@ -511,7 +511,6 @@ PRTdecls (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTdecls");
   DBUG_PRINT ("PRT", ("PRTdecls"));
 
-  // todo print
   DECLS_DECL( arg_node) = TRAVdo( DECLS_DECL( arg_node), arg_info);
   DECLS_NEXT( arg_node) = TRAVopt( DECLS_NEXT( arg_node), arg_info);
 
@@ -536,8 +535,7 @@ PRTexprs (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTexprs");
   DBUG_PRINT ("PRT", ("PRTexprs"));
-
-  // todo print  
+ 
   EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info);
 
   if (EXPRS_NEXT( arg_node))
@@ -568,7 +566,6 @@ PRTarrexpr (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTarrexpr");
   DBUG_PRINT ("PRT", ("PRTarrexpr"));
 
-  // todo print  
   ARREXPR_EXPRS( arg_node) = TRAVdo( ARREXPR_EXPRS( arg_node), arg_info);
 
   DBUG_RETURN (arg_node);
@@ -1000,7 +997,6 @@ PRTfor (node * arg_node, info * arg_info)
 
   print(arg_info, "for ( int %s = ", FOR_LOOPVAR(arg_node)); // print the loop variable.
 
-  // todo - print
   FOR_START( arg_node) = TRAVdo( FOR_START( arg_node), arg_info);
 
   printf(", ");
@@ -1024,35 +1020,6 @@ PRTfor (node * arg_node, info * arg_info)
   INFO_TABS(arg_info)--;
 
   print(arg_info, "}\n");
-
-  DBUG_RETURN (arg_node);
-}
-
-/** <!--******************************************************************-->
- *
- * @fn PRTglobdecl
- *
- * @brief Prints the node and its sons/attributes
- *
- * @param arg_node letrec node to process
- * @param arg_info pointer to info structure
- *
- * @return processed node
- *
- ***************************************************************************/
-
-node *
-PRTglobdecl (node * arg_node, info * arg_info)
-{
-  DBUG_ENTER ("PRTglobdecl");
-  DBUG_PRINT ("PRT", ("PRTglobdecl"));
-
-  // print the syntax
-  printf("extern2 %s %s;\n", stype(GLOBDECL_TYPE(arg_node)), GLOBDECL_NAME(arg_node));
-
-  // todo - print
-  GLOBDECL_DIMS( arg_node) = TRAVopt( GLOBDECL_DIMS( arg_node), arg_info);
-
 
   DBUG_RETURN (arg_node);
 }
@@ -1167,9 +1134,6 @@ PRTvardecl (node * arg_node, info * arg_info)
 
   // print identifier
   printf("%s %s", stype(VARDECL_TYPE(arg_node)), VARDECL_NAME(arg_node));
-
-  // @todo used for array declerations
-  // VARDECL_DIMS( arg_node) = TRAVopt( VARDECL_DIMS( arg_node), arg_info);
 
   // was this an intialized variable
   if (VARDECL_INIT( arg_node) != NULL)
