@@ -20,7 +20,6 @@ extern node *GBCifelse (node *arg_node, info *arg_info);
 extern node *GBCwhile (node *arg_node, info *arg_info);
 extern node *GBCdowhile (node *arg_node, info *arg_info);
 extern node *GBCfor (node *arg_node, info *arg_info);
-extern node *GBCglobdecl (node *arg_node, info *arg_info);
 extern node *GBCglobdef (node *arg_node, info *arg_info);
 extern node *GBCparam (node *arg_node, info *arg_info);
 extern node *GBCvardecl (node *arg_node, info *arg_info);

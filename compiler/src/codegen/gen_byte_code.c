@@ -609,7 +609,7 @@ node *GBCglobdef(node *arg_node, info *arg_info)
 
     if (GLOBDEF_ISEXTERN(arg_node))
     {
-        char *str = STRcatn(4, "var ", GLOBDEF_NAME(arg_node), "\" ", stype(GLOBDEF_TYPE(arg_node)));
+        char *str = STRcatn(4, "var \"", GLOBDEF_NAME(arg_node), "\" ", stype(GLOBDEF_TYPE(arg_node)));
         addToExternPool(arg_info, str);
     }
 
@@ -619,7 +619,7 @@ node *GBCglobdef(node *arg_node, info *arg_info)
         node *entry = STdeepSearchVariableByName(INFO_SYMBOL_TABLE(arg_info), GLOBDEF_NAME(arg_node));
 
         char *offset = STRitoa(SYMBOLTABLEENTRY_OFFSET(entry));
-        char *str = STRcatn(4, "var ", GLOBDEF_NAME(arg_node), "\" ", offset);
+        char *str = STRcatn(4, "var \"", GLOBDEF_NAME(arg_node), "\" ", offset);
         free(offset);
         addToExportPool(arg_info, str);
     }
@@ -901,15 +901,6 @@ node *GBCnum(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("GBCnum");
     DBUG_PRINT("GBC", ("GBCnum"));
-
-    char *num = STRitoa(NUM_VALUE(arg_node));
-
-    DBUG_PRINT("GBC", ("GBCnum 1"));
-
-    if (arg_node == NULL) printf("NULL = ");
-    printf("%d = %s\n", NUM_VALUE(arg_node), num);
-
-    DBUG_PRINT("GBC", ("GBCnum 2"));
 
     // Create const pool byte code string
     char *str = STRcat("int ", STRitoa(NUM_VALUE(arg_node)));
