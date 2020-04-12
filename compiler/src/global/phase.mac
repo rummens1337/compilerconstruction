@@ -33,6 +33,12 @@ PHASE( ca,
        "Context analysis",
        ALWAYS)
 
+// SUBPHASE( cr,
+//           "Check Range",
+//           CRdoCheckRange,
+//           ALWAYS,
+//           ca)
+
 SUBPHASE( nfl,
           "Normalizing For Loops",
           NFLdoNormalizeForLoops,

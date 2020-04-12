@@ -172,38 +172,40 @@ node *PSTfuncall(node * arg_node, info * arg_info)
     if (entry == NULL) CTIerrorLine ( NODE_LINE ( arg_node), "`%s()` was not declared in this scope\n", FUNCALL_NAME ( arg_node));
 
     // set the decl
-    if (FUNCALL_DECL ( arg_node) == NULL) FUNCALL_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
-
-    // do we have paramters
-    if (FUNCALL_ARGS ( arg_node) != NULL)
+    else 
     {
-        INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
-        int backarguments = INFO_ARGUMENTS ( arg_info);
+        FUNCALL_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK(entry);
 
-        // traverse over the arguments
-        FUNCALL_ARGS ( arg_node) = TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
-
-        // number of parameters
-        size_t params = STparams ( SYMBOLTABLEENTRY_TABLE ( entry));
-
-        // do we have the right number of arguments
-        if (INFO_ARGUMENTS ( arg_info) < params)
+        // do we have paramters
+        if (FUNCALL_ARGS ( arg_node) != NULL)
         {
-           CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+            int backarguments = INFO_ARGUMENTS ( arg_info);
+            INFO_ARGUMENTS ( arg_info) = 0;
+
+            // traverse over the arguments
+            FUNCALL_ARGS ( arg_node) = TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
+
+            // number of parameters
+            size_t params = STparams ( SYMBOLTABLEENTRY_TABLE ( entry));
+
+            // do we have the right number of arguments
+            if (INFO_ARGUMENTS ( arg_info) < params)
+            {
+            CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+            }
+            else if (INFO_ARGUMENTS ( arg_info) > params)
+            {
+                CTIerrorLine ( NODE_LINE ( arg_node), "Too many arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+            }
+
+            // restore the info properties
+            INFO_ARGUMENTS ( arg_info) = backarguments;
         }
-        else if (INFO_ARGUMENTS ( arg_info) > params)
+
+        else if ( STparams ( SYMBOLTABLEENTRY_TABLE ( entry)) > 0)
         {
-            CTIerrorLine ( NODE_LINE ( arg_node), "Too many arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
+            CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
         }
-
-        // restore the info properties
-        INFO_ARGUMENTS ( arg_info) = backarguments;
-        INFO_SYMBOL_TABLE ( arg_info) = table;
-    }
-
-    else if ( STparams ( SYMBOLTABLEENTRY_TABLE ( entry)) > 0)
-    {
-        CTIerrorLine ( NODE_LINE ( arg_node), "Too few arguments to function `%s %s(...)`\n", stype(SYMBOLTABLEENTRY_TYPE ( entry)), FUNCALL_NAME ( arg_node));
     }
    
     DBUG_RETURN( arg_node);
@@ -216,6 +218,8 @@ node *PSTexprs (node * arg_node, info * arg_info)
 
     // increment the number of arguments
     INFO_ARGUMENTS ( arg_info) += 1;
+
+    EXPRS_EXPR ( arg_node) = TRAVdo ( EXPRS_EXPR ( arg_node), arg_info);
 
     // traverse over the next expression
     EXPRS_NEXT ( arg_node) = TRAVopt ( EXPRS_NEXT ( arg_node), arg_info);
@@ -237,9 +241,11 @@ node *PSTvar(node * arg_node, info * arg_info)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VAR_NAME ( arg_node));
     }
-
-    // set the decl
-    if (VAR_DECL ( arg_node) == NULL) VAR_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
+    else
+    {
+        // set the decl
+        VAR_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK(entry);
+    }
 
     DBUG_RETURN( arg_node);
 }
@@ -251,6 +257,9 @@ node *PSTvardecl(node * arg_node, info * arg_info)
 
     // the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
+
+    // traverse over the nodes, do this before adding the vardecl
+    if (VARDECL_INIT ( arg_node)) VARDECL_INIT ( arg_node) = TRAVopt(VARDECL_INIT ( arg_node), arg_info);
 
     // create the entry
     node *entry = TBmakeSymboltableentry ( STRcpy(VARDECL_NAME ( arg_node)), VARDECL_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
@@ -277,9 +286,11 @@ node *PSTvarlet(node * arg_node, info * arg_info)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VARLET_NAME ( arg_node));
     }
-
-    // set the decl
-    if (VARLET_DECL ( arg_node) == NULL) VARLET_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
+    else
+    {
+        // set the decl
+        VARLET_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK(entry);
+    }
 
     DBUG_RETURN( arg_node);
 }

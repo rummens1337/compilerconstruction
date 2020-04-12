@@ -134,6 +134,46 @@ node *STdeepSearchVariableByName(node *table, const char *name)
     return STdeepSearchVariableByName(parent, name);
 }
 
+
+/**
+ *  Find an entry by its link
+ *  @param  table       the symbol table
+ *  @param  name        the name of the node
+ *  @return node|NULL
+ */
+node *STdeepSearchByNode(node *table, node *link)
+{
+    // get the entry
+    node *entry = SYMBOLTABLE_ENTRY ( table);
+
+    // loop over the entries
+    for (; entry != NULL; entry = SYMBOLTABLEENTRY_NEXT ( entry))
+    {
+        node *n = SYMBOLTABLEENTRY_LINK ( entry);
+
+        // if (link == n) return entry;
+
+        // printf("%ld = %ld\n", NODE_TYPE (link), NODE_TYPE (n));
+
+        if (NODE_TYPE (link) != NODE_TYPE (n)) continue;
+
+        if ( NODE_TYPE (n) == N_globdef) printf("%s, %s\n", GLOBDEF_NAME (n), GLOBDEF_NAME (link));
+        if ( NODE_TYPE (n) == N_fundef) printf("%s, %s\n", FUNDEF_NAME (n), FUNDEF_NAME (link));
+        if ( NODE_TYPE (n) == N_vardecl) printf("%s, %s\n", VARDECL_NAME (n), VARDECL_NAME (link));
+        if ( NODE_TYPE (n) == N_param) printf("%s, %s\n", PARAM_NAME (n), PARAM_NAME (link));
+
+        if ( NODE_TYPE (n) == N_globdef && STReq(GLOBDEF_NAME (n), GLOBDEF_NAME (link))) return entry;
+        if ( NODE_TYPE (n) == N_fundef && STReq(FUNDEF_NAME (n), FUNDEF_NAME (link))) return entry;
+        if ( NODE_TYPE (n) == N_vardecl && STReq(VARDECL_NAME (n), VARDECL_NAME (link))) return entry;
+        if ( NODE_TYPE (n) == N_param && STReq(PARAM_NAME (n), PARAM_NAME (link))) return entry;
+
+    }
+
+    if (SYMBOLTABLE_PARENT ( table) == NULL) return NULL;
+
+    return STdeepSearchByNode ( SYMBOLTABLE_PARENT ( table), link);
+}
+
 /**
  *  Find an entry in a linked list of Symbol Table Entry nodes
  *  @param  table       the symbol table

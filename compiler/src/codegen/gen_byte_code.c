@@ -868,22 +868,21 @@ node *GBCvar(node *arg_node, info *arg_info)
     DBUG_ENTER("GBCvar");
     DBUG_PRINT("GBC", ("GBCvar"));
 
-    node *entry = STdeepSearchVariableByName(INFO_SYMBOL_TABLE(arg_info), VAR_NAME(arg_node));
+    node *decl = VAR_DECL ( arg_node);
+    node *entry = STdeepSearchByNode(INFO_SYMBOL_TABLE(arg_info), decl);
 
     // Set current type to int
     INFO_CURRENT_TYPE(arg_info) = SYMBOLTABLEENTRY_TYPE(entry);
 
-    // fprintf(INFO_FILE(arg_info), " name(%s) %d", SYMBOLTABLEENTRY_NAME(entry), SYMBOLTABLEENTRY_DEPTH(entry));
-
     // is this the global scope?
-    if (SYMBOLTABLEENTRY_DEPTH(entry) == 0)
+    if (NODE_TYPE ( decl) == N_globdef)
     {
         // change scope to extern if flag is set.
-        char scope = GLOBDEF_ISEXTERN(SYMBOLTABLEENTRY_LINK(entry)) ? 'e' : 'g';
+        char scope = GLOBDEF_ISEXTERN ( decl) ? 'e' : 'g';
 
-        if (SYMBOLTABLEENTRY_TYPE(entry) == T_int)
+        if (GLOBDEF_TYPE(decl) == T_int)
             fprintf(INFO_FILE(arg_info), "\tiload%c %d\n", scope, SYMBOLTABLEENTRY_OFFSET(entry));
-        else if (SYMBOLTABLEENTRY_TYPE(entry) == T_float)
+        else if (GLOBDEF_TYPE(decl) == T_float)
             fprintf(INFO_FILE(arg_info), "\tfload%c %d\n", scope, SYMBOLTABLEENTRY_OFFSET(entry));
     }
     else

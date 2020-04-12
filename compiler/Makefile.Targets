@@ -80,7 +80,7 @@ codegen     = gen_byte_code.o
 
 analysis    = process_symbol_table.o symbol_table.o change_variable_initialisations.o \
               normalize_for_loops.o type_checking.o compiling_boolean_disjunction_and_conjunction.o \
-              transformation_of_cast_expressions.o
+              transformation_of_cast_expressions.o check_range.o
 
 
 ###############################################################################

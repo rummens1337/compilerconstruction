@@ -14,6 +14,7 @@
  *  @return node|NULL
  */
 extern node *STsearchVariable(node *list, const char *name, type type);
+extern node *STdeepSearchByNode(node *table, node *link);
 extern node *STsearchVariableByName(node *table, const char *name);
 
 /**
