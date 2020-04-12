@@ -59,6 +59,8 @@ static info *FreeInfo( info *info)
  */
 void printTabs(info *info)
 {
+  if (info == NULL) return;
+  
   for (size_t i=0; i < INFO_TABS(info); i++) printf("\t");
 }
 
@@ -537,7 +539,12 @@ PRTexprs (node * arg_node, info * arg_info)
 
   // todo print  
   EXPRS_EXPR( arg_node) = TRAVdo( EXPRS_EXPR( arg_node), arg_info);
-  EXPRS_NEXT( arg_node) = TRAVopt( EXPRS_NEXT( arg_node), arg_info); 
+
+  if (EXPRS_NEXT( arg_node))
+  {
+    printf(", ");
+    EXPRS_NEXT( arg_node) = TRAVopt( EXPRS_NEXT( arg_node), arg_info); 
+  }
 
   DBUG_RETURN (arg_node);
 }
@@ -764,34 +771,32 @@ PRTfundef (node * arg_node, info * arg_info)
   DBUG_PRINT ("PRT", ("PRTfundef"));
 
   // print export token
-  if (FUNDEF_ISEXPORT(arg_node) == 1) printf("%s ", "export");
-
-  int hasParam = FUNDEF_PARAMS(arg_node) != NULL;
-  int isExtern = FUNDEF_ISEXTERN(arg_node) == 1;
-  
-  if (isExtern) printf("%s ", "extern");
+  if (FUNDEF_ISEXPORT(arg_node)) printf("%s ", "export");
+  else if (FUNDEF_ISEXTERN(arg_node)) printf("%s ", "extern");
 
   printf("%s %s", stype(FUNDEF_TYPE (arg_node)), FUNDEF_NAME (arg_node));
 
-  if (!isExtern || hasParam) printf(" (");
-
+  printf(" ( ");
   FUNDEF_PARAMS( arg_node) = TRAVopt( FUNDEF_PARAMS( arg_node), arg_info);
-
-  if (!isExtern)printf(") {\n");
-  if (hasParam)printf(")");
-
-  // increment the number of tabs
-  INFO_TABS(arg_info)++;
-
-  FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
-
-  // decrement the number of tabs
-  INFO_TABS(arg_info)--;
-
-  if (isExtern)
-    printf(";\n");
+  printf(" ) ");
+  
+  if (FUNDEF_FUNBODY ( arg_node) == NULL) printf(";\n");
+  
   else
-    printf("}\n"); // prints the function type.
+  {
+    print(arg_info, "\n{\n");
+
+    // increment the number of tabs
+    INFO_TABS(arg_info) += 1;
+
+    FUNDEF_FUNBODY( arg_node) = TRAVopt( FUNDEF_FUNBODY( arg_node), arg_info);
+
+    // decrement the number of tabs
+    INFO_TABS(arg_info) -= 1;
+    print(arg_info, "}\n"); // prints the function type.
+  }
+  
+
 
 
   DBUG_RETURN (arg_node);
@@ -844,16 +849,23 @@ PRTifelse (node * arg_node, info * arg_info)
   DBUG_PRINT ("PRT", ("PRTifelse"));
 
   print(arg_info, "if ( ");
-  // todo - print
   IFELSE_COND( arg_node) = TRAVdo( IFELSE_COND( arg_node), arg_info);
-  printf(")");
-
+  printf(" )\n");
+  print(arg_info, "{\n");
+  INFO_TABS ( arg_info) += 1;
   IFELSE_THEN( arg_node) = TRAVopt( IFELSE_THEN( arg_node), arg_info);
+  INFO_TABS ( arg_info) -= 1;
+
+  print(arg_info, "}\n");
 
   if (IFELSE_ELSE( arg_node))
   {
-    printf(" else ");
+    print(arg_info, "else\n");
+    print(arg_info, "{\n");
+    INFO_TABS ( arg_info) += 1;
     IFELSE_ELSE( arg_node) = TRAVopt( IFELSE_ELSE( arg_node), arg_info);
+    INFO_TABS ( arg_info) -= 1;
+    print(arg_info, "}\n");
   }
 
   DBUG_RETURN (arg_node);
@@ -1196,8 +1208,6 @@ node *PRTsymboltable (node * arg_node, info * arg_info)
   DBUG_ENTER ("PRTsymboltable");
   DBUG_PRINT ("PRT", ("PRTsymboltable"));
 
-  printf("PRTsymboltable");
-
   DBUG_RETURN (arg_node);
 }
 
@@ -1219,8 +1229,6 @@ node *PRTsymboltableentry (node * arg_node, info * arg_info)
 {
   DBUG_ENTER ("PRTsymboltableentry");
   DBUG_PRINT ("PRT", ("PRTsymboltableentry"));
-
-  printf("PRTsymboltableentry");
 
   DBUG_RETURN (arg_node);
 }

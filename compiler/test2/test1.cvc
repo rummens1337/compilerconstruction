@@ -1,22 +1,13 @@
-extern void printInt(int val);
-extern void printInt1();
-extern int woopsie;
-extern int woopsie2;
-int bar;
-int bar2;
 
-int main(){
-    int z;
+extern int foo();
 
-    woopsie = 5;
-    woopsie2 = 5;
-    bar = 5;
-    bar2 = 5;
+int fun()
+{
+    bool d = foo() == 1;
 
-    z = woopsie + bar;
+    foo();
 
-    printInt(woopsie);
-    printInt1();
+    if (foo() == 1) d = true;
 
-    return 5;
+    return 1;
 }

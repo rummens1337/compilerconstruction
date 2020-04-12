@@ -22,7 +22,7 @@ function echo_failed {
 # expected output.
 function check_output {
     file=$1
-    expect_file=../src/codegen/${file%.*}.out
+    expect_file=${file%.*}.out
 
     if [ ! -f $file ]; then return; fi
 
@@ -156,9 +156,9 @@ function run_dir {
             check_output $f
         done
 
-        for d in $BASE/combined_*; do
-            check_combined $d
-        done
+        # for d in $BASE/combined_*; do
+        #     check_combined $d
+        # done
     fi
 
     echo

@@ -37,17 +37,18 @@
  */
 
 struct INFO {
-  node *front;
-  node *back;
+  node *vardecls;
+  node *stmts;
   kvlistnode *names;
 };
 
 /*
  * INFO macros
  */
-#define INFO_FRONT(n)  ((n)->front)
-#define INFO_BACK(n)  ((n)->back)
+#define INFO_VARDECLS(n)  ((n)->vardecls)
+#define INFO_STMTS(n)  ((n)->stmts)
 #define INFO_NAMES(n)  ((n)->names)
+
 
 void append(node *front, node *new)
 {
@@ -57,10 +58,19 @@ void append(node *front, node *new)
     if (NODE_TYPE ( front) == N_stmts)
     {
         // did we reach the end?
-        if (STMTS_NEXT ( front) == NULL)STMTS_NEXT (front) = new;
+        if (STMTS_NEXT ( front) == NULL) STMTS_NEXT (front) = new;
 
         // get the next node
         else append(STMTS_NEXT(front), new);
+    }
+
+    else if (NODE_TYPE ( front) == N_vardecl)
+    {
+        // did we reach the end?
+        if (VARDECL_NEXT ( front) == NULL) VARDECL_NEXT (front) = new;
+
+        // get the next node
+        else append(VARDECL_NEXT(front), new);
     }
 }
 /*
@@ -75,8 +85,8 @@ static info *MakeInfo()
 
   result = (info *)MEMmalloc(sizeof(info));
 
-  INFO_FRONT ( result) = NULL;
-  INFO_BACK ( result) = NULL;
+  INFO_VARDECLS ( result) = NULL;
+  INFO_STMTS ( result) = NULL;
   INFO_NAMES ( result) = NULL;
 
   DBUG_RETURN( result);
@@ -84,11 +94,14 @@ static info *MakeInfo()
 
 static info *FreeInfo( info *info)
 {
-  DBUG_ENTER ("FreeInfo");
+    DBUG_ENTER ("FreeInfo");
 
-  info = MEMfree( info);
+    // free the list
+    KVLLdispose(INFO_NAMES (info));
 
-  DBUG_RETURN( info);
+    info = MEMfree( info);
+
+    DBUG_RETURN( info);
 }
 
 node *NFLfunbody(node * arg_node, info * arg_info)
@@ -97,29 +110,52 @@ node *NFLfunbody(node * arg_node, info * arg_info)
     DBUG_PRINT ("NFL", ("NFLfunbody"));
 
     // traverse over the sons
-    TRAVopt ( FUNBODY_STMTS(arg_node), arg_info);
+    FUNBODY_STMTS(arg_node) = TRAVopt ( FUNBODY_STMTS(arg_node), arg_info);
 
     // do we need to add vardecls?
-    node *front = INFO_FRONT ( arg_info);
+    node *vardecls = INFO_VARDECLS ( arg_info);
 
-    if ( front == NULL) DBUG_RETURN( arg_node);
+    if ( vardecls == NULL) DBUG_RETURN( arg_node);
 
-    // the var decls
-    node * decls = FUNBODY_VARDECLS ( arg_node);
-    
     // append the var decls
-    if (decls == NULL) FUNBODY_VARDECLS ( arg_node) = front;
+    if (FUNBODY_VARDECLS ( arg_node) == NULL) FUNBODY_VARDECLS ( arg_node) = vardecls;
 
     // add the decls
-    else TRAVdo (decls, arg_info);
+    else append(FUNBODY_VARDECLS ( arg_node), vardecls);
 
     // reset the variable
-    INFO_FRONT ( arg_info) = NULL;
+    INFO_VARDECLS ( arg_info) = NULL;
 
     // done
     DBUG_RETURN( arg_node);
 }
 
+node *NFLstmts(node * arg_node, info * arg_info)
+{
+    DBUG_ENTER("NFLstmts");
+    DBUG_PRINT ("NFL", ("NFLstmts"));
+
+    nodetype type = NODE_TYPE ( STMTS_STMT ( arg_node));
+
+    STMTS_STMT ( arg_node) = TRAVdo ( STMTS_STMT ( arg_node), arg_info);
+
+    if (type == N_for)
+    {
+        node *oldnode = arg_node;
+        append(INFO_STMTS (arg_info), arg_node);
+        arg_node = INFO_STMTS (arg_info);
+        INFO_STMTS (arg_info) = NULL;
+
+        STMTS_NEXT ( oldnode) = TRAVopt ( STMTS_NEXT ( oldnode), arg_info);
+    }
+    else
+    {
+        STMTS_NEXT ( arg_node) = TRAVopt ( STMTS_NEXT ( arg_node), arg_info);
+    }
+
+    // done
+    DBUG_RETURN( arg_node);
+}
 node *NFLfor(node * arg_node, info * arg_info)
 {
     DBUG_ENTER("NFLfor");
@@ -131,42 +167,13 @@ node *NFLfor(node * arg_node, info * arg_info)
     // generate random number
     int index = rand(); 
 
+    char *cindex = STRitoa(index);
+
     // set the new name
-    char *name = STRcatn ( 4, "__for_", STRitoa(index), "_" , varname);
+    char *name = STRcatn ( 4, "__for_", cindex, "_" , varname);
 
-    // step expression
-    node *stepexpr = FOR_STEP ( arg_node) ? COPYdoCopy ( FOR_STEP ( arg_node)) : TBmakeNum ( 1);
-
-    // create a new vardecl node
-    node *step = TBmakeVardecl ( STRcat ( name, "_step"), T_int, NULL, stepexpr, NULL);
-    node *stop = TBmakeVardecl ( STRcat ( name, "_stop"), T_int, NULL, COPYdoCopy ( FOR_STOP ( arg_node)), step);
-    node *start = TBmakeVardecl ( name, T_int, NULL, COPYdoCopy ( FOR_START ( arg_node)), stop);
-
-    // create the assignemnt statement
-    node *assign = TBmakeAssign (
-        TBmakeVarlet (STRcpy(name), NULL, NULL), 
-        TBmakeBinop(BO_add, TBmakeVar (STRcpy(name), NULL, NULL), TBmakeVar (STRcat ( name, "_step"), NULL, NULL))
-    );
-
-    // copy the blocks
-    node *block = COPYdoCopy ( FOR_BLOCK ( arg_node));
-
-    // append the statement to the end
-    append(block, TBmakeStmts ( assign, NULL ));
-
-    // do we already have a front set?
-    if ( INFO_FRONT (arg_info) == NULL)
-    {
-        // set front and back
-        INFO_FRONT ( arg_info) = start;
-        INFO_BACK ( arg_info) = step;
-    }
-    else
-    {
-        // set the new back
-        VARDECL_NEXT ( INFO_BACK (arg_info)) = start;
-        INFO_BACK ( arg_info) = step;
-    }
+    // free the string
+    free(cindex);
 
     // add the name to the list
     if (INFO_NAMES( arg_info) == NULL) INFO_NAMES( arg_info) = KVLLcreate(varname, name, NULL);
@@ -175,46 +182,64 @@ node *NFLfor(node * arg_node, info * arg_info)
     else INFO_NAMES( arg_info) = KVLLprepend(INFO_NAMES( arg_info), varname, name);
 
     // traverse over the nodes
-    TRAVopt ( block, arg_info);
+    FOR_BLOCK ( arg_node) = TRAVopt ( FOR_BLOCK ( arg_node), arg_info);
 
     // remove the node from the list
     INFO_NAMES( arg_info) = KVLLremove_front ( INFO_NAMES( arg_info));
+
+    // create a new vardecl node
+    node *step = TBmakeVardecl ( STRcat ( name, "_step"), T_int, NULL, NULL, NULL);
+    node *stop = TBmakeVardecl ( STRcat ( name, "_stop"), T_int, NULL, NULL, step);
+    node *start = TBmakeVardecl ( STRcpy ( name), T_int, NULL, NULL, stop);
+
+    // do we already have a front set?
+    if ( INFO_VARDECLS (arg_info) == NULL) INFO_VARDECLS ( arg_info) = start;
+    else append(INFO_VARDECLS (arg_info), start);
+
+    // step expression
+    node *stepexpr = FOR_STEP ( arg_node) ? COPYdoCopy ( FOR_STEP ( arg_node)) : TBmakeNum ( 1);
+    node *assignstep = TBmakeAssign ( TBmakeVarlet ( STRcpy( VARDECL_NAME ( step)), step, NULL), stepexpr);
+    node *assignstop = TBmakeAssign ( TBmakeVarlet ( STRcpy( VARDECL_NAME ( stop)), stop, NULL), COPYdoCopy ( FOR_STOP ( arg_node)));
+    node *assignstart = TBmakeAssign ( TBmakeVarlet ( STRcpy( VARDECL_NAME ( start)), start, NULL), COPYdoCopy ( FOR_START ( arg_node)));
+
+    node *stmtsstep = TBmakeStmts( assignstep, NULL);
+    node *stmtsstop = TBmakeStmts( assignstop, stmtsstep);
+    node *stmtsstart = TBmakeStmts( assignstart, stmtsstop);
+
+    // remember the statments
+    INFO_STMTS (arg_info) = stmtsstart;
+
+    // copy the blocks
+    node *block = COPYdoCopy ( FOR_BLOCK ( arg_node));
+
+    // create the assignemnt statement
+    node *assign = TBmakeAssign (
+        TBmakeVarlet (STRcpy(VARDECL_NAME ( start)), start, NULL), 
+        TBmakeBinop(BO_add, TBmakeVar (STRcpy(VARDECL_NAME ( start)), start, NULL), TBmakeVar (STRcpy( VARDECL_NAME ( step)), step, NULL))
+    );
+
+    //append the statement to the end
+    if (block == NULL) block = TBmakeStmts ( assign, NULL );
+    
+    else append(block, TBmakeStmts ( assign, NULL ));
 
     // remove the node
     FREEdoFreeTree(arg_node);
 
     // create the conditions
-    node * binopleft = TBmakeBinop(BO_gt, TBmakeVar (STRcat ( name, "_step"), NULL, NULL), TBmakeNum (0));
-    node * binopright = TBmakeBinop(BO_lt, TBmakeVar (STRcpy(name), NULL, NULL), TBmakeVar (STRcat ( name, "_stop"), NULL, NULL));
+    node *ternary = TBmakeTernary(
+        TBmakeBinop(BO_gt, TBmakeVar (STRcpy( VARDECL_NAME ( step)), step, NULL), TBmakeNum (0)),
+        TBmakeBinop(BO_lt, TBmakeVar (STRcpy( VARDECL_NAME ( start)), start, NULL), TBmakeVar (STRcpy( VARDECL_NAME ( stop)), stop, NULL)),
+        TBmakeBinop(BO_gt, TBmakeVar (STRcpy( VARDECL_NAME ( start)), start, NULL), TBmakeVar (STRcpy( VARDECL_NAME ( stop)), stop, NULL))
+    );
 
-    // add the while loop
+    //add the while loop
     arg_node = TBmakeWhile(
-        TBmakeBinop(BO_and, binopleft, binopright),
+        ternary,
         block
     );
 
     // done
-    DBUG_RETURN( arg_node);
-}
-
-node *NFLvardecl ( node *arg_node, info *arg_info)
-{
-    DBUG_ENTER("NFLverdecl");
-    DBUG_PRINT ("NFL", ("NFLverdecl"));
-
-    // do we need to add vardecls?
-    node *front = INFO_FRONT ( arg_info);
-    if ( front == NULL) DBUG_RETURN( arg_node);
-
-    // next vardecl
-    node *next = VARDECL_NEXT ( arg_node);
-
-    // do we have a next node?
-    if ( VARDECL_NEXT ( arg_node) != NULL) TRAVdo (next, arg_info);
-
-    // add the verdecls
-    else VARDECL_NEXT ( arg_node) = INFO_FRONT ( arg_info);
-
     DBUG_RETURN( arg_node);
 }
 

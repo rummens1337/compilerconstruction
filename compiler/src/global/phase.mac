@@ -78,7 +78,7 @@ PHASE( cg,
        "Code generation",
        ALWAYS)
 
-SUBPHASE( GBC, 
+SUBPHASE( gbc, 
           "Generating byte code", 
           GBCdoGenByteCode, 
           ALWAYS,

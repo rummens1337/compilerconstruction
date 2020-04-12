@@ -410,8 +410,6 @@ node *STadd(node *table, node *entry)
     else if ( NODE_TYPE (link) == N_fundef && FUNDEF_ISEXTERN ( link)) SYMBOLTABLEENTRY_OFFSET( entry) = STcountFunDecls ( table);
     else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( table);
 
-    printf("Name: %s, Offset: %d\n", SYMBOLTABLEENTRY_NAME (entry), SYMBOLTABLEENTRY_OFFSET(entry));
-
     // find the last entry
     node *last = STend(table);
 

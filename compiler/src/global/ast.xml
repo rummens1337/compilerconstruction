@@ -45,8 +45,8 @@
     <traversal id="NFL" name="Normalize For Loops" default="sons" include="normalize_for_loops.h">
         <travuser>
             <node name="FunBody" />
+            <node name="Stmts" />
             <node name="For" />
-            <node name="VarDecl" />
             <node name="VarLet" />
             <node name="Var" />
         </travuser>
@@ -77,6 +77,7 @@
             <node name="Float" />
             <node name="Bool" />
             <node name="Cast" />
+            <node name="BinOp" />
         </travuser>
     </traversal>
 
@@ -154,21 +155,17 @@
                     </target>
                 </targets>
             </son>
+            <son name="SymbolTable">
+                <targets>
+                    <target mandatory="no">
+                        <node name="SymbolTable"/>
+                        <phases>
+                            <all/>
+                        </phases>
+                    </target>
+                </targets>
+            </son>
         </sons>
-        <attributes>
-            <attribute name="SymbolTable">
-                <type name="Link">
-                    <targets>
-                        <target mandatory="no">
-                            <any/>
-                            <phases>
-                                <all/>
-                            </phases>
-                        </target>
-                    </targets>
-                </type>
-            </attribute>
-        </attributes>
     </node>
 
     <node name="SymbolTable">

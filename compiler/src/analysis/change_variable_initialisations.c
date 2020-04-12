@@ -83,11 +83,8 @@ node *CVIprogram (node *arg_node, info *arg_info)
     // set the symbol table
     INFO_SYMBOL_TABLE (arg_info) = PROGRAM_SYMBOLTABLE ( arg_node);
 
-    // the decls
-    node *decls = PROGRAM_DECLS ( arg_node);
-
     // traverse over the decls
-    TRAVopt ( decls, arg_info);
+    PROGRAM_DECLS ( arg_node) = TRAVopt ( PROGRAM_DECLS ( arg_node), arg_info);
 
     // get the added statements
     node *stmts = INFO_FRONT(arg_info);
@@ -101,7 +98,7 @@ node *CVIprogram (node *arg_node, info *arg_info)
     FUNDEF_ISEXPORT(init) = 1;
 
     // prepend the __init function to other DECLS
-    PROGRAM_DECLS(arg_node) = TBmakeDecls(init, decls);
+    PROGRAM_DECLS(arg_node) = TBmakeDecls(init, PROGRAM_DECLS ( arg_node));
 
     // refernce to the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
@@ -123,12 +120,13 @@ node *CVIglobdef(node *arg_node, info *arg_info)
 {
     DBUG_ENTER("CVIglobdef");
     DBUG_PRINT("CVI", ("CVIglobdef"));
+
     node *expr = GLOBDEF_INIT(arg_node);
 
     // do we have expressions?
     if (expr == NULL) DBUG_RETURN(arg_node);
     
-    node *varlet = TBmakeVarlet(STRcpy(GLOBDEF_NAME(arg_node)), NULL, NULL);
+    node *varlet = TBmakeVarlet(STRcpy(GLOBDEF_NAME(arg_node)), arg_node, NULL);
     node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
 
     FREEdoFreeTree(expr);
@@ -159,12 +157,13 @@ node *CVIfunbody(node *arg_node, info *arg_info)
     DBUG_PRINT("CVI", ("CVIfunbody"));
 
     info *info = MakeInfo();
-    TRAVopt(FUNBODY_VARDECLS(arg_node), info);
+    FUNBODY_VARDECLS(arg_node) = TRAVopt(FUNBODY_VARDECLS(arg_node), info);
 
-    if (INFO_LAST(info) == NULL) DBUG_RETURN(arg_node);
-
-    STMTS_NEXT(INFO_LAST(info)) = FUNBODY_STMTS(arg_node);
-    FUNBODY_STMTS(arg_node) = INFO_FRONT(info);
+    if (INFO_LAST(info) != NULL)
+    {
+        STMTS_NEXT(INFO_LAST(info)) = FUNBODY_STMTS(arg_node);
+        FUNBODY_STMTS(arg_node) = INFO_FRONT(info);
+    }
 
     FreeInfo(info);
     DBUG_RETURN(arg_node);
@@ -178,9 +177,13 @@ node *CVIvardecl(node *arg_node, info *arg_info)
     node *expr = VARDECL_INIT ( arg_node);
 
     // do we have expressions?
-    if (expr == NULL) DBUG_RETURN(arg_node);
+    if (expr == NULL) 
+    {
+        VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
+        DBUG_RETURN(arg_node);
+    }
     
-    node *varlet = TBmakeVarlet(STRcpy(VARDECL_NAME(arg_node)), NULL, NULL);
+    node *varlet = TBmakeVarlet(STRcpy(VARDECL_NAME(arg_node)), arg_node, NULL);
     node *assign = TBmakeAssign(varlet, COPYdoCopy(expr));
 
     FREEdoFreeTree(expr);
@@ -198,7 +201,7 @@ node *CVIvardecl(node *arg_node, info *arg_info)
         INFO_LAST(arg_info) = node;
     }
 
-    TRAVopt(VARDECL_NEXT(arg_node), arg_info);
+    VARDECL_NEXT(arg_node) = TRAVopt(VARDECL_NEXT(arg_node), arg_info);
 
     DBUG_RETURN(arg_node);
 }

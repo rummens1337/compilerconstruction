@@ -1,0 +1,11 @@
+__init:
+	iloadc 0
+	istoreg 0
+	iloadc 1
+	istoreg 1
+	return
+
+foo:
+	esr 2
+	iloadc 2
+	istore 0

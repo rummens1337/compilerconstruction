@@ -74,7 +74,7 @@ static int yyerror( char *errname);
 
 program: decls
         {
-            parseresult = TBmakeProgram($1);
+            parseresult = TBmakeProgram($1, NULL);
         }
     ;
 
@@ -296,7 +296,7 @@ block: CURLY_L CURLY_R
         }
     |   stmt
         {
-            $$ = $1;
+            $$ = TBmakeStmts($1, NULL);
         }
     ;
 
@@ -310,6 +310,7 @@ return: RETURN SEMICOLON
         }
     ;
 
+// TODO apperently not for all statements
 exprstmt: expr SEMICOLON
         {
             $$ = TBmakeExprstmt( $1);

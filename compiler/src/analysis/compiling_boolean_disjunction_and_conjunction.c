@@ -39,7 +39,7 @@ node *CBDCbinop ( node *arg_node, info *arg_info)
     if (BO_or == BINOP_OP ( arg_node))
     {
         // create the right expression
-        node *right = BINOP_RIGHT( arg_node) == NULL ? TBmakeBool(0) : TBmakeTernary (COPYdoCopy(BINOP_RIGHT( arg_node)), TBmakeBool(1), TBmakeBool(0));
+        node *right = COPYdoCopy(BINOP_RIGHT( arg_node));
 
         // define the left node
         left = TBmakeTernary (COPYdoCopy(BINOP_LEFT( arg_node)), TBmakeBool(1), right);
@@ -47,7 +47,7 @@ node *CBDCbinop ( node *arg_node, info *arg_info)
     else if (BO_and == BINOP_OP ( arg_node))
     {
         // create the right expression
-        node *right = BINOP_RIGHT( arg_node) == NULL ? TBmakeBool(1) : TBmakeTernary (COPYdoCopy(BINOP_RIGHT( arg_node)), TBmakeBool(1), TBmakeBool(0));
+        node *right = COPYdoCopy(BINOP_RIGHT( arg_node));
 
         // define the left node
         left = TBmakeTernary (COPYdoCopy(BINOP_LEFT( arg_node)), right, TBmakeBool(0));

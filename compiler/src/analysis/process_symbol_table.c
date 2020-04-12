@@ -86,7 +86,7 @@ node *PSTprogram(node * arg_node, info * arg_info)
     PROGRAM_SYMBOLTABLE ( arg_node) = INFO_SYMBOL_TABLE ( arg_info);
 
     // traverse over the sons
-    TRAVopt ( PROGRAM_DECLS(arg_node), arg_info);
+    PROGRAM_DECLS(arg_node) = TRAVopt ( PROGRAM_DECLS(arg_node), arg_info);
 
     DBUG_RETURN( arg_node);
 }
@@ -100,7 +100,7 @@ node *PSTglobdef(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( GLOBDEF_NAME ( arg_node), GLOBDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( STRcpy(GLOBDEF_NAME ( arg_node)), GLOBDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", GLOBDEF_NAME ( arg_node));
@@ -121,14 +121,14 @@ node *PSTfundef(node * arg_node, info * arg_info)
     SYMBOLTABLE_RETURNTYPE ( INFO_SYMBOL_TABLE ( info)) = FUNDEF_TYPE ( arg_node);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry(FUNDEF_NAME ( arg_node), FUNDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, INFO_SYMBOL_TABLE ( info));
+    node *entry = TBmakeSymboltableentry( STRcpy(FUNDEF_NAME ( arg_node)), FUNDEF_TYPE ( arg_node), 0, 0, arg_node, NULL, INFO_SYMBOL_TABLE ( info));
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s(...)'\n", FUNDEF_NAME ( arg_node));
 
     // traverse over the sons
-    TRAVopt ( FUNDEF_PARAMS( arg_node), info);
-    TRAVopt ( FUNDEF_FUNBODY( arg_node), info);
+    FUNDEF_PARAMS( arg_node) = TRAVopt ( FUNDEF_PARAMS( arg_node), info);
+    FUNDEF_FUNBODY( arg_node) = TRAVopt ( FUNDEF_FUNBODY( arg_node), info);
 
     // free the info
     FreeInfo ( info);
@@ -145,14 +145,14 @@ node *PSTparam(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( STRcpy(PARAM_NAME ( arg_node)), PARAM_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
     SYMBOLTABLEENTRY_PARAM ( entry) = TRUE;
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node),  "Redefinition of `%s %s` ", stype(PARAM_TYPE ( arg_node)), PARAM_NAME ( arg_node));
 
     // traverse over the sons
-    TRAVopt ( PARAM_NEXT( arg_node), arg_info);
+    PARAM_NEXT( arg_node) = TRAVopt ( PARAM_NEXT( arg_node), arg_info);
 
     DBUG_RETURN( arg_node);
 }
@@ -161,9 +161,6 @@ node *PSTfuncall(node * arg_node, info * arg_info)
 {
     DBUG_ENTER("PSTfuncall");
     DBUG_PRINT ("PST", ("PSTfuncall"));
-
-    // get the parameters
-    node *args = FUNCALL_ARGS ( arg_node);
 
     // get the symbol table
     node *table = INFO_SYMBOL_TABLE ( arg_info);
@@ -174,14 +171,17 @@ node *PSTfuncall(node * arg_node, info * arg_info)
     // add to the current scope
     if (entry == NULL) CTIerrorLine ( NODE_LINE ( arg_node), "`%s()` was not declared in this scope\n", FUNCALL_NAME ( arg_node));
 
+    // set the decl
+    if (FUNCALL_DECL ( arg_node) == NULL) FUNCALL_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
+
     // do we have paramters
-    else if (args != NULL)
+    if (FUNCALL_ARGS ( arg_node) != NULL)
     {
         INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
         int backarguments = INFO_ARGUMENTS ( arg_info);
 
         // traverse over the arguments
-        TRAVopt ( args, arg_info);
+        FUNCALL_ARGS ( arg_node) = TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
 
         // number of parameters
         size_t params = STparams ( SYMBOLTABLEENTRY_TABLE ( entry));
@@ -218,7 +218,7 @@ node *PSTexprs (node * arg_node, info * arg_info)
     INFO_ARGUMENTS ( arg_info) += 1;
 
     // traverse over the next expression
-    TRAVopt ( EXPRS_NEXT ( arg_node), arg_info);
+    EXPRS_NEXT ( arg_node) = TRAVopt ( EXPRS_NEXT ( arg_node), arg_info);
 
     // done
     DBUG_RETURN( arg_node);
@@ -229,14 +229,17 @@ node *PSTvar(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTvar");
     DBUG_PRINT ("PST", ("PSTvar"));
 
-
-    STdisplay(INFO_SYMBOL_TABLE ( arg_info), 0);
+    // get the entry
+    node *entry = STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VAR_NAME ( arg_node));
 
     // add to the current scope
-    if (!STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VAR_NAME ( arg_node)))
+    if (entry == NULL)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VAR_NAME ( arg_node));
     }
+
+    // set the decl
+    if (VAR_DECL ( arg_node) == NULL) VAR_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
 
     DBUG_RETURN( arg_node);
 }
@@ -250,13 +253,13 @@ node *PSTvardecl(node * arg_node, info * arg_info)
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // create the entry
-    node *entry = TBmakeSymboltableentry ( VARDECL_NAME ( arg_node), VARDECL_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
+    node *entry = TBmakeSymboltableentry ( STRcpy(VARDECL_NAME ( arg_node)), VARDECL_TYPE ( arg_node), 0, 1, arg_node, NULL, NULL);
 
     // add to the current scope
     if (!STadd(table, entry)) CTIerrorLine ( NODE_LINE ( arg_node), "Multiple definition of `%s'\n", VARDECL_NAME ( arg_node));
 
     // traverse over the sons
-    TRAVopt ( VARDECL_NEXT( arg_node), arg_info);
+    VARDECL_NEXT( arg_node) = TRAVopt ( VARDECL_NEXT( arg_node), arg_info);
 
     DBUG_RETURN( arg_node);
 }
@@ -266,11 +269,17 @@ node *PSTvarlet(node * arg_node, info * arg_info)
     DBUG_ENTER("PSTvarlet");
     DBUG_PRINT ("PST", ("PSTvarlet"));
 
+    // get the entry
+    node *entry = STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VARLET_NAME ( arg_node));
+
     // add to the current scope
-    if (!STdeepSearchVariableByName(INFO_SYMBOL_TABLE ( arg_info), VARLET_NAME ( arg_node)))
+    if (entry == NULL)
     {
         CTIerrorLine ( NODE_LINE ( arg_node), "`%s` was not declared in this scope\n", VARLET_NAME ( arg_node));
     }
+
+    // set the decl
+    if (VARLET_DECL ( arg_node) == NULL) VARLET_DECL ( arg_node) = SYMBOLTABLEENTRY_LINK ( entry);
 
     DBUG_RETURN( arg_node);
 }

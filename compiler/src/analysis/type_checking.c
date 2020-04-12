@@ -87,7 +87,7 @@ node *TCprogram(node * arg_node, info * arg_info)
     INFO_SYMBOL_TABLE ( arg_info) = PROGRAM_SYMBOLTABLE ( arg_node);
 
     // traverse over the sons
-    TRAVopt ( PROGRAM_DECLS(arg_node), arg_info);
+    PROGRAM_DECLS(arg_node) = TRAVopt ( PROGRAM_DECLS(arg_node), arg_info);
 
     DBUG_RETURN( arg_node);
 }
@@ -105,7 +105,7 @@ node *TCfundef(node * arg_node, info * arg_info)
     INFO_SYMBOL_TABLE ( arg_info) = SYMBOLTABLEENTRY_TABLE ( entry);
 
     // traverse over the body
-    TRAVopt ( FUNDEF_FUNBODY ( arg_node), arg_info);
+    FUNDEF_FUNBODY ( arg_node)= TRAVopt ( FUNDEF_FUNBODY ( arg_node), arg_info);
 
     // do we have a return statement
     if (FUNDEF_TYPE ( arg_node) != T_void && INFO_HAS_RETURN_TYPE ( arg_info) == 0 && FUNDEF_ISEXTERN(arg_node) < 1)
@@ -124,7 +124,7 @@ node *TCexprstmt(node * arg_node, info * arg_info)
     DBUG_ENTER("TCexprstmt");
     DBUG_PRINT ("TC", ("TCexprstmt"));
 
-    TRAVopt(EXPRSTMT_EXPR( arg_node), arg_info);
+    EXPRSTMT_EXPR( arg_node) = TRAVopt(EXPRSTMT_EXPR( arg_node), arg_info);
 
     DBUG_RETURN( arg_node);
 }
@@ -138,14 +138,13 @@ node *TCreturn(node *arg_node, info *arg_info)
     INFO_HAS_RETURN_TYPE ( arg_info) += 1;
 
     // the expression
-    node *expr = RETURN_EXPR ( arg_node);
     node *table = INFO_SYMBOL_TABLE ( arg_info);
 
     // do nothing for void methods
-    if (expr == NULL && SYMBOLTABLE_RETURNTYPE ( table) == T_void) DBUG_RETURN( arg_node);
+    if (RETURN_EXPR ( arg_node) == NULL && SYMBOLTABLE_RETURNTYPE ( table) == T_void) DBUG_RETURN( arg_node);
 
     // do the types match
-    TRAVopt ( RETURN_EXPR ( arg_node), arg_info);
+    RETURN_EXPR ( arg_node) = TRAVopt ( RETURN_EXPR ( arg_node), arg_info);
 
     // do we have the corrrect return type?
     if (INFO_VAR_TYPE ( arg_info) == SYMBOLTABLE_RETURNTYPE ( table)) DBUG_RETURN( arg_node);
@@ -174,7 +173,7 @@ node *TCassign(node *arg_node, info *arg_info)
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( node);
 
     // traverse over the expressions
-    TRAVdo (  ASSIGN_EXPR ( arg_node), arg_info);
+    ASSIGN_EXPR ( arg_node) = TRAVdo ( ASSIGN_EXPR ( arg_node), arg_info);
 
     // reset the type
     INFO_VAR_TYPE ( arg_info) = type;
@@ -187,11 +186,11 @@ node *TCbinop (node * arg_node, info * arg_info)
     DBUG_ENTER("TCbinop");
     DBUG_PRINT ("TC", ("TCbinop"));
 
-    TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
+    BINOP_LEFT ( arg_node) = TRAVopt ( BINOP_LEFT ( arg_node), arg_info);
 
     type leftype = INFO_VAR_TYPE ( arg_info);
 
-    TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
+    BINOP_RIGHT ( arg_node) = TRAVopt ( BINOP_RIGHT ( arg_node), arg_info);
 
     type righttype = INFO_VAR_TYPE ( arg_info);
 
@@ -249,7 +248,7 @@ node *TCfuncall(node * arg_node, info * arg_info)
     INFO_FUNDEF ( arg_info) = entry;
 
     // traverse over the arguments
-    TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
+    FUNCALL_ARGS ( arg_node) = TRAVopt ( FUNCALL_ARGS ( arg_node), arg_info);
 
     // set the type
     INFO_VAR_TYPE ( arg_info) = SYMBOLTABLEENTRY_TYPE ( entry);
@@ -263,13 +262,13 @@ extern node *TCexprs (node * arg_node, info * arg_info)
     DBUG_PRINT ("TC", ("TCexprs"));
 
     //
-    TRAVdo ( EXPRS_EXPR ( arg_node), arg_info);
+    EXPRS_EXPR ( arg_node) = TRAVdo ( EXPRS_EXPR ( arg_node), arg_info);
 
     // increment the number of arguments
     INFO_OFFSET ( arg_info) += 1;
 
     // traverse over the next expression
-    TRAVopt ( EXPRS_NEXT ( arg_node), arg_info);
+    EXPRS_NEXT ( arg_node) = TRAVopt ( EXPRS_NEXT ( arg_node), arg_info);
 
     INFO_OFFSET ( arg_info) -= 1;
 
