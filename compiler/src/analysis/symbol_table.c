@@ -351,7 +351,7 @@ size_t STcount(node *table)
         node *link = SYMBOLTABLEENTRY_LINK ( entry);
 
         // is it a globef node
-        if ( NODE_TYPE (link) == N_fundef && FUNDEF_ISEXTERN (link)) continue;
+        if ( NODE_TYPE (link) == N_fundef && (FUNDEF_ISEXTERN (link) || FUNDEF_ISEXPORT (link))) continue;
 
         // is it a globef node
         if ( NODE_TYPE (link) == N_globdef && GLOBDEF_ISEXTERN (link)) continue;
@@ -446,7 +446,7 @@ node *STadd(node *table, node *entry)
     node *link = SYMBOLTABLEENTRY_LINK ( entry);
 
     // set the offset
-    if ( NODE_TYPE ( link) == N_globdef && GLOBDEF_ISEXTERN ( link))SYMBOLTABLEENTRY_OFFSET( entry) = STcountGlobdecls ( table);
+    if ( NODE_TYPE ( link) == N_globdef && GLOBDEF_ISEXTERN ( link)) SYMBOLTABLEENTRY_OFFSET( entry) = STcountGlobdecls ( table);
     else if ( NODE_TYPE (link) == N_fundef && FUNDEF_ISEXTERN ( link)) SYMBOLTABLEENTRY_OFFSET( entry) = STcountFunDecls ( table);
     else SYMBOLTABLEENTRY_OFFSET( entry) = STcount ( table);
 
